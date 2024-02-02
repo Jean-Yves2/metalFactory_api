@@ -1,0 +1,78 @@
+src/
+|-- app.module.ts
+|-- main.ts
+|-- common/
+|   |-- decorators/
+|   |-- filters/
+|   |-- guards/
+|   |-- middleware/
+|   |-- pipes/
+|   |-- strategies/
+|-- config/
+|   |-- configuration.ts
+|   |-- database.config.ts
+|-- customers/
+|   |-- dto/
+|   |   |-- create-customer.dto.ts
+|   |   |-- update-customer.dto.ts
+|   |-- entities/
+|   |   |-- customer.entity.ts
+|   |-- customers.module.ts
+|   |-- customers.controller.ts
+|   |-- customers.service.ts
+|-- addresses/
+|   |-- dto/
+|   |   |-- create-address.dto.ts
+|   |   |-- update-address.dto.ts
+|   |-- entities/
+|   |   |-- address.entity.ts
+|   |-- addresses.module.ts
+|   |-- addresses.controller.ts
+|   |-- addresses.service.ts
+|-- orders/
+|   |-- dto/
+|   |   |-- create-order.dto.ts
+|   |   |-- update-order.dto.ts
+|   |-- entities/
+|   |   |-- order.entity.ts
+|   |   |-- orderLine.entity.ts
+|   |-- orders.module.ts
+|   |-- orders.controller.ts
+|   |-- orders.service.ts
+|-- products/
+|   |-- dto/
+|   |   |-- create-product.dto.ts
+|   |   |-- update-product.dto.ts
+|   |-- entities/
+|   |   |-- product.entity.ts
+|   |-- products.module.ts
+|   |-- products.controller.ts
+|   |-- products.service.ts
+|-- warehouses/
+|   |-- dto/
+|   |   |-- create-warehouse.dto.ts
+|   |   |-- update-warehouse.dto.ts
+|   |-- entities/
+|   |   |-- warehouse.entity.ts
+|   |-- warehouses.module.ts
+|   |-- warehouses.controller.ts
+|   |-- warehouses.service.ts
+|-- suppliers/
+|   |-- dto/
+|   |   |-- create-supplier.dto.ts
+|   |   |-- update-supplier.dto.ts
+|   |-- entities/
+|   |   |-- supplier.entity.ts
+|   |-- suppliers.module.ts
+|   |-- suppliers.controller.ts
+|   |-- suppliers.service.ts
+|-- auth/
+|   |-- dto/
+|   |   |-- login.dto.ts
+|   |-- jwt.strategy.ts
+|   |-- auth.module.ts
+|   |-- auth.service.ts
+|   |-- auth.controller.ts
+|-- database/
+|   |-- database.module.ts
+|   |-- database.providers.ts
