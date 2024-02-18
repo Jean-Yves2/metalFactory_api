@@ -1,0 +1,321 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  password       String
+  role           UserRole       @default(USER)
+  userType       UserType
+  firstName      String?
+  lastName       String?
+  phone          String?        @unique
+  isProfessional Boolean        @default(false)
+  siret          String?        @unique
+  companyName    String?
+  addresses      UserAddress[]
+  orders         Order[]
+  quotes         Quote[]
+  webAnalytics   WebAnalytics[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model UserAddress {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  addressId Int
+  type      AddressType
+  user      User        @relation(fields: [userId], references: [id])
+  address   Address     @relation(fields: [addressId], references: [id])
+
+  @@unique([userId, addressId, type])
+}
+
+model Address {
+  id                  Int           @id @default(autoincrement())
+  street              String
+  postalCode          String
+  city                String
+  country             String        @default("France")
+  distanceToWarehouse Decimal       @default(0.0)
+  userAddresses       UserAddress[]
+  orders              Order[]
+  warehouses          Warehouse[]
+  suppliers           Supplier[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model Order {
+  id                Int         @id @default(autoincrement())
+  customerId        Int
+  orderDate         DateTime
+  status            OrderStatus
+  totalExclTax      Decimal
+  totalInclTax      Decimal
+  deliveryAddressId Int
+  customer          User        @relation(fields: [customerId], references: [id])
+  deliveryAddress   Address     @relation(fields: [deliveryAddressId], references: [id])
+  orderLines        OrderLine[]
+  deliveries        Delivery[]
+  payments          Payment[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([orderDate])
+}
+
+model OrderLine {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  cutLength Decimal
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quote {
+  id                      Int         @id @default(autoincrement())
+  clientId                Int
+  dateIssued              DateTime
+  status                  QuoteStatus
+  totalPrice              Decimal
+  discountId              Int?
+  totalPriceAfterDiscount Decimal
+  client                  User        @relation(fields: [clientId], references: [id])
+  quoteLines              QuoteLine[]
+  discount                Discount?   @relation(fields: [discountId], references: [id])
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+}
+
+model QuoteLine {
+  id              Int      @id @default(autoincrement())
+  quoteId         Int
+  productId       Int
+  quantity        Int
+  unitPrice       Decimal
+  discountApplied Boolean  @default(false)
+  quote           Quote    @relation(fields: [quoteId], references: [id])
+  product         Product  @relation(fields: [productId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum AddressType {
+  DELIVERY
+  BILLING
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  INTERNAL_USER
+}
+
+enum UserType {
+  CUSTOMER
+  INTERNAL
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  DELIVERED
+  AWAITING_STOCK
+  CUTTING
+}
+
+enum QuoteStatus {
+  PENDING
+  IN_PROCESS
+  CLOSED
+}
+
+model Product {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  description        String?
+  basePrice          Decimal
+  unitPriceExclTax   Decimal
+  VATRate            Decimal
+  marginPercent      Decimal
+  sellingPrice       Decimal             @default(0)
+  linearWeight       Decimal?
+  stocks             Stock[]
+  orderLines         OrderLine[]
+  quoteLines         QuoteLine[]
+  supplierOrderLines SupplierOrderLine[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Stock {
+  id           Int       @id @default(autoincrement())
+  warehouseId  Int
+  productId    Int
+  quantity     Int
+  minThreshold Int
+  lastUpdated  DateTime  @updatedAt
+  product      Product   @relation(fields: [productId], references: [id])
+  warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Warehouse {
+  id        Int      @id @default(autoincrement())
+  name      String
+  addressId Int
+  address   Address  @relation(fields: [addressId], references: [id])
+  stocks    Stock[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Discount {
+  id                Int          @id @default(autoincrement())
+  description       String
+  discountPercent   Decimal
+  validFrom         DateTime
+  validTo           DateTime
+  global            Boolean      @default(false)
+  minPurchaseAmount Decimal?     @default(0)
+  discountType      DiscountType
+  quotes            Quote[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+enum DiscountType {
+  FALL
+  PROFESSIONAL
+  VOLUME
+}
+
+model Supplier {
+  id             Int             @id @default(autoincrement())
+  name           String
+  SIRET          String          @unique
+  addressId      Int
+  address        Address         @relation(fields: [addressId], references: [id])
+  contactEmail   String
+  contactPhone   String
+  supplierOrders SupplierOrder[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model SupplierOrder {
+  id                   Int                 @id @default(autoincrement())
+  supplierId           Int
+  orderDate            DateTime
+  expectedDeliveryDate DateTime
+  status               SupplierOrderStatus
+  supplier             Supplier            @relation(fields: [supplierId], references: [id])
+  supplierOrderLines   SupplierOrderLine[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model SupplierOrderLine {
+  id               Int           @id @default(autoincrement())
+  supplierOrderId  Int
+  productId        Int
+  orderedQuantity  Int
+  unitPriceExclTax Decimal
+  receivedQuantity Int           @default(0)
+  discrepancy      Int?
+  receivedDate     DateTime?
+  supplierOrder    SupplierOrder @relation(fields: [supplierOrderId], references: [id])
+  product          Product       @relation(fields: [productId], references: [id])
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model DeliveryCompany {
+  id              Int        @id @default(autoincrement())
+  name            String
+  baseRate        Decimal
+  ratePerKm       Decimal
+  weightSurcharge Decimal
+  deliveries      Delivery[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Delivery {
+  id                Int             @id @default(autoincrement())
+  orderId           Int
+  deliveryCompanyId Int
+  distance          Int
+  weight            Decimal
+  cost              Decimal
+  VATRate           Decimal
+  deliveryStatus    DeliveryStatus
+  order             Order           @relation(fields: [orderId], references: [id])
+  deliveryCompany   DeliveryCompany @relation(fields: [deliveryCompanyId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model WebAnalytics {
+  visitId   Int      @id @default(autoincrement())
+  pageURL   String
+  visitDate DateTime
+  userId    Int?
+  sessionID String
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  paymentId     Int           @id @default(autoincrement())
+  orderId       Int
+  amount        Decimal
+  paymentDate   DateTime
+  paymentMethod PaymentMethod
+  transactionId String        @unique
+  status        PaymentStatus
+  order         Order         @relation(fields: [orderId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum SupplierOrderStatus {
+  PENDING
+  CONFIRMED
+  DELIVERED
+}
+
+enum DeliveryStatus {
+  PREPARED
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  DELAYED
+  CANCELED
+}
+
+enum PaymentMethod {
+  CARD
+  INVOICE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}

@@ -1,78 +1,104 @@
 src/
-|-- app.module.ts
-|-- main.ts
-|-- common/
-|   |-- decorators/
-|   |-- filters/
-|   |-- guards/
-|   |-- middleware/
-|   |-- pipes/
-|   |-- strategies/
-|-- config/
-|   |-- configuration.ts
-|   |-- database.config.ts
-|-- customers/
-|   |-- dto/
-|   |   |-- create-customer.dto.ts
-|   |   |-- update-customer.dto.ts
-|   |-- entities/
-|   |   |-- customer.entity.ts
-|   |-- customers.module.ts
-|   |-- customers.controller.ts
-|   |-- customers.service.ts
-|-- addresses/
-|   |-- dto/
-|   |   |-- create-address.dto.ts
-|   |   |-- update-address.dto.ts
-|   |-- entities/
-|   |   |-- address.entity.ts
-|   |-- addresses.module.ts
-|   |-- addresses.controller.ts
-|   |-- addresses.service.ts
-|-- orders/
-|   |-- dto/
-|   |   |-- create-order.dto.ts
-|   |   |-- update-order.dto.ts
-|   |-- entities/
-|   |   |-- order.entity.ts
-|   |   |-- orderLine.entity.ts
-|   |-- orders.module.ts
-|   |-- orders.controller.ts
-|   |-- orders.service.ts
-|-- products/
-|   |-- dto/
-|   |   |-- create-product.dto.ts
-|   |   |-- update-product.dto.ts
-|   |-- entities/
-|   |   |-- product.entity.ts
-|   |-- products.module.ts
-|   |-- products.controller.ts
-|   |-- products.service.ts
-|-- warehouses/
-|   |-- dto/
-|   |   |-- create-warehouse.dto.ts
-|   |   |-- update-warehouse.dto.ts
-|   |-- entities/
-|   |   |-- warehouse.entity.ts
-|   |-- warehouses.module.ts
-|   |-- warehouses.controller.ts
-|   |-- warehouses.service.ts
-|-- suppliers/
-|   |-- dto/
-|   |   |-- create-supplier.dto.ts
-|   |   |-- update-supplier.dto.ts
-|   |-- entities/
-|   |   |-- supplier.entity.ts
-|   |-- suppliers.module.ts
-|   |-- suppliers.controller.ts
-|   |-- suppliers.service.ts
-|-- auth/
-|   |-- dto/
-|   |   |-- login.dto.ts
-|   |-- jwt.strategy.ts
-|   |-- auth.module.ts
-|   |-- auth.service.ts
-|   |-- auth.controller.ts
-|-- database/
-|   |-- database.module.ts
-|   |-- database.providers.ts
+├── addresses/
+│   ├── dto/
+│   ├── addresses.module.ts
+│   ├── addresses.service.ts
+│   ├── addresses.controller.ts
+├── users/
+│   ├── dto/
+│   ├── users.module.ts
+│   ├── users.service.ts
+│   ├── users.controller.ts
+├── user-addresses/
+│   ├── dto/
+│   ├── user-addresses.module.ts
+│   ├── user-addresses.service.ts
+│   ├── user-addresses.controller.ts
+├── orders/
+│   ├── dto/
+│   ├── orders.module.ts
+│   ├── orders.service.ts
+│   ├── orders.controller.ts
+├── order-lines/
+│   ├── dto/
+│   ├── order-lines.module.ts
+│   ├── order-lines.service.ts
+│   ├── order-lines.controller.ts
+├── quotes/
+│   ├── dto/
+│   ├── quotes.module.ts
+│   ├── quotes.service.ts
+│   ├── quotes.controller.ts
+├── quote-lines/
+│   ├── dto/
+│   ├── quote-lines.module.ts
+│   ├── quote-lines.service.ts
+│   ├── quote-lines.controller.ts
+├── products/
+│   ├── dto/
+│   ├── products.module.ts
+│   ├── products.service.ts
+│   ├── products.controller.ts
+├── stocks/
+│   ├── dto/
+│   ├── stocks.module.ts
+│   ├── stocks.service.ts
+│   ├── stocks.controller.ts
+├── warehouses/
+│   ├── dto/
+│   ├── warehouses.module.ts
+│   ├── warehouses.service.ts
+│   ├── warehouses.controller.ts
+├── discounts/
+│   ├── dto/
+│   ├── discounts.module.ts
+│   ├── discounts.service.ts
+│   ├── discounts.controller.ts
+├── suppliers/
+│   ├── dto/
+│   ├── suppliers.module.ts
+│   ├── suppliers.service.ts
+│   ├── suppliers.controller.ts
+├── supplier-orders/
+│   ├── dto/
+│   ├── supplier-orders.module.ts
+│   ├── supplier-orders.service.ts
+│   ├── supplier-orders.controller.ts
+├── supplier-order-lines/
+│   ├── dto/
+│   ├── supplier-order-lines.module.ts
+│   ├── supplier-order-lines.service.ts
+│   ├── supplier-order-lines.controller.ts
+├── delivery-companies/
+│   ├── dto/
+│   ├── delivery-companies.module.ts
+│   ├── delivery-companies.service.ts
+│   ├── delivery-companies.controller.ts
+├── deliveries/
+│   ├── dto/
+│   ├── deliveries.module.ts
+│   ├── deliveries.service.ts
+│   ├── deliveries.controller.ts
+├── web-analytics/
+│   ├── dto/
+│   ├── web-analytics.module.ts
+│   ├── web-analytics.service.ts
+│   ├── web-analytics.controller.ts
+├── payments/
+│   ├── dto/
+│   ├── payments.module.ts
+│   ├── payments.service.ts
+│   ├── payments.controller.ts
+├── auth/
+│   ├── dto/
+│   ├── auth.module.ts
+│   ├── auth.service.ts
+│   ├── auth.controller.ts
+├── database/
+│   ├── prisma/
+│   │   ├── prisma.service.ts
+│   │   ├── prisma.service.spec.ts
+│   ├── database.module.ts
+├── app.module.ts
+├── main.ts
+├── ...
