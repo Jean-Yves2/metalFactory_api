@@ -20,6 +20,7 @@ import { SupplierOrderLineModule } from './supplier-order-line/supplier-order-li
 import { DeliveryCompanyModule } from './delivery-company/delivery-company.module';
 import { DeliveryModule } from './delivery/delivery.module';
 import { WebAnalyticsModule } from './web-analytics/web-analytics.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { WebAnalyticsModule } from './web-analytics/web-analytics.module';
     DeliveryCompanyModule,
     DeliveryModule,
     WebAnalyticsModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
