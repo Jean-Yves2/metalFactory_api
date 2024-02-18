@@ -11,9 +11,10 @@ import { UserAddressModule } from './user-address/user-address.module';
 import { OrderLineModule } from './order-line/order-line.module';
 import { QuoteModule } from './quote/quote.module';
 import { QuoteLineModule } from './quote-line/quote-line.module';
+import { StockModule } from './stock/stock.module';
 
 @Module({
-  imports: [UserModule, OrderModule, ProductModule, AuthModule, AddressModule, UserAddressModule, OrderLineModule, QuoteModule, QuoteLineModule],
+  imports: [UserModule, OrderModule, ProductModule, AuthModule, AddressModule, UserAddressModule, OrderLineModule, QuoteModule, QuoteLineModule, StockModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
