@@ -12,9 +12,10 @@ import { OrderLineModule } from './order-line/order-line.module';
 import { QuoteModule } from './quote/quote.module';
 import { QuoteLineModule } from './quote-line/quote-line.module';
 import { StockModule } from './stock/stock.module';
+import { WarehouseModule } from './warehouse/warehouse.module';
 
 @Module({
-  imports: [UserModule, OrderModule, ProductModule, AuthModule, AddressModule, UserAddressModule, OrderLineModule, QuoteModule, QuoteLineModule, StockModule],
+  imports: [UserModule, OrderModule, ProductModule, AuthModule, AddressModule, UserAddressModule, OrderLineModule, QuoteModule, QuoteLineModule, StockModule, WarehouseModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
