@@ -14,6 +14,7 @@ import { QuoteLineModule } from './quote-line/quote-line.module';
 import { StockModule } from './stock/stock.module';
 import { WarehouseModule } from './warehouse/warehouse.module';
 import { DiscountModule } from './discount/discount.module';
+import { SupplierModule } from './supplier/supplier.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DiscountModule } from './discount/discount.module';
     StockModule,
     WarehouseModule,
     DiscountModule,
+    SupplierModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
