@@ -4,6 +4,6 @@ import { SupplierOrderLineController } from './supplier-order-line.controller';
 
 @Module({
   providers: [SupplierOrderLineService],
-  controllers: [SupplierOrderLineController]
+  controllers: [SupplierOrderLineController],
 })
 export class SupplierOrderLineModule {}

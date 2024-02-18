@@ -4,6 +4,6 @@ import { OrderLineController } from './order-line.controller';
 
 @Module({
   providers: [OrderLineService],
-  controllers: [OrderLineController]
+  controllers: [OrderLineController],
 })
 export class OrderLineModule {}

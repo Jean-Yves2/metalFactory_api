@@ -9,7 +9,9 @@ describe('SupplierOrderLineController', () => {
       controllers: [SupplierOrderLineController],
     }).compile();
 
-    controller = module.get<SupplierOrderLineController>(SupplierOrderLineController);
+    controller = module.get<SupplierOrderLineController>(
+      SupplierOrderLineController,
+    );
   });
 
   it('should be defined', () => {

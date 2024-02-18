@@ -4,6 +4,6 @@ import { WebAnalyticsController } from './web-analytics.controller';
 
 @Module({
   providers: [WebAnalyticsService],
-  controllers: [WebAnalyticsController]
+  controllers: [WebAnalyticsController],
 })
 export class WebAnalyticsModule {}
