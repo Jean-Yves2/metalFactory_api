@@ -10,9 +10,10 @@ import { AddressModule } from './address/address.module';
 import { UserAddressModule } from './user-address/user-address.module';
 import { OrderLineModule } from './order-line/order-line.module';
 import { QuoteModule } from './quote/quote.module';
+import { QuoteLineModule } from './quote-line/quote-line.module';
 
 @Module({
-  imports: [UserModule, OrderModule, ProductModule, AuthModule, AddressModule, UserAddressModule, OrderLineModule, QuoteModule],
+  imports: [UserModule, OrderModule, ProductModule, AuthModule, AddressModule, UserAddressModule, OrderLineModule, QuoteModule, QuoteLineModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
