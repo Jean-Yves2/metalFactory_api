@@ -1,94 +1,94 @@
 src/
-├── addresses/
+├── address/
 │   ├── dto/
-│   ├── addresses.module.ts
-│   ├── addresses.service.ts
-│   ├── addresses.controller.ts
-├── users/
+│   ├── address.module.ts
+│   ├── address.service.ts
+│   ├── address.controller.ts
+├── user/
 │   ├── dto/
-│   ├── users.module.ts
-│   ├── users.service.ts
-│   ├── users.controller.ts
-├── user-addresses/
+│   ├── user.module.ts
+│   ├── user.service.ts
+│   ├── user.controller.ts
+├── user-address/
 │   ├── dto/
-│   ├── user-addresses.module.ts
-│   ├── user-addresses.service.ts
-│   ├── user-addresses.controller.ts
-├── orders/
+│   ├── user-address.module.ts
+│   ├── user-address.service.ts
+│   ├── user-address.controller.ts
+├── order/
 │   ├── dto/
-│   ├── orders.module.ts
-│   ├── orders.service.ts
-│   ├── orders.controller.ts
-├── order-lines/
+│   ├── order.module.ts
+│   ├── order.service.ts
+│   ├── order.controller.ts
+├── order-line/
 │   ├── dto/
-│   ├── order-lines.module.ts
-│   ├── order-lines.service.ts
-│   ├── order-lines.controller.ts
-├── quotes/
+│   ├── order-line.module.ts
+│   ├── order-line.service.ts
+│   ├── order-line.controller.ts
+├── quote/
 │   ├── dto/
-│   ├── quotes.module.ts
-│   ├── quotes.service.ts
-│   ├── quotes.controller.ts
-├── quote-lines/
+│   ├── quote.module.ts
+│   ├── quote.service.ts
+│   ├── quote.controller.ts
+├── quote-line/
 │   ├── dto/
-│   ├── quote-lines.module.ts
-│   ├── quote-lines.service.ts
-│   ├── quote-lines.controller.ts
-├── products/
+│   ├── quote-line.module.ts
+│   ├── quote-line.service.ts
+│   ├── quote-line.controller.ts
+├── product/
 │   ├── dto/
-│   ├── products.module.ts
-│   ├── products.service.ts
-│   ├── products.controller.ts
-├── stocks/
+│   ├── product.module.ts
+│   ├── product.service.ts
+│   ├── product.controller.ts
+├── stock/
 │   ├── dto/
-│   ├── stocks.module.ts
-│   ├── stocks.service.ts
-│   ├── stocks.controller.ts
-├── warehouses/
+│   ├── stock.module.ts
+│   ├── stock.service.ts
+│   ├── stock.controller.ts
+├── warehouse/
 │   ├── dto/
-│   ├── warehouses.module.ts
-│   ├── warehouses.service.ts
-│   ├── warehouses.controller.ts
-├── discounts/
+│   ├── warehouse.module.ts
+│   ├── warehouse.service.ts
+│   ├── warehouse.controller.ts
+├── discount/
 │   ├── dto/
-│   ├── discounts.module.ts
-│   ├── discounts.service.ts
-│   ├── discounts.controller.ts
-├── suppliers/
+│   ├── discount.module.ts
+│   ├── discount.service.ts
+│   ├── discount.controller.ts
+├── supplier/
 │   ├── dto/
-│   ├── suppliers.module.ts
-│   ├── suppliers.service.ts
-│   ├── suppliers.controller.ts
-├── supplier-orders/
+│   ├── supplier.module.ts
+│   ├── supplier.service.ts
+│   ├── supplier.controller.ts
+├── supplier-order/
 │   ├── dto/
-│   ├── supplier-orders.module.ts
-│   ├── supplier-orders.service.ts
-│   ├── supplier-orders.controller.ts
-├── supplier-order-lines/
+│   ├── supplier-order.module.ts
+│   ├── supplier-order.service.ts
+│   ├── supplier-order.controller.ts
+├── supplier-order-line/
 │   ├── dto/
-│   ├── supplier-order-lines.module.ts
-│   ├── supplier-order-lines.service.ts
-│   ├── supplier-order-lines.controller.ts
-├── delivery-companies/
+│   ├── supplier-order-line.module.ts
+│   ├── supplier-order-line.service.ts
+│   ├── supplier-order-line.controller.ts
+├── delivery-company/
 │   ├── dto/
-│   ├── delivery-companies.module.ts
-│   ├── delivery-companies.service.ts
-│   ├── delivery-companies.controller.ts
-├── deliveries/
+│   ├── delivery-company.module.ts
+│   ├── delivery-company.service.ts
+│   ├── delivery-company.controller.ts
+├── delivery/
 │   ├── dto/
-│   ├── deliveries.module.ts
-│   ├── deliveries.service.ts
-│   ├── deliveries.controller.ts
+│   ├── delivery.module.ts
+│   ├── delivery.service.ts
+│   ├── delivery.controller.ts
 ├── web-analytics/
 │   ├── dto/
 │   ├── web-analytics.module.ts
 │   ├── web-analytics.service.ts
 │   ├── web-analytics.controller.ts
-├── payments/
+├── payment/
 │   ├── dto/
-│   ├── payments.module.ts
-│   ├── payments.service.ts
-│   ├── payments.controller.ts
+│   ├── payment.module.ts
+│   ├── payment.service.ts
+│   ├── payment.controller.ts
 ├── auth/
 │   ├── dto/
 │   ├── auth.module.ts
