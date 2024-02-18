@@ -16,6 +16,7 @@ import { WarehouseModule } from './warehouse/warehouse.module';
 import { DiscountModule } from './discount/discount.module';
 import { SupplierModule } from './supplier/supplier.module';
 import { SupplierOrderModule } from './supplier-order/supplier-order.module';
+import { SupplierOrderLineModule } from './supplier-order-line/supplier-order-line.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { SupplierOrderModule } from './supplier-order/supplier-order.module';
     DiscountModule,
     SupplierModule,
     SupplierOrderModule,
+    SupplierOrderLineModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
