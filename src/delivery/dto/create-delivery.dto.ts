@@ -1,23 +1,31 @@
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsInt, IsDecimal } from 'class-validator';
 
 export class CreateDeliveryDto {
   @IsNotEmpty()
-  @IsString()
-  name: string;
+  @IsInt()
+  orderId: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  deliveryCompanyId: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  distance: number;
+
+  @IsNotEmpty()
+  @IsDecimal()
+  weight: number;
+
+  @IsNotEmpty()
+  @IsDecimal()
+  cost: number;
+
+  @IsNotEmpty()
+  @IsDecimal()
+  VATRate: number;
 
   @IsNotEmpty()
   @IsString()
-  description: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  price: number;
-
-  @IsNotEmpty()
-  @IsString()
-  currency: string;
-
-  @IsNotEmpty()
-  @IsString()
-  duration: string;
+  deliveryStatus: string;
 }

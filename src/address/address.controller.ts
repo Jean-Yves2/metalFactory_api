@@ -17,29 +17,29 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressService.createAddress(createAddressDto);
-  }
-
   @Get()
   findAll() {
     return this.addressService.getAllAddresses();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.addressService.getAddressById(+id);
+  findOne(@Param('id') id: number) {
+    return this.addressService.getAddressById(id);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createAddressDto: CreateAddressDto) {
+    return this.addressService.createAddress(createAddressDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressService.updateAddress(+id, updateAddressDto);
+  update(@Param('id') id: number, @Body() updateAddressDto: UpdateAddressDto) {
+    return this.addressService.updateAddress(id, updateAddressDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.addressService.softDelete(+id);
+  remove(@Param('id') id: number) {
+    return this.addressService.softDelete(id);
   }
 }
