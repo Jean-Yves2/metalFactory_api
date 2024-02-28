@@ -31,7 +31,7 @@ export class DeliveryService {
     // Logic to create a new delivery in a data source
     const { orderId, ...rest } = createDeliveryDto;
     return this.prismaService.delivery.create({
-      data: { orderId: Number(orderId), ...rest },
+      data: { orderId: Number(orderId), ...rest } as any, // Cast orderId to any type
     });
   }
 
@@ -40,9 +40,10 @@ export class DeliveryService {
     updateDeliveryDto: UpdateDeliveryDto,
   ): Promise<Delivery> {
     // Logic to update an existing delivery in a data source
+    const { orderId, ...rest } = updateDeliveryDto;
     return this.prismaService.delivery.update({
       where: { id },
-      data: updateDeliveryDto,
+      data: { orderId: Number(orderId), ...rest } as any, // Cast orderId to any type
     });
   }
 
