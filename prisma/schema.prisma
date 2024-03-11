@@ -162,7 +162,7 @@ model Product {
   supplierOrderLines SupplierOrderLine[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
-}
+} 
 
 model Stock {
   id           Int       @id @default(autoincrement())
@@ -175,6 +175,7 @@ model Stock {
   warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  deletedAt DateTime? @map("deleted_at") 
 }
 
 model Warehouse {
