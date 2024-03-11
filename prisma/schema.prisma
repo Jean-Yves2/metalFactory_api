@@ -114,6 +114,7 @@ model QuoteLine {
   product         Product  @relation(fields: [productId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  deletedAt       DateTime? @map("deleted_at")
 }
 
 enum AddressType {
