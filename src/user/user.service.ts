@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { CreateUserDto } from './dto/createUserdto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -40,5 +42,33 @@ export class UserService {
 
   async createUser(data: CreateUserDto) {
     return data;
+  }
+
+  async updateUser(
+    id: number | string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    id = typeof id === 'string' ? parseInt(id, 10) : id;
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    const dataToUpdate = {} as UpdateUserDto;
+    for (const key in updateUserDto) {
+      if (
+        updateUserDto.hasOwnProperty(key) &&
+        updateUserDto[key] !== existingUser[key]
+      ) {
+        dataToUpdate[key] = updateUserDto[key];
+      }
+    }
+    return await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...dataToUpdate,
+        updatedAt: new Date(),
+      },
+    });
   }
 }
