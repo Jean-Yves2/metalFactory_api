@@ -40,6 +40,9 @@ export class UserService {
     return user;
   }
 
+  // ⚠️ La creation d'un utilisateur n'est pas encore implementée
+  // ⚠️ Car elle nécéssite l'implémentaion de l'addresse de l'utilisateur
+  // ⚠️ et la gestion des roles
   async createUser(data: CreateUserDto) {
     return data;
   }
