@@ -34,7 +34,5 @@
       "username": "postgres",
       "password": "Appl3"
     }
-  ],
-  "github.copilot.editor.enableAutoCompletions": true,
-  "github.copilot.editor.enableCodeActions": true
+  ]
 }
