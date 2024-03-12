@@ -7,6 +7,7 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './interfaces/user.interface';
@@ -43,5 +44,10 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
   ) {
     return this.userService.updateUser(id, createUserDto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return this.userService.softDelete(+id);
   }
 }
