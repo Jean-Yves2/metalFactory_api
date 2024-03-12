@@ -101,7 +101,7 @@ model Quote {
   discount                Discount?   @relation(fields: [discountId], references: [id])
   createdAt               DateTime    @default(now())
   updatedAt               DateTime    @updatedAt
-  deletedAt               DateTime?   @map("deleted_at")
+  deletedAt               DateTime?  @map("deleted_at")
 }
 
 model QuoteLine {
@@ -110,11 +110,11 @@ model QuoteLine {
   productId       Int
   quantity        Int
   unitPrice       Decimal
-  discountApplied Boolean   @default(false)
-  quote           Quote     @relation(fields: [quoteId], references: [id])
-  product         Product   @relation(fields: [productId], references: [id])
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  discountApplied Boolean  @default(false)
+  quote           Quote    @relation(fields: [quoteId], references: [id])
+  product         Product  @relation(fields: [productId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   deletedAt       DateTime? @map("deleted_at")
 }
 
