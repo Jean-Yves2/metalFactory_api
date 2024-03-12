@@ -25,6 +25,7 @@ model User {
   webAnalytics   WebAnalytics[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?      @map("deleted_at")
 }
 
 model UserAddress {
@@ -51,7 +52,7 @@ model Address {
   suppliers           Supplier[]
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
-  deletedAt           DateTime?    @map("deleted_at")
+  deletedAt           DateTime?     @map("deleted_at")
 }
 
 model Order {
@@ -69,21 +70,21 @@ model Order {
   payments          Payment[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
-  deletedAt         DateTime?  @map("deleted_at")
+  deletedAt         DateTime?   @map("deleted_at")
 
   @@index([orderDate])
 }
 
 model OrderLine {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   orderId   Int
   productId Int
   quantity  Int
   cutLength Decimal
-  order     Order    @relation(fields: [orderId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  order     Order     @relation(fields: [orderId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? @map("deleted_at")
 }
 
@@ -199,7 +200,7 @@ model Discount {
   quotes            Quote[]
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  deletedAt         DateTime?    @map("deleted_at")
 }
 
 enum DiscountType {
@@ -257,7 +258,7 @@ model DeliveryCompany {
   deliveries      Delivery[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
-  deletedAt       DateTime? @map("deleted_at")
+  deletedAt       DateTime?  @map("deleted_at")
 }
 
 model Delivery {
@@ -273,7 +274,7 @@ model Delivery {
   deliveryCompany   DeliveryCompany @relation(fields: [deliveryCompanyId], references: [id])
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
-  deletedAt         DateTime?      @map("deleted_at")
+  deletedAt         DateTime?       @map("deleted_at")
 }
 
 model WebAnalytics {
