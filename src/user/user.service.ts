@@ -40,11 +40,41 @@ export class UserService {
     return user;
   }
 
-  // ⚠️ La creation d'un utilisateur n'est pas encore implementée
-  // ⚠️ Car elle nécéssite l'implémentaion de l'addresse de l'utilisateur
-  // ⚠️ et la gestion des roles
-  async createUser(data: CreateUserDto) {
-    return data;
+  async createUser(createUserDto: CreateUserDto) {
+    const { firstName, lastName, email, password, companyName, phone } =
+      createUserDto;
+
+    const createAddressDto = createUserDto.address;
+
+    await this.prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        password,
+        companyName,
+        userType: 'CUSTOMER', // default to customer
+        addresses: {
+          create: [
+            {
+              type: createAddressDto.type,
+              address: {
+                create: {
+                  street: createAddressDto.street,
+                  postalCode: createAddressDto.postalCode,
+                  city: createAddressDto.city,
+                  country: createAddressDto.country,
+                  distanceToWarehouse: createAddressDto.distanceToWarehouse,
+                },
+              },
+            },
+          ],
+        },
+        phone,
+      },
+    });
+
+    return 'User created successfully!';
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
