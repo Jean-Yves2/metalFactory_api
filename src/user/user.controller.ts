@@ -23,7 +23,7 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
-  @Get('/:id') // GET /user/:id to get user with specific id
+  @Get(':id') // GET /user/:id to get user with specific id
   async getUserById(@Param('id') id: string): Promise<User> {
     return this.userService.getUserById(id);
   }
@@ -38,7 +38,7 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
-  @Put('/:id') // PUT /user/:id to update user with specific id
+  @Put(':id') // PUT /user/:id to update user with specific id
   async updateUser(
     @Param('id') id: number,
     @Body() createUserDto: CreateUserDto,
@@ -48,6 +48,6 @@ export class UserController {
 
   @Delete(':id')
   async remove(@Param('id') id: number) {
-    return this.userService.softDelete(+id);
+    return this.userService.softDelete(id);
   }
 }

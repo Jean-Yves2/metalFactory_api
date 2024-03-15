@@ -47,12 +47,7 @@ export class UserService {
     return data;
   }
 
-  async updateUser(
-    id: number | string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    id = typeof id === 'string' ? parseInt(id, 10) : id;
-
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const existingUser = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -84,9 +79,7 @@ export class UserService {
     }
     return await this.prisma.user.update({
       where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
+      data: { deletedAt: new Date() },
     });
   }
 }
