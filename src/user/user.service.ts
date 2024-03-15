@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 import { CreateUserDto } from './dto/createUserdto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,7 +20,7 @@ export class UserService {
     });
 
     if (!users) {
-      throw new Error('No users found');
+      throw new HttpException('Users not found', HttpStatus.NOT_FOUND);
     }
 
     return users;
@@ -42,7 +42,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     return user;
@@ -91,7 +91,7 @@ export class UserService {
     });
 
     if (!existingUser) {
-      throw new Error('User not found');
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     const dataToUpdate = {} as UpdateUserDto;
@@ -117,7 +117,7 @@ export class UserService {
       where: { id: id },
     });
     if (!user) {
-      throw new Error('User not found');
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return await this.prisma.user.update({
       where: { id },
