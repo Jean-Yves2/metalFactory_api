@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 
@@ -16,7 +16,7 @@ export class SupplierService {
     });
 
     if (!supplier) {
-      throw new Error('Supplier not found');
+      throw new HttpException('Supplier not found', HttpStatus.NOT_FOUND);
     }
 
     return supplier;
@@ -48,7 +48,7 @@ export class SupplierService {
     });
 
     if (!supplier) {
-      throw new Error('Supplier not found');
+      throw new HttpException('Supplier not found', HttpStatus.NOT_FOUND);
     }
 
     await this.prismaService.supplier.update({
@@ -77,7 +77,7 @@ export class SupplierService {
     });
 
     if (!supplier) {
-      throw new Error('Supplier not found');
+      throw new HttpException('Supplier not found', HttpStatus.NOT_FOUND);
     }
 
     await this.prismaService.supplier.update({
