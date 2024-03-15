@@ -71,15 +71,18 @@ export class UserService {
   }
 
   async softDelete(id: number) {
+    id = typeof id === 'string' ? parseInt(id, 10) : id;
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id: id },
     });
     if (!user) {
       throw new Error('User not found');
     }
     return await this.prisma.user.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+      },
     });
   }
 }
