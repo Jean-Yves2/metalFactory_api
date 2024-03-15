@@ -1,15 +1,18 @@
 import { IsNotEmpty } from 'class-validator';
-
+import { CreateAddressDto } from '../../address/dto/create-address.dto';
 export class CreateSupplierDto {
   @IsNotEmpty()
   name: string;
 
   @IsNotEmpty()
-  email: string;
+  SIRET: string;
 
   @IsNotEmpty()
-  phone: string;
+  address: CreateAddressDto;
 
   @IsNotEmpty()
-  address: string;
+  contactEmail: string;
+
+  @IsNotEmpty()
+  contactPhone: string;
 }
