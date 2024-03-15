@@ -25,7 +25,7 @@ export class UserController {
 
   @Get(':id') // GET /user/:id to get user with specific id
   async getUserById(@Param('id') id: string): Promise<User> {
-    return this.userService.getUserById(id);
+    return this.userService.getUserById(+id);
   }
 
   @Post() // POST /user to create a new user
@@ -43,11 +43,11 @@ export class UserController {
     @Param('id') id: number,
     @Body() createUserDto: CreateUserDto,
   ) {
-    return this.userService.updateUser(id, createUserDto);
+    return this.userService.updateUser(+id, createUserDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: number) {
-    return this.userService.softDelete(id);
+    return this.userService.softDelete(+id);
   }
 }

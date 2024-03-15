@@ -22,11 +22,10 @@ export class UserService {
     return users;
   }
 
-  async getUserById(id: string) {
-    const userId = parseInt(id, 10);
+  async getUserById(id: number) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: userId,
+        id: id,
       },
       select: {
         id: true,
@@ -101,7 +100,6 @@ export class UserService {
   }
 
   async softDelete(id: number) {
-    id = typeof id === 'string' ? parseInt(id, 10) : id;
     const user = await this.prisma.user.findUnique({
       where: { id: id },
     });
