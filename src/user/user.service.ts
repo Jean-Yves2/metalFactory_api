@@ -19,6 +19,10 @@ export class UserService {
       },
     });
 
+    if (!users) {
+      throw new Error('No users found');
+    }
+
     return users;
   }
 
@@ -26,6 +30,7 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,
+        deletedAt: null,
       },
       select: {
         id: true,
@@ -35,6 +40,10 @@ export class UserService {
         role: true,
       },
     });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
 
     return user;
   }
@@ -78,8 +87,12 @@ export class UserService {
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const existingUser = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
     });
+
+    if (!existingUser) {
+      throw new Error('User not found');
+    }
 
     const dataToUpdate = {} as UpdateUserDto;
     for (const key in updateUserDto) {
