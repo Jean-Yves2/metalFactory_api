@@ -21,6 +21,7 @@ import { DeliveryCompanyModule } from './delivery-company/delivery-company.modul
 import { DeliveryModule } from './delivery/delivery.module';
 import { WebAnalyticsModule } from './web-analytics/web-analytics.module';
 import { PaymentModule } from './payment/payment.module';
+import { OpenRouteModule } from './open-route/open-route.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { PaymentModule } from './payment/payment.module';
     DeliveryModule,
     WebAnalyticsModule,
     PaymentModule,
+    OpenRouteModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
