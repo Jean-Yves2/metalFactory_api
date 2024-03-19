@@ -19,6 +19,12 @@ export class FakerController {
     return 'Fake users generated successfully.';
   }
 
+  @Post('supplier')
+  async generateFakeSupplier(): Promise<string> {
+    await this.fakerService.generateOneSupplier();
+    return 'Fake supplier generated successfully.';
+  }
+
   @Delete('delete/all')
   async deleteAllData(): Promise<string> {
     await this.fakerService.deleteAllData();

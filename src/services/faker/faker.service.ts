@@ -71,6 +71,38 @@ export class FakerService {
     }
   }
 
+  async generateOneSupplier() {
+    const fakeSupplier = {
+      name: faker.company.companyName(),
+      SIRET: faker.datatype.string({ length: 20, numeric: true }),
+      address: {
+        street: faker.address.streetAddress(),
+        postalCode: faker.address.zipCode(),
+        city: faker.address.city(),
+        country: faker.address.country(),
+      },
+      contactEmail: faker.internet.email(),
+      contactPhone: faker.phone.phoneNumber(),
+    };
+
+    await this.prisma.supplier.create({
+      data: {
+        name: fakeSupplier.name,
+        SIRET: fakeSupplier.SIRET,
+        address: {
+          create: {
+            street: fakeSupplier.address.street,
+            postalCode: fakeSupplier.address.postalCode,
+            city: fakeSupplier.address.city,
+            country: fakeSupplier.address.country,
+          },
+        },
+        contactEmail: fakeSupplier.contactEmail,
+        contactPhone: fakeSupplier.contactPhone,
+      },
+    });
+  }
+
   async deleteAllData() {
     await this.prisma.webAnalytics.deleteMany();
     await this.prisma.supplierOrderLine.deleteMany();
