@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
@@ -20,35 +21,30 @@ export class DeliveryController {
   @Get()
   findAll() {
     return this.deliveryService.getAllDeliveries();
-    // Logique pour récupérer toutes les livraisons
   }
 
   @Get()
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    // Logique pour récupérer une livraison par son ID
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryService.getDeliveryById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createDeliveryDto: CreateDeliveryDto) {
-    // Logique pour créer une nouvelle livraison
     return this.deliveryService.createDelivery(createDeliveryDto);
   }
 
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDeliveryDto: UpdateDeliveryDto,
   ) {
-    // Logique pour mettre à jour une livraison
     return this.deliveryService.updateDelivery(id, updateDeliveryDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    // Logique pour supprimer une livraison
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryService.softDelete(id);
   }
 }
