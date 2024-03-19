@@ -25,6 +25,14 @@ export class FakerController {
     return 'Fake supplier generated successfully.';
   }
 
+  @Post('suppliers/:id')
+  async generateFakeSuppliers(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<string> {
+    await this.fakerService.generateManySuppliers(id);
+    return 'Fake suppliers generated successfully.';
+  }
+
   @Delete('delete/all')
   async deleteAllData(): Promise<string> {
     await this.fakerService.deleteAllData();

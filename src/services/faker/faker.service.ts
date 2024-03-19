@@ -74,7 +74,7 @@ export class FakerService {
   async generateOneSupplier() {
     const fakeSupplier = {
       name: faker.company.companyName(),
-      SIRET: faker.datatype.string({ length: 20, numeric: true }),
+      SIRET: faker.random.alphaNumeric(14),
       address: {
         street: faker.address.streetAddress(),
         postalCode: faker.address.zipCode(),
@@ -101,6 +101,12 @@ export class FakerService {
         contactPhone: fakeSupplier.contactPhone,
       },
     });
+  }
+
+  async generateManySuppliers(count: number) {
+    for (let i = 0; i < count; i++) {
+      await this.generateOneSupplier();
+    }
   }
 
   async deleteAllData() {
