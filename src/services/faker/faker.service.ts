@@ -19,7 +19,7 @@ export class FakerService {
         postalCode: faker.address.zipCode(),
         city: faker.address.city(),
         country: faker.address.country(),
-        distanceToWarehouse: faker.random.number({ min: 1, max: 20 }), // Utilisez faker.random.number pour générer un nombre aléatoire
+        distanceToWarehouse: faker.datatype.number({ min: 1, max: 20 }), // Utilisez faker.random.number pour générer un nombre aléatoire
         type: 'DELIVERY',
       },
       phone: faker.phone.phoneNumber(),
