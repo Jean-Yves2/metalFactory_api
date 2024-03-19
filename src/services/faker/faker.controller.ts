@@ -1,4 +1,4 @@
-import { Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Controller, Param, ParseIntPipe, Post, Delete } from '@nestjs/common';
 import { FakerService } from './faker.service';
 
 @Controller('faker')
@@ -17,5 +17,11 @@ export class FakerController {
   ): Promise<string> {
     await this.fakerService.generateManyFakeUsers(id);
     return 'Fake users generated successfully.';
+  }
+
+  @Delete('delete/all')
+  async deleteAllData(): Promise<string> {
+    await this.fakerService.deleteAllData();
+    return 'All fake users deleted successfully.';
   }
 }

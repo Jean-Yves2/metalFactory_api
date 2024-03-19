@@ -70,4 +70,25 @@ export class FakerService {
       await this.generateOneFakeUser();
     }
   }
+
+  async deleteAllData() {
+    await this.prisma.webAnalytics.deleteMany();
+    await this.prisma.supplierOrderLine.deleteMany();
+    await this.prisma.supplierOrder.deleteMany();
+    await this.prisma.payment.deleteMany();
+    await this.prisma.delivery.deleteMany();
+    await this.prisma.quoteLine.deleteMany();
+    await this.prisma.quote.deleteMany();
+    await this.prisma.stock.deleteMany();
+    await this.prisma.orderLine.deleteMany();
+    await this.prisma.order.deleteMany();
+    await this.prisma.supplier.deleteMany();
+    await this.prisma.deliveryCompany.deleteMany();
+    await this.prisma.userAddress.deleteMany();
+    await this.prisma.address.deleteMany();
+    await this.prisma.user.deleteMany();
+    await this.prisma.product.deleteMany();
+    await this.prisma.discount.deleteMany();
+    await this.prisma.warehouse.deleteMany();
+  }
 }
