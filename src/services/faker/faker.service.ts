@@ -6,7 +6,7 @@ import { PrismaService } from '../../database/prisma/prisma.service';
 export class FakerService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async generateFakeUser() {
+  async generateOneFakeUser() {
     const fakeUser = {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
@@ -52,5 +52,11 @@ export class FakerService {
         phone: fakeUser.phone,
       },
     });
+  }
+
+  async generateManyFakeUsers(count: number) {
+    for (let i = 0; i < count; i++) {
+      await this.generateOneFakeUser();
+    }
   }
 }
