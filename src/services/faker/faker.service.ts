@@ -156,6 +156,11 @@ export class FakerService {
     });
   }
 
+  async generateManyOrders(count: number) {
+    for (let i = 0; i < count; i++) {
+      await this.generateOneOrder();
+    }
+  }
   async deleteAllData() {
     await this.prisma.webAnalytics.deleteMany();
     await this.prisma.supplierOrderLine.deleteMany();

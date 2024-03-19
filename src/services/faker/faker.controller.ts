@@ -44,4 +44,12 @@ export class FakerController {
     await this.fakerService.generateOneOrder();
     return 'Fake order generated successfully.';
   }
+
+  @Post('orders/:id')
+  async generateFakeOrders(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<string> {
+    await this.fakerService.generateManyOrders(id);
+    return 'Fake orders generated successfully.';
+  }
 }
