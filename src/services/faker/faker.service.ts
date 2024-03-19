@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as faker from 'faker';
 import { PrismaService } from '../../database/prisma/prisma.service';
-import { UserType, AddressType } from '@prisma/client';
+import { UserType, AddressType, OrderStatus, User } from '@prisma/client';
 
 @Injectable()
 export class FakerService {
@@ -107,6 +107,53 @@ export class FakerService {
     for (let i = 0; i < count; i++) {
       await this.generateOneSupplier();
     }
+  }
+
+  async generateOneOrder() {
+    const allUsers: User[] = await this.prisma.user.findMany();
+
+    if (allUsers.length === 0) {
+      throw new Error('No users found in the database');
+    }
+    const randomUser: User = faker.random.arrayElement(allUsers);
+
+    const allexistingAdresses = await this.prisma.address.findMany();
+
+    if (allexistingAdresses.length === 0) {
+      throw new Error('No addresses found in the database');
+    }
+
+    const randomAddress = faker.random.arrayElement(allexistingAdresses);
+    const oderStatus = [
+      OrderStatus.PENDING,
+      OrderStatus.DELIVERED,
+      OrderStatus.CONFIRMED,
+      OrderStatus.PROCESSING,
+      OrderStatus.AWAITING_STOCK,
+      OrderStatus.CUTTING,
+    ];
+    const randomOrderStatus =
+      oderStatus[Math.floor(Math.random() * oderStatus.length)];
+
+    const fakeOrder = {
+      customerId: randomUser.id,
+      orderDate: faker.date.past(),
+      status: randomOrderStatus,
+      toalExclTax: faker.datatype.number({ min: 10, max: 1000 }),
+      totalInclTax: faker.datatype.number({ min: 10, max: 1000 }),
+      deliveryAddressId: randomAddress.id,
+    };
+
+    await this.prisma.order.create({
+      data: {
+        customerId: fakeOrder.customerId,
+        orderDate: fakeOrder.orderDate,
+        status: fakeOrder.status,
+        totalExclTax: fakeOrder.toalExclTax,
+        totalInclTax: fakeOrder.totalInclTax,
+        deliveryAddressId: fakeOrder.deliveryAddressId,
+      },
+    });
   }
 
   async deleteAllData() {

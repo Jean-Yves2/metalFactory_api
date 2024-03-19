@@ -38,4 +38,10 @@ export class FakerController {
     await this.fakerService.deleteAllData();
     return 'All fake users deleted successfully.';
   }
+
+  @Post('order')
+  async generateFakeOrder(): Promise<string> {
+    await this.fakerService.generateOneOrder();
+    return 'Fake order generated successfully.';
+  }
 }
