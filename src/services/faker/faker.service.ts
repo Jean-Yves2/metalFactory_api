@@ -1,26 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import * as faker from 'faker';
 import { PrismaService } from '../../database/prisma/prisma.service';
+import { UserType, AddressType } from '@prisma/client';
 
 @Injectable()
 export class FakerService {
   constructor(private readonly prisma: PrismaService) {}
 
   async generateOneFakeUser() {
+    const userTypes = [UserType.CUSTOMER, UserType.INTERNAL];
+    const addressTypes = [AddressType.DELIVERY, AddressType.BILLING];
+
+    const randomUserType =
+      userTypes[Math.floor(Math.random() * userTypes.length)];
+
+    const randomAddressType =
+      addressTypes[Math.floor(Math.random() * addressTypes.length)];
+
     const fakeUser = {
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
       companyName: faker.company.companyName(),
-      userType: 'CUSTOMER',
+      userType: randomUserType,
+
       address: {
         street: faker.address.streetAddress(),
         postalCode: faker.address.zipCode(),
         city: faker.address.city(),
         country: faker.address.country(),
-        distanceToWarehouse: faker.datatype.number({ min: 1, max: 20 }), // Utilisez faker.random.number pour générer un nombre aléatoire
-        type: 'DELIVERY',
+        distanceToWarehouse: faker.datatype.number({ min: 1, max: 20 }),
+        type: randomAddressType,
       },
       phone: faker.phone.phoneNumber(),
     };
@@ -32,11 +43,11 @@ export class FakerService {
         email: fakeUser.email,
         password: fakeUser.password,
         companyName: fakeUser.companyName,
-        userType: 'CUSTOMER',
+        userType: randomUserType,
         addresses: {
           create: [
             {
-              type: 'DELIVERY',
+              type: randomAddressType,
               address: {
                 create: {
                   street: fakeUser.address.street,
