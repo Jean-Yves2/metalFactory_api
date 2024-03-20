@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
@@ -23,7 +24,7 @@ export class AddressController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.addressService.getAddressById(id);
   }
 
@@ -34,12 +35,15 @@ export class AddressController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateAddressDto: UpdateAddressDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateAddressDto: UpdateAddressDto,
+  ) {
     return this.addressService.updateAddress(id, updateAddressDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.addressService.softDelete(id);
   }
 }

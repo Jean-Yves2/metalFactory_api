@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DeliveryCompanyService } from './delivery-company.service';
 import { CreateDeliveryCompanyDto } from './dto/create-delivery-company.dto';
@@ -25,7 +26,7 @@ export class DeliveryCompanyController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryCompanyService.getDeliveryCompanyById(id);
   }
 
@@ -39,7 +40,7 @@ export class DeliveryCompanyController {
 
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDeliveryCompanyDto: UpdateDeliveryCompanyDto,
   ) {
     return this.deliveryCompanyService.updateDeliveryCompany(
@@ -49,7 +50,7 @@ export class DeliveryCompanyController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryCompanyService.softDelete(id);
   }
 }

@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import { OrderService } from './order.service';
@@ -24,7 +25,7 @@ export class OrderController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.orderService.getOrderById(id);
   }
 
@@ -35,12 +36,15 @@ export class OrderController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateOrderDto: UpdateOrderDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
     return this.orderService.updateOrder(id, updateOrderDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.orderService.softDelete(id);
   }
 }

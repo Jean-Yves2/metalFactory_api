@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import { QuoteLineService } from './quote-line.service';
@@ -24,7 +25,7 @@ export class QuoteLineController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.quoteLineService.getQuoteLineById(id);
   }
 
@@ -36,14 +37,14 @@ export class QuoteLineController {
 
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateQuoteLineDto: UpdateQuoteLineDto,
   ) {
     return this.quoteLineService.updateQuoteLine(id, updateQuoteLineDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.quoteLineService.softDelete(id);
   }
 }

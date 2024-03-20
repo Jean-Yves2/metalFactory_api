@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import { DiscountService } from './discount.service';
@@ -24,7 +25,7 @@ export class DiscountController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.discountService.getDiscountById(id);
   }
 
@@ -36,14 +37,14 @@ export class DiscountController {
 
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDiscountDto: UpdateDiscountDto,
   ) {
     return this.discountService.updateDiscount(id, updateDiscountDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.discountService.softDelete(id);
   }
 }
