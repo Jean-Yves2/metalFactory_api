@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UsePipes,
@@ -22,8 +23,8 @@ export class SupplierController {
   }
 
   @Get(':id')
-  async getSupplierById(@Param('id') id: number) {
-    return this.userService.getSupplierById(+id);
+  async getSupplierById(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.getSupplierById(id);
   }
 
   @Post()
@@ -34,14 +35,14 @@ export class SupplierController {
 
   @Put(':id')
   async updateSupplier(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() createSupplierDto: CreateSupplierDto,
   ) {
-    return this.userService.updateSupplier(+id, createSupplierDto);
+    return this.userService.updateSupplier(id, createSupplierDto);
   }
 
   @Delete(':id')
-  async deleteSupplier(@Param('id') id: number) {
-    return this.userService.softeDeleteSupplier(+id);
+  async deleteSupplier(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.softeDeleteSupplier(id);
   }
 }
