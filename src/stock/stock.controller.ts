@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { StockService } from './stock.service';
 import { CreateStockDto } from './dto/create-stock.dto';
@@ -23,7 +24,7 @@ export class StockController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.stockService.getStockById(id);
   }
 
@@ -34,12 +35,15 @@ export class StockController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateStockDto: UpdateStockDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateStockDto: UpdateStockDto,
+  ) {
     return this.stockService.updateStock(id, updateStockDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.stockService.softDelete(id);
   }
 }
