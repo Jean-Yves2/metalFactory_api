@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Test, TestingModule } from '@nestjs/testing';
 import { StockService } from './stock.service';
 import { PrismaService } from '../database/prisma/prisma.service';
@@ -17,4 +18,4 @@ describe('StockService', () => {
     expect(service).toBeDefined();
   });
 });
-``;
+// eslint-disable-next-line prettier/prettier
