@@ -19,18 +19,18 @@ export class WarehouseController {
 
   @Get()
   findAll() {
-    return this.warehouseService.findAll();
+    return this.warehouseService.getAllWarehouses();
   }
 
   @Get(':id')
-  findById(@Param('id') id: number) {
-    return this.warehouseService.findById(id);
+  findOne(@Param('id') id: number) {
+    return this.warehouseService.getWarehouseById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createWarehouseDto: CreateWarehouseDto) {
-    return this.warehouseService.create(createWarehouseDto);
+    return this.warehouseService.createWarehouse(createWarehouseDto);
   }
 
   @Put(':id')
@@ -38,11 +38,11 @@ export class WarehouseController {
     @Param('id') id: number,
     @Body() updateWarehouseDto: UpdateWarehouseDto,
   ) {
-    return this.warehouseService.update(id, updateWarehouseDto);
+    return this.warehouseService.updateWarehouse(id, updateWarehouseDto);
   }
 
   @Delete(':id')
-  softDelete(@Param('id') id: number) {
+  remove(@Param('id') id: number) {
     return this.warehouseService.softDelete(id);
   }
 }
