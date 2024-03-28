@@ -8,6 +8,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
 import { CreateWarehouseDto } from './dto/create-warehouse.dto';
@@ -23,7 +24,7 @@ export class WarehouseController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.warehouseService.getWarehouseById(id);
   }
 
@@ -35,14 +36,14 @@ export class WarehouseController {
 
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateWarehouseDto: UpdateWarehouseDto,
   ) {
     return this.warehouseService.updateWarehouse(id, updateWarehouseDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.warehouseService.softDelete(id);
   }
 }
