@@ -9,6 +9,8 @@ import {
   HttpStatus,
   HttpCode,
   ParseIntPipe,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
@@ -19,31 +21,55 @@ export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
   @Get()
-  findAll() {
-    return this.addressService.getAllAddresses();
+  async findAll() {
+    try {
+      return await this.addressService.getAllAddresses();
+    } catch (error) {
+      throw new InternalServerErrorException('Error getting all addresses');
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.addressService.getAddressById(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.addressService.getAddressById(id);
+    } catch (error) {
+      throw new NotFoundException(`Address with ID ${id} not found`);
+    }
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressService.createAddress(createAddressDto);
+  async create(@Body() createAddressDto: CreateAddressDto) {
+    try {
+      return await this.addressService.createAddress(createAddressDto);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating address');
+    }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
-    return this.addressService.updateAddress(id, updateAddressDto);
+    try {
+      return await this.addressService.updateAddress(id, updateAddressDto);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error updating address with id ${id}`,
+      );
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.addressService.softDelete(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return await this.addressService.softDelete(id);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error deleting address with id ${id}`,
+      );
+    }
   }
 }

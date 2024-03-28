@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { PrismaService } from '../database/prisma/prisma.service';
@@ -6,48 +10,71 @@ import { Address } from '@prisma/client';
 
 @Injectable()
 export class AddressService {
-  // Inject your data service in the constructor
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllAddresses(): Promise<Address[]> {
-    // Logic to fetch all addresses from a data source
-    return this.prismaService.address.findMany({ where: { deletedAt: null } });
+    try {
+      return await this.prismaService.address.findMany({
+        where: { deletedAt: null },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error getting all addresses');
+    }
   }
 
   async getAddressById(id: number): Promise<Address> {
-    // Logic to fetch an address by its ID from a data source
-    const address = await this.prismaService.address.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!address) {
-      throw new NotFoundException(`Address with ID ${id} not found`);
+    try {
+      const address = await this.prismaService.address.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!address) {
+        throw new NotFoundException(`Address with ID ${id} not found`);
+      }
+      return address;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error getting address with id ${id}`,
+      );
     }
-    return address;
   }
 
   async createAddress(createAddressDto: CreateAddressDto): Promise<Address> {
-    // Logic to create a new address in a data source
-    const { postalCode, ...rest } = createAddressDto;
-    return this.prismaService.address.create({
-      data: { postalCode, city: '', ...rest },
-    });
+    try {
+      const { postalCode, ...rest } = createAddressDto;
+      return await this.prismaService.address.create({
+        data: { postalCode, city: '', ...rest },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating address');
+    }
   }
 
   async updateAddress(
     id: number,
     updateAddressDto: UpdateAddressDto,
   ): Promise<Address> {
-    // Logic to update an existing address in a data source
-    return this.prismaService.address.update({
-      where: { id },
-      data: updateAddressDto,
-    });
+    try {
+      return await this.prismaService.address.update({
+        where: { id },
+        data: updateAddressDto,
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error updating address with id ${id}`,
+      );
+    }
   }
 
   async softDelete(id: number): Promise<Address> {
-    return this.prismaService.address.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+    try {
+      return await this.prismaService.address.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error deleting address with id ${id}`,
+      );
+    }
   }
 }
