@@ -23,9 +23,13 @@ import { WebAnalyticsModule } from './web-analytics/web-analytics.module';
 import { PaymentModule } from './payment/payment.module';
 import { OpenRouteModule } from './open-route/open-route.module';
 import { FakerModule } from './services/faker/faker.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     OrderModule,
     ProductModule,
