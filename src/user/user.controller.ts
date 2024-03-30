@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Put,
   Param,
   Body,
@@ -30,17 +29,8 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
-  @Post() // POST /user to create a new user
-  @UsePipes(ValidationPipe)
-  async createUser(
-    @Body()
-    createUserDto: CreateUserDto,
-  ) {
-    console.log(createUserDto);
-    return this.userService.createUser(createUserDto);
-  }
-
   @Put(':id') // PUT /user/:id to update user with specific id
+  @UsePipes(ValidationPipe)
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() createUserDto: CreateUserDto,
