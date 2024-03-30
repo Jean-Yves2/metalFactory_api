@@ -1,4 +1,4 @@
-import { IsDecimal, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -10,22 +10,22 @@ export class CreateProductDto {
   description?: string;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   basePrice: number;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   unitPriceExclTax: number;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   VATRate: number;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   marginPercent: number;
 
   @IsOptional()
-  @IsDecimal()
+  @IsNumber()
   linearWeight?: number;
 }
