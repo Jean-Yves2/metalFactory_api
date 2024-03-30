@@ -3,6 +3,7 @@ import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateUserDto } from './dto/createUserdto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -52,6 +53,9 @@ export class UserService {
     const { firstName, lastName, email, password, companyName, phone } =
       createUserDto;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const createAddressDto = createUserDto.address;
 
     await this.prisma.user.create({
@@ -59,7 +63,7 @@ export class UserService {
         firstName,
         lastName,
         email,
-        password,
+        password: hashedPassword,
         companyName,
         userType: 'CUSTOMER', // default to customer
         addresses: {

@@ -13,4 +13,8 @@ export class AuthService {
 
     return user;
   }
+
+  async register(createUserDto) {
+    return this.userService.createUser(createUserDto);
+  }
 }
