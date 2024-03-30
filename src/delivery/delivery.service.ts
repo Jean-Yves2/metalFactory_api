@@ -97,6 +97,12 @@ export class DeliveryService {
 
   async softDelete(id: number): Promise<Delivery> {
     try {
+      const delivery = await this.prismaService.delivery.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!delivery) {
+        throw new NotFoundException(`Delivery with ID ${id} not found`);
+      }
       return await this.prismaService.delivery.update({
         where: { id },
         data: { deletedAt: new Date() },

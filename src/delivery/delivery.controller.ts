@@ -9,8 +9,6 @@ import {
   Post,
   Put,
   Delete,
-  NotFoundException,
-  InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
@@ -22,26 +20,18 @@ export class DeliveryController {
 
   @Get()
   async findAll() {
-    return await this.deliveryService.getAllDeliveries();
+    return this.deliveryService.getAllDeliveries();
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    const delivery = await this.deliveryService.getDeliveryById(id);
-    if (!delivery) {
-      throw new NotFoundException(`Delivery with id ${id} not found`);
-    }
-    return delivery;
+    return this.deliveryService.getDeliveryById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createDeliveryDto: CreateDeliveryDto) {
-    try {
-      return await this.deliveryService.createDelivery(createDeliveryDto);
-    } catch (error) {
-      throw new InternalServerErrorException('Error creating delivery');
-    }
+    return this.deliveryService.createDelivery(createDeliveryDto);
   }
 
   @Put(':id')
@@ -49,28 +39,11 @@ export class DeliveryController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDeliveryDto: UpdateDeliveryDto,
   ) {
-    try {
-      const delivery = await this.deliveryService.updateDelivery(
-        id,
-        updateDeliveryDto,
-      );
-      if (!delivery) {
-        throw new NotFoundException(`Delivery with id ${id} not found`);
-      }
-      return delivery;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Error updating delivery with id ${id}`,
-      );
-    }
+    return this.deliveryService.updateDelivery(id, updateDeliveryDto);
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    const deleted = await this.deliveryService.softDelete(id);
-    if (!deleted) {
-      throw new NotFoundException(`Delivery with id ${id} not found`);
-    }
-    return deleted;
+    return this.deliveryService.softDelete(id);
   }
 }

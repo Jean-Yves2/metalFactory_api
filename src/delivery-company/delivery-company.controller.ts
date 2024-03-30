@@ -21,25 +21,25 @@ export class DeliveryCompanyController {
   ) {}
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.deliveryCompanyService.getAllDeliveryCompanies();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryCompanyService.getDeliveryCompanyById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createDeliveryCompanyDto: CreateDeliveryCompanyDto) {
+  async create(@Body() createDeliveryCompanyDto: CreateDeliveryCompanyDto) {
     return this.deliveryCompanyService.createDeliveryCompany(
       createDeliveryCompanyDto,
     );
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDeliveryCompanyDto: UpdateDeliveryCompanyDto,
   ) {
@@ -50,7 +50,7 @@ export class DeliveryCompanyController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryCompanyService.softDelete(id);
   }
 }
