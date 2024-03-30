@@ -1,50 +1,76 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
   Delete,
-  Body,
-  Param,
-  HttpStatus,
-  HttpCode,
-  ParseIntPipe,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
-import { DeliveryService } from './delivery.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { DeliveryService } from './delivery.service';
 
 @Controller('delivery')
 export class DeliveryController {
   constructor(private readonly deliveryService: DeliveryService) {}
 
   @Get()
-  findAll() {
-    return this.deliveryService.getAllDeliveries();
+  async findAll() {
+    return await this.deliveryService.getAllDeliveries();
   }
 
-  @Get()
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.deliveryService.getDeliveryById(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const delivery = await this.deliveryService.getDeliveryById(id);
+    if (!delivery) {
+      throw new NotFoundException(`Delivery with id ${id} not found`);
+    }
+    return delivery;
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createDeliveryDto: CreateDeliveryDto) {
-    return this.deliveryService.createDelivery(createDeliveryDto);
+  async create(@Body() createDeliveryDto: CreateDeliveryDto) {
+    try {
+      return await this.deliveryService.createDelivery(createDeliveryDto);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating delivery');
+    }
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDeliveryDto: UpdateDeliveryDto,
   ) {
-    return this.deliveryService.updateDelivery(id, updateDeliveryDto);
+    try {
+      const delivery = await this.deliveryService.updateDelivery(
+        id,
+        updateDeliveryDto,
+      );
+      if (!delivery) {
+        throw new NotFoundException(`Delivery with id ${id} not found`);
+      }
+      return delivery;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error updating delivery with id ${id}`,
+      );
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.deliveryService.softDelete(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const deleted = await this.deliveryService.softDelete(id);
+    if (!deleted) {
+      throw new NotFoundException(`Delivery with id ${id} not found`);
+    }
+    return deleted;
   }
 }

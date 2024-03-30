@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString, IsInt, IsDecimal } from 'class-validator';
+import { IsNotEmpty, IsInt, IsDecimal, IsEnum } from 'class-validator';
+import { DeliveryStatus } from '@prisma/client';
 
 export class CreateDeliveryDto {
   @IsNotEmpty()
@@ -26,6 +27,6 @@ export class CreateDeliveryDto {
   VATRate: number;
 
   @IsNotEmpty()
-  @IsString()
-  deliveryStatus: string;
+  @IsEnum(DeliveryStatus)
+  deliveryStatus: DeliveryStatus;
 }
