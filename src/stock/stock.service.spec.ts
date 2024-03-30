@@ -17,4 +17,4 @@ describe('StockService', () => {
     expect(service).toBeDefined();
   });
 });
-``;
+// eslint-disable-next-line prettier/prettier
