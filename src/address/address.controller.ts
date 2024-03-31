@@ -1,20 +1,18 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
   Delete,
-  Body,
-  Param,
-  HttpStatus,
-  HttpCode,
-  ParseIntPipe,
-  NotFoundException,
-  InternalServerErrorException,
 } from '@nestjs/common';
-import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { AddressService } from './address.service';
 
 @Controller('address')
 export class AddressController {
@@ -22,30 +20,18 @@ export class AddressController {
 
   @Get()
   async findAll() {
-    try {
-      return await this.addressService.getAllAddresses();
-    } catch (error) {
-      throw new InternalServerErrorException('Error getting all addresses');
-    }
+    return this.addressService.getAllAddresses();
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return await this.addressService.getAddressById(id);
-    } catch (error) {
-      throw new NotFoundException(`Address with ID ${id} not found`);
-    }
+    return this.addressService.getAddressById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createAddressDto: CreateAddressDto) {
-    try {
-      return await this.addressService.createAddress(createAddressDto);
-    } catch (error) {
-      throw new InternalServerErrorException('Error creating address');
-    }
+    return this.addressService.createAddress(createAddressDto);
   }
 
   @Put(':id')
@@ -53,23 +39,11 @@ export class AddressController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
-    try {
-      return await this.addressService.updateAddress(id, updateAddressDto);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Error updating address with id ${id}`,
-      );
-    }
+    return this.addressService.updateAddress(id, updateAddressDto);
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return await this.addressService.softDelete(id);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Error deleting address with id ${id}`,
-      );
-    }
+    return this.addressService.softDelete(id);
   }
 }

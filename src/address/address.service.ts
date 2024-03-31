@@ -53,10 +53,20 @@ export class AddressService {
     id: number,
     updateAddressDto: UpdateAddressDto,
   ): Promise<Address> {
+    const address = await this.prismaService.address.findUnique({
+      where: { id },
+    });
+    if (!address) {
+      throw new NotFoundException(`Address with id ${id} not found`);
+    }
+
     try {
       return await this.prismaService.address.update({
         where: { id },
-        data: updateAddressDto,
+        data: {
+          ...updateAddressDto,
+          updatedAt: new Date(),
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -66,10 +76,19 @@ export class AddressService {
   }
 
   async softDelete(id: number): Promise<Address> {
+    const address = await this.prismaService.address.findUnique({
+      where: { id },
+    });
+    if (!address) {
+      throw new NotFoundException(`Address with id ${id} not found`);
+    }
+
     try {
       return await this.prismaService.address.update({
         where: { id },
-        data: { deletedAt: new Date() },
+        data: {
+          deletedAt: new Date(),
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(
