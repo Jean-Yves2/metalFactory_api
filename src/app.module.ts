@@ -24,6 +24,8 @@ import { PaymentModule } from './payment/payment.module';
 import { OpenRouteModule } from './open-route/open-route.module';
 import { FakerModule } from './services/faker/faker.module';
 import { ConfigModule } from '@nestjs/config';
+//import { AuthGuard } from 'src/guards/auth.guard'; //activate this when you want to use the global guard
+//import { APP_GUARD } from '@nestjs/core'; //activate this when you want to use the global guard
 
 @Module({
   imports: [
@@ -53,6 +55,10 @@ import { ConfigModule } from '@nestjs/config';
     FakerModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [
+    AppService,
+    PrismaService,
+    //{ provide: APP_GUARD, useClass: AuthGuard }, // I disabled this to allow public routes for testing (I will enable it later) if you want to use faker module don't forget to disable this
+  ],
 })
 export class AppModule {}
