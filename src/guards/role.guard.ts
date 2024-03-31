@@ -2,6 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -12,7 +13,7 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.get<string[]>(
+    const requiredRoles = this.reflector.get<UserRole[]>(
       'roles',
       context.getHandler(), // getHandler() returns the handler method of the route expamle:[AsyncFunction: getUserById]
     );
