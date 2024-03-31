@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../database/prisma/prisma.service';
@@ -9,61 +13,96 @@ export class OrderService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllOrders(): Promise<Order[]> {
-    // Logic to fetch all orders from a data source
-    return this.prismaService.order.findMany({
-      where: { deletedAt: null },
-    });
+    try {
+      return await this.prismaService.order.findMany({
+        where: { deletedAt: null },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching all orders');
+    }
   }
 
   async getOrderById(id: number): Promise<Order> {
-    // Logic to fetch an order by its ID from a data source
-    const order = await this.prismaService.order.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
+    try {
+      const order = await this.prismaService.order.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!order) {
+        throw new NotFoundException(`Order with ID ${id} not found`);
+      }
+      return order;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error fetching order with id ${id}`,
+      );
     }
-    return order;
   }
 
   async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
-    return this.prismaService.order.create({
-      data: {
-        ...createOrderDto,
-        createdAt: new Date(),
-      },
-    });
+    try {
+      return await this.prismaService.order.create({
+        data: {
+          ...createOrderDto,
+          createdAt: new Date(),
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating order');
+    }
   }
 
   async updateOrder(
     id: number,
     updateOrderDto: UpdateOrderDto,
   ): Promise<Order> {
-    const order = await this.prismaService.order.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
+    try {
+      const order = await this.prismaService.order.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!order) {
+        throw new NotFoundException(`Order with ID ${id} not found`);
+      }
+      return await this.prismaService.order.update({
+        where: { id },
+        data: {
+          ...updateOrderDto,
+          updatedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error updating order with id ${id}`,
+      );
     }
-    return this.prismaService.order.update({
-      where: { id },
-      data: {
-        ...updateOrderDto,
-        updatedAt: new Date(),
-      },
-    });
   }
 
   async softDelete(id: number): Promise<Order> {
-    const order = await this.prismaService.order.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
+    try {
+      const order = await this.prismaService.order.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!order) {
+        throw new NotFoundException(`Order with ID ${id} not found`);
+      }
+      return await this.prismaService.order.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error deleting order with id ${id}`,
+      );
     }
-    return this.prismaService.order.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
   }
 }

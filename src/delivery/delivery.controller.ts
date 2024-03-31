@@ -1,42 +1,41 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
   Delete,
-  Body,
-  Param,
-  HttpStatus,
-  HttpCode,
-  ParseIntPipe,
 } from '@nestjs/common';
-import { DeliveryService } from './delivery.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { DeliveryService } from './delivery.service';
 
 @Controller('delivery')
 export class DeliveryController {
   constructor(private readonly deliveryService: DeliveryService) {}
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.deliveryService.getAllDeliveries();
   }
 
-  @Get()
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryService.getDeliveryById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createDeliveryDto: CreateDeliveryDto) {
+  async create(@Body() createDeliveryDto: CreateDeliveryDto) {
     return this.deliveryService.createDelivery(createDeliveryDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateDeliveryDto: UpdateDeliveryDto,
   ) {
@@ -44,7 +43,7 @@ export class DeliveryController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.deliveryService.softDelete(id);
   }
 }

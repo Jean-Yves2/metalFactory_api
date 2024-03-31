@@ -1,41 +1,41 @@
 import {
+  Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
   Delete,
-  Body,
-  Param,
-  HttpStatus,
-  HttpCode,
-  ParseIntPipe,
 } from '@nestjs/common';
-import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { AddressService } from './address.service';
 
 @Controller('address')
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.addressService.getAllAddresses();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.addressService.getAddressById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createAddressDto: CreateAddressDto) {
+  async create(@Body() createAddressDto: CreateAddressDto) {
     return this.addressService.createAddress(createAddressDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAddressDto: UpdateAddressDto,
   ) {
@@ -43,7 +43,7 @@ export class AddressController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.addressService.softDelete(id);
   }
 }
