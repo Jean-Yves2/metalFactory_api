@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderLineDto } from './dto/create-order-line.dto';
 import { UpdateOrderLineDto } from './dto/update-order-line.dto';
 import { PrismaService } from '../database/prisma/prisma.service';
@@ -9,63 +13,98 @@ export class OrderLineService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllOrderLines(): Promise<OrderLine[]> {
-    // Logic to fetch all order lines from a data source
-    return this.prismaService.orderLine.findMany({
-      where: { deletedAt: null },
-    });
+    try {
+      return await this.prismaService.orderLine.findMany({
+        where: { deletedAt: null },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching all order lines');
+    }
   }
 
   async getOrderLineById(id: number): Promise<OrderLine> {
-    // Logic to fetch an order line by its ID from a data source
-    const orderLine = await this.prismaService.orderLine.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!orderLine) {
-      throw new NotFoundException(`Order line with ID ${id} not found`);
+    try {
+      const orderLine = await this.prismaService.orderLine.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!orderLine) {
+        throw new NotFoundException(`Order line with ID ${id} not found`);
+      }
+      return orderLine;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error fetching order line with id ${id}`,
+      );
     }
-    return orderLine;
   }
 
   async createOrderLine(
     createOrderLineDto: CreateOrderLineDto,
   ): Promise<OrderLine> {
-    return this.prismaService.orderLine.create({
-      data: {
-        ...createOrderLineDto,
-        createdAt: new Date(),
-      },
-    });
+    try {
+      return await this.prismaService.orderLine.create({
+        data: {
+          ...createOrderLineDto,
+          createdAt: new Date(),
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating order line');
+    }
   }
 
   async updateOrderLine(
     id: number,
     updateOrderLineDto: UpdateOrderLineDto,
   ): Promise<OrderLine> {
-    const orderLine = await this.prismaService.orderLine.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!orderLine) {
-      throw new NotFoundException(`Order line with ID ${id} not found`);
+    try {
+      const orderLine = await this.prismaService.orderLine.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!orderLine) {
+        throw new NotFoundException(`Order line with ID ${id} not found`);
+      }
+      return await this.prismaService.orderLine.update({
+        where: { id },
+        data: {
+          ...updateOrderLineDto,
+          updatedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error updating order line with id ${id}`,
+      );
     }
-    return this.prismaService.orderLine.update({
-      where: { id },
-      data: {
-        ...updateOrderLineDto,
-        updatedAt: new Date(),
-      },
-    });
   }
 
   async softDelete(id: number): Promise<OrderLine> {
-    const orderLine = await this.prismaService.orderLine.findUnique({
-      where: { id, deletedAt: null },
-    });
-    if (!orderLine) {
-      throw new NotFoundException(`Order line with ID ${id} not found`);
+    try {
+      const orderLine = await this.prismaService.orderLine.findUnique({
+        where: { id, deletedAt: null },
+      });
+      if (!orderLine) {
+        throw new NotFoundException(`Order line with ID ${id} not found`);
+      }
+      return await this.prismaService.orderLine.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        `Error deleting order line with id ${id}`,
+      );
     }
-    return this.prismaService.orderLine.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
   }
 }
