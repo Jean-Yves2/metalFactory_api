@@ -70,22 +70,19 @@ export class DeliveryService {
     id: number,
     updateDeliveryDto: UpdateDeliveryDto,
   ): Promise<Delivery> {
+    const delivery = await this.prismaService.delivery.findUnique({
+      where: { id },
+    });
+    if (!delivery) {
+      throw new NotFoundException(`Delivery with ID ${id} not found`);
+    }
+
     try {
-      const { orderId, deliveryCompanyId, ...rest } = updateDeliveryDto;
       return await this.prismaService.delivery.update({
         where: { id },
         data: {
-          ...rest,
-          order: {
-            connect: {
-              id: orderId,
-            },
-          },
-          deliveryCompany: {
-            connect: {
-              id: deliveryCompanyId,
-            },
-          },
+          ...updateDeliveryDto,
+          updatedAt: new Date(),
         },
       });
     } catch (error) {
@@ -96,16 +93,19 @@ export class DeliveryService {
   }
 
   async softDelete(id: number): Promise<Delivery> {
+    const delivery = await this.prismaService.delivery.findUnique({
+      where: { id },
+    });
+    if (!delivery) {
+      throw new NotFoundException(`Delivery with ID ${id} not found`);
+    }
+
     try {
-      const delivery = await this.prismaService.delivery.findUnique({
-        where: { id, deletedAt: null },
-      });
-      if (!delivery) {
-        throw new NotFoundException(`Delivery with ID ${id} not found`);
-      }
       return await this.prismaService.delivery.update({
         where: { id },
-        data: { deletedAt: new Date() },
+        data: {
+          deletedAt: new Date(),
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(
