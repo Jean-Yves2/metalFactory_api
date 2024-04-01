@@ -14,8 +14,8 @@ import {
 import { UserService } from './user.service';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/createUserdto';
-import { RoleGuard } from 'src/guards/role.guard';
-import { Roles } from 'src/decorators/roles.decorator';
+import { RoleGuard } from '../guards/role.guard';
+import { Roles } from '../decorators/roles.decorator';
 
 @Controller('user')
 export class UserController {
@@ -23,7 +23,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get() // GET /user to get all users
-  async getAllUsers() {
+  async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }
 
