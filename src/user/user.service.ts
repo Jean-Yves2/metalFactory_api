@@ -4,6 +4,9 @@ import { CreateUserDto } from './dto/createUserdto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { PasswordDto } from './dto/password.dto';
+import { validateOrReject } from 'class-validator';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -52,6 +55,16 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto) {
     const { firstName, lastName, email, password, companyName, phone } =
       createUserDto;
+
+    const passwordDto = new PasswordDto();
+    passwordDto.password = password;
+
+    try {
+      await validateOrReject(passwordDto);
+    } catch (errors) {
+      const errorMessage = Object.values(errors[0].constraints).join(', ');
+      throw new BadRequestException('Mot de passe invalide: ' + errorMessage);
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
