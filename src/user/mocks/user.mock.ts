@@ -51,3 +51,22 @@ export const userMock = [
     phone: '321-987-6543',
   },
 ];
+
+export const userMockFromDelete = [
+  {
+    id: 4,
+    email: 'Arnold.Wolff@gmail.com',
+    password: 'v6SD601PbSoBNx0',
+    role: 'USER',
+    userType: 'CUSTOMER',
+    firstName: 'Donald',
+    lastName: 'Stark',
+    phone: '538.933.1914 x9356',
+    isProfessional: false,
+    siret: 'null',
+    companyName: 'ABCaaa Company',
+    createdAt: '2024-04-02T17:44:37.422Z',
+    updatedAt: '2024-04-03T19:54:57.027Z',
+    deletedAt: Date,
+  },
+];

@@ -1,5 +1,6 @@
 import { userMock } from './user.mock';
 import { CreateUserDto } from '../dto/createUserdto';
+import { userMockFromDelete } from './user.mock';
 
 export class UserServiceMock {
   getAllUsers = jest.fn().mockImplementation(() => {
@@ -33,6 +34,14 @@ export class UserServiceMock {
 
       return updatedUser;
     });
-  softDelete = jest.fn();
-  findUserByEmail = jest.fn();
+
+  softDelete = jest.fn().mockImplementation((id: number) => {
+    const userToDelete = userMockFromDelete.find((user) => user.id === id);
+
+    if (!userToDelete) {
+      return null;
+    }
+
+    return { ...userToDelete, deletedAt: new Date() };
+  });
 }

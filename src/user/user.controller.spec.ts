@@ -79,4 +79,25 @@ describe('UserController', () => {
 
     expect(await controller.updateUser(id, createUserDto)).toEqual(updatedUser);
   });
+
+  it('should remove a user with specific id', async () => {
+    const id = 4;
+    const deletedUser = await controller.remove(id);
+    expect(deletedUser).toEqual({
+      id: 4,
+      deletedAt: expect.any(Date), // Verification that deletedAt is an instance of Date
+      email: expect.any(String),
+      password: expect.any(String),
+      role: expect.any(String),
+      userType: expect.any(String),
+      firstName: expect.any(String),
+      lastName: expect.any(String),
+      phone: expect.any(String),
+      isProfessional: expect.any(Boolean),
+      siret: expect.any(String),
+      companyName: expect.any(String),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
+  });
 });
