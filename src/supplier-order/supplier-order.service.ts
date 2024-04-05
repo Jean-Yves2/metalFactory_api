@@ -83,7 +83,7 @@ export class SupplierOrderService {
     }
   }
 
-  async deleteSupplierOrder(id: number): Promise<SupplierOrder> {
+  async softDelete(id: number): Promise<SupplierOrder> {
     try {
       const supplierOrder = await this.prismaService.supplierOrder.findUnique({
         where: { id, deletedAt: null },
