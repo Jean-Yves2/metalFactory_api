@@ -104,7 +104,7 @@ export class UserService {
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const existingUser = await this.prisma.user.findUnique({
-      where: { id, deletedAt: null },
+      where: { id: id, deletedAt: null },
     });
 
     if (!existingUser) {
@@ -119,6 +119,11 @@ export class UserService {
       ) {
         dataToUpdate[key] = updateUserDto[key];
       }
+    }
+    if (dataToUpdate.password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(dataToUpdate.password, salt);
+      dataToUpdate.password = hashedPassword;
     }
     return await this.prisma.user.update({
       where: { id },
