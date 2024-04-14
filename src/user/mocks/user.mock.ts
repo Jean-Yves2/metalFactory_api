@@ -1,3 +1,6 @@
+import { AddressType } from '@prisma/client';
+import { CreateUserDto } from '../dto/createUserdto';
+
 export const userMock = [
   {
     id: 1,
@@ -12,7 +15,7 @@ export const userMock = [
       city: 'Mapletown',
       country: 'United States',
       distanceToWarehouse: 20,
-      type: 'DELIVERY',
+      type: AddressType.DELIVERY,
     },
     phone: '987-654-3210',
   },
@@ -29,7 +32,7 @@ export const userMock = [
       city: 'Pineville',
       country: 'United States',
       distanceToWarehouse: 25,
-      type: 'DELIVERY',
+      type: AddressType.DELIVERY,
     },
     phone: '555-123-4567',
   },
@@ -46,7 +49,7 @@ export const userMock = [
       city: 'Elmvale',
       country: 'United States',
       distanceToWarehouse: 30,
-      type: 'DELIVERY',
+      type: AddressType.DELIVERY,
     },
     phone: '321-987-6543',
   },
@@ -70,3 +73,20 @@ export const userMockFromDelete = [
     deletedAt: Date,
   },
 ];
+
+export const userMockForCreate: CreateUserDto = {
+  firstName: 'bal2e',
+  lastName: 'Dfgdfgjgffgkhdgoee',
+  email: 'jogdfhkjhkfgf12dlmMhengfv1.doe@example.com',
+  password: 'baltazar111111*B11e1111122',
+  companyName: 'Exampfhlegd Companye',
+  address: {
+    street: '123 Maihgfggdn St',
+    postalCode: '1233166654415',
+    city: 'Exampdhgjgfgfle City',
+    country: 'Examplfggjde Country',
+    distanceToWarehouse: 10,
+    type: 'DELIVERY', // Assuming the default type is 'DELIVERY'
+  },
+  phone: '123456544568554705455214890',
+};
