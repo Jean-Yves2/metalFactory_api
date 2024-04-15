@@ -6,7 +6,9 @@ export class SupplierServiceMock {
     return SupplierMock;
   });
 
-  getSupplierById = jest.fn();
+  getSupplierById = jest.fn().mockImplementation((id: number) => {
+    return SupplierMock.find((supplier) => supplier.id === id);
+  });
   createSupplier = jest.fn();
   updateSupplier = jest.fn();
   softeDeleteSupplier = jest.fn();

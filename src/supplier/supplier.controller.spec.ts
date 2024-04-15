@@ -25,4 +25,11 @@ describe('SupplierController', () => {
       expect(await controller.getAllSuppliers()).toEqual(SupplierMock);
     });
   });
+
+  describe('getSupplierById', () => {
+    it('should return a supplier by id', async () => {
+      const getSupplier = SupplierMock.find((supplier) => supplier.id === 1);
+      expect(await controller.getSupplierById(1)).toEqual(getSupplier);
+    });
+  });
 });
