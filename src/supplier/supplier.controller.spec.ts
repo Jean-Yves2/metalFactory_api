@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupplierController } from './supplier.controller';
 import { SupplierService } from './supplier.service';
-import { PrismaService } from '../database/prisma/prisma.service';
+//import { PrismaService } from '../database/prisma/prisma.service';
+import { SupplierServiceMock } from './mocks/supplier.service.mock';
 
 describe('SupplierController', () => {
   let controller: SupplierController;
@@ -9,7 +10,7 @@ describe('SupplierController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SupplierController],
-      providers: [SupplierService, PrismaService],
+      providers: [{ provide: SupplierService, useClass: SupplierServiceMock }],
     }).compile();
 
     controller = module.get<SupplierController>(SupplierController);
