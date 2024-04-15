@@ -8,6 +8,10 @@ import { UserType } from '@prisma/client';
 import { userMock } from './mocks/user.mock';
 import { CreateUserDto } from './dto/createUserdto';
 import { userMockForCreate } from './mocks/user.mock';
+import { JwtServiceMock } from './mocks/jwt.service.mock';
+import { ConfigService } from '@nestjs/config';
+import { ConfigServiceMock } from './mocks/config.service.mock';
+import { JwtService } from '@nestjs/jwt';
 describe('UserService', () => {
   let service: UserService;
   let prismaService: PrismaService;
@@ -20,6 +24,8 @@ describe('UserService', () => {
           provide: PrismaService,
           useClass: UserPrismaMock,
         },
+        { provide: ConfigService, useValue: ConfigServiceMock },
+        { provide: JwtService, useValue: JwtServiceMock },
       ],
     }).compile();
 
@@ -130,6 +136,23 @@ describe('UserService', () => {
           phone: newUser.phone,
         },
       });
+    });
+  });
+
+  describe('updateUser', () => {
+    it('should update a user', async () => {
+      const userSearch = userMock.find((user) => user.id === 1);
+      userSearch.firstName = 'John';
+      const updatedUser = await service.updateUser(1, userSearch);
+      expect(updatedUser).toEqual(userSearch);
+    });
+    it('should throw an HttpException if no user found', async () => {
+      jest.spyOn(prismaService.user, 'update').mockResolvedValueOnce(null);
+      const userSearch = userMock.find((user) => user.id === 1);
+
+      await expect(service.updateUser(8, userSearch)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 });

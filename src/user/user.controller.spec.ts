@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtServiceMock } from './mocks/jwt.service.mock';
 import { userMock } from './mocks/user.mock';
 import { CreateUserDto } from './dto/createUserdto';
+import { HttpException } from '@nestjs/common';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -37,6 +38,11 @@ describe('UserController', () => {
     const id = 1;
     const user = userMock.find((user) => user.id === id);
     expect(await controller.getUserById(id)).toEqual(user);
+  });
+
+  it('should throw an HttpException if no user found', async () => {
+    const id = 100;
+    await expect(controller.getUserById(id)).rejects.toThrow(HttpException);
   });
 
   it('should update a user with specific id', async () => {
@@ -78,6 +84,29 @@ describe('UserController', () => {
     }
 
     expect(await controller.updateUser(id, createUserDto)).toEqual(updatedUser);
+  });
+
+  it('should throw an HttpException if no user found', async () => {
+    const id = 100;
+    const createUserDto: CreateUserDto = {
+      firstName: 'Michael',
+      lastName: 'Smith deckard',
+      email: 'm.smith@example.com',
+      password: 'SecurePass123!',
+      companyName: 'Smith & Co.',
+      address: {
+        street: '456 Maple Avenue',
+        postalCode: '54321',
+        city: 'Mapletown',
+        country: 'United States',
+        distanceToWarehouse: 20,
+        type: 'DELIVERY',
+      },
+      phone: '987-654-3210',
+    };
+    expect(controller.updateUser(id, createUserDto)).rejects.toThrow(
+      HttpException,
+    );
   });
 
   it('should remove a user with specific id', async () => {

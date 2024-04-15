@@ -1,6 +1,7 @@
 import { CreateAddressDto } from '../../address/dto/create-address.dto';
 import { userMock, userMockForCreate } from './user.mock';
 import { CreateUserDto } from '../dto/createUserdto';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class UserPrismaMock {
   user = {
@@ -16,7 +17,9 @@ export class UserPrismaMock {
     }),
     findUnique: jest.fn().mockImplementation((params) => {
       const foundUser = userMock.find((user) => user.id === params.where.id);
-      if (!foundUser) throw new Error('User not found');
+      if (!foundUser) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
       return foundUser;
     }),
     create: jest.fn().mockImplementation(() => {
@@ -59,6 +62,12 @@ export class UserPrismaMock {
       return 'User created successfully!';
     }),
 
-    update: jest.fn(),
+    update: jest.fn().mockImplementation((params) => {
+      const existingUser = userMock.find((user) => user.id === params.where.id);
+      if (!existingUser) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      return existingUser;
+    }),
   };
 }
