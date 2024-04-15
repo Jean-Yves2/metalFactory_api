@@ -1,4 +1,4 @@
-export const supplierMock = [
+export const SupplierMock = [
   [
     {
       id: 1,
