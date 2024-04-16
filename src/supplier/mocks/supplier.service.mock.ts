@@ -10,6 +10,7 @@ export class SupplierServiceMock {
   getSupplierById = jest.fn().mockImplementation((id: number) => {
     return SupplierMock.find((supplier) => supplier.id === id);
   });
+
   createSupplier = jest
     .fn()
     .mockImplementation((createSupplierDto: CreateSupplierDto) => {
@@ -27,6 +28,20 @@ export class SupplierServiceMock {
       SupplierMock.push(newSupplier);
       return 'Supplier created successfully';
     });
-  updateSupplier = jest.fn();
+
+  updateSupplier = jest
+    .fn()
+    .mockImplementation((id: number, createSupplierDto: CreateSupplierDto) => {
+      const supplier = SupplierMock.find((supplier) => supplier.id === id);
+      const updateSupplier = {
+        ...supplier,
+        name: createSupplierDto.name,
+        SIRET: createSupplierDto.SIRET,
+        contactEmail: createSupplierDto.contactEmail,
+        contactPhone: createSupplierDto.contactPhone,
+        updatedAt: new Date(),
+      };
+      return updateSupplier; //'Supplier updated successfully';
+    });
   softeDeleteSupplier = jest.fn();
 }

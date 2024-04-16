@@ -53,4 +53,35 @@ describe('SupplierController', () => {
       );
     });
   });
+
+  describe('updateSupplier', () => {
+    it('should update a supplier', async () => {
+      const dataForUpdateSupplier = {
+        name: 'New Name of the Supplier', // Test the update of the name
+        SIRET: '',
+        address: {
+          // Can't update the address here ,we make it on the address controller.spec.ts
+          street: '123 gjgRue du Foughjhkgrnisseur',
+          city: 'Ville du Foufhfrnjghjiskseur',
+          postalCode: '12ggk345',
+          country: 'Pakys gjdu Fourjhgnisseur',
+        },
+        contactEmail: 'Terrill22@hotmail.com',
+        contactPhone: '386-412-6992',
+      };
+      expect(await controller.updateSupplier(3, dataForUpdateSupplier)).toEqual(
+        {
+          id: 3,
+          name: 'New Name of the Supplier',
+          SIRET: '',
+          addressId: 57,
+          contactEmail: 'Terrill22@hotmail.com',
+          contactPhone: '386-412-6992',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          deletedAt: null,
+        },
+      );
+    });
+  });
 });
