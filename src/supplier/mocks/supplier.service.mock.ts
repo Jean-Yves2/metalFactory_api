@@ -1,21 +1,21 @@
 import { CreateSupplierDto } from '../dto/create-supplier.dto';
-import { SupplierMock } from './supplier.mock';
+import { supplierMock } from './supplier.mock';
 export class SupplierServiceMock {
   // this is a mock class that will be used to replace the real SupplierService class
   // In code this.supplierService.getAllSuppliers() will be replaced with this.getAllSuppliers() in my mock class
   getAllSuppliers = jest.fn().mockImplementation(() => {
-    return SupplierMock;
+    return supplierMock;
   });
 
   getSupplierById = jest.fn().mockImplementation((id: number) => {
-    return SupplierMock.find((supplier) => supplier.id === id);
+    return supplierMock.find((supplier) => supplier.id === id);
   });
 
   createSupplier = jest
     .fn()
     .mockImplementation((createSupplierDto: CreateSupplierDto) => {
       const newSupplier = {
-        id: SupplierMock.length + 1,
+        id: supplierMock.length + 1,
         name: createSupplierDto.name,
         SIRET: createSupplierDto.SIRET,
         addressId: 10, // this is a mock value
@@ -25,14 +25,14 @@ export class SupplierServiceMock {
         updatedAt: new Date(),
         deletedAt: null,
       };
-      SupplierMock.push(newSupplier);
+      supplierMock.push(newSupplier);
       return 'Supplier created successfully';
     });
 
   updateSupplier = jest
     .fn()
     .mockImplementation((id: number, createSupplierDto: CreateSupplierDto) => {
-      const supplier = SupplierMock.find((supplier) => supplier.id === id);
+      const supplier = supplierMock.find((supplier) => supplier.id === id);
       const updateSupplier = {
         ...supplier,
         name: createSupplierDto.name,
@@ -45,7 +45,7 @@ export class SupplierServiceMock {
     });
 
   softeDeleteSupplier = jest.fn().mockImplementation((id: number) => {
-    const supplier = SupplierMock.find((supplier) => supplier.id === id);
+    const supplier = supplierMock.find((supplier) => supplier.id === id);
     const deleteSupplier = {
       ...supplier,
       deletedAt: new Date(),

@@ -3,7 +3,7 @@ import { SupplierController } from './supplier.controller';
 import { SupplierService } from './supplier.service';
 //import { PrismaService } from '../database/prisma/prisma.service';
 import { SupplierServiceMock } from './mocks/supplier.service.mock';
-import { SupplierMock } from './mocks/supplier.mock';
+import { supplierMock } from './mocks/supplier.mock';
 
 describe('SupplierController', () => {
   let controller: SupplierController;
@@ -22,13 +22,13 @@ describe('SupplierController', () => {
   });
   describe('getAllSuppliers', () => {
     it('should return all suppliers', async () => {
-      expect(await controller.getAllSuppliers()).toEqual(SupplierMock);
+      expect(await controller.getAllSuppliers()).toEqual(supplierMock);
     });
   });
 
   describe('getSupplierById', () => {
     it('should return a supplier by id', async () => {
-      const getSupplier = SupplierMock.find((supplier) => supplier.id === 1);
+      const getSupplier = supplierMock.find((supplier) => supplier.id === 1);
       expect(await controller.getSupplierById(1)).toEqual(getSupplier);
     });
   });

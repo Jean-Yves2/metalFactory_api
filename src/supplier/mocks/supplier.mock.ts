@@ -1,6 +1,6 @@
 import { Supplier } from '@prisma/client';
 
-export const SupplierMock: Supplier[] = [
+export const supplierMock: Supplier[] = [
   {
     id: 1,
     name: 'Pagac, Predovic and Sanford',
