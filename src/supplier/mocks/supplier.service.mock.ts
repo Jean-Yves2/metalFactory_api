@@ -41,7 +41,15 @@ export class SupplierServiceMock {
         contactPhone: createSupplierDto.contactPhone,
         updatedAt: new Date(),
       };
-      return updateSupplier; //'Supplier updated successfully';
+      return updateSupplier;
     });
-  softeDeleteSupplier = jest.fn();
+
+  softeDeleteSupplier = jest.fn().mockImplementation((id: number) => {
+    const supplier = SupplierMock.find((supplier) => supplier.id === id);
+    const deleteSupplier = {
+      ...supplier,
+      deletedAt: new Date(),
+    };
+    return deleteSupplier;
+  });
 }

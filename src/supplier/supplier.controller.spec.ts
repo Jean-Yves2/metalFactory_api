@@ -84,4 +84,20 @@ describe('SupplierController', () => {
       );
     });
   });
+
+  describe('deleteSupplier', () => {
+    it('should delete a supplier', async () => {
+      expect(await controller.deleteSupplier(3)).toEqual({
+        id: 3,
+        name: 'Quitzon, Medhurst and Mann',
+        SIRET: '',
+        addressId: 57,
+        contactEmail: 'Terrill22@hotmail.com',
+        contactPhone: '386-412-6992',
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        deletedAt: expect.any(Date),
+      }); // We don't return anything when we delete a supplier
+    });
+  });
 });
