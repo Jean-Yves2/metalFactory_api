@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupplierService } from './supplier.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { PrismaServiceMock } from './mocks/prisma.service.mock';
+import { supplierMock } from './mocks/supplier.mock';
 
 describe('SupplierService', () => {
   let service: SupplierService;
@@ -22,5 +23,11 @@ describe('SupplierService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('getAllSuppliers', () => {
+    it('should return all suppliers', async () => {
+      expect(await service.getAllSuppliers()).toEqual(supplierMock);
+    });
   });
 });
