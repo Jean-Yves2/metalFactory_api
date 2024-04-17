@@ -28,6 +28,22 @@ export class PrismaServiceMock {
         supplierMock.push(newSupplier);
         return 'Supplier created successfully';
       }),
-    update: jest.fn(),
+
+    update: jest.fn().mockImplementation((params) => {
+      const supplier = supplierMock.find(
+        (supplier) =>
+          supplier.id === params.where.id && supplier.deletedAt === null,
+      );
+      if (!supplier) {
+        return null;
+      }
+      supplier.name = params.data.name;
+      supplier.SIRET = params.data.SIRET;
+      supplier.contactEmail = params.data.contactEmail;
+      supplier.contactPhone = params.data.contactPhone;
+      supplier.updatedAt = new Date();
+      console.log('supplierMock', supplierMock);
+      return 'Supplier updated successfully';
+    }),
   };
 }

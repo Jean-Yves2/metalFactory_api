@@ -67,4 +67,54 @@ describe('SupplierService', () => {
       );
     });
   });
+
+  describe('updateSupplier', () => {
+    it('should update a supplier', async () => {
+      const supplierId = 3;
+      const updatedSupplier = {
+        name: 'Nom du fournisseur modifié',
+        SIRET: '',
+        address: {
+          street: '123 gjgRue du Foughjhkgrnisseur',
+          city: 'Ville du Foufhfrnjghjiskseur',
+          postalCode: '12ggk345',
+          country: 'Pakys gjdu Fourjhgnisseur',
+        },
+        addressId: 57,
+        contactEmail: 'Terrill22@hotmail.com',
+        contactPhone: '386-412-6992',
+        createdAt: new Date('2024-03-19T11:17:15.273Z'),
+        updatedAt: new Date('2024-03-19T11:33:08.092Z'),
+        deletedAt: null,
+      };
+      expect(await service.updateSupplier(supplierId, updatedSupplier)).toEqual(
+        'Supplier updated successfully',
+      );
+    });
+
+    it('should return null when supplier is not found', async () => {
+      const supplierId = 100;
+      const updatedSupplier = {
+        name: 'Nom du fournisseur modifié',
+        SIRET: '',
+        address: {
+          street: '123 gjgRue du Foughjhkgrnisseur',
+          city: 'Ville du Foufhfrnjghjiskseur',
+          postalCode: '12ggk345',
+          country: 'Pakys gjdu Fourjhgnisseur',
+        },
+        addressId: 57,
+        contactEmail: 'Terrill22@hotmail.com',
+        contactPhone: '386-412-6992',
+        createdAt: new Date('2024-03-19T11:17:15.273Z'),
+        updatedAt: new Date('2024-03-19T11:33:08.092Z'),
+        deletedAt: null,
+      };
+      await expect(
+        service.updateSupplier(supplierId, updatedSupplier),
+      ).rejects.toThrow(
+        new HttpException('Supplier not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });
