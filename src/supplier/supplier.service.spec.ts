@@ -46,4 +46,25 @@ describe('SupplierService', () => {
       );
     });
   });
+
+  describe('createSupplier', () => {
+    it('should create a supplier', async () => {
+      const createSupplier = {
+        name: 'Nom du fsfsdfghgoujhkhrnjkljlkisseur',
+        SIRET: '1234564647890004500',
+        address: {
+          street: '123 gjgRue du Foughjhkgrnisseur',
+          city: 'Ville du Foufhfrnjghjiskseur',
+          postalCode: '12ggk345',
+          country: 'Pakys gjdu Fourjhgnisseur',
+        },
+        contactEmail: 'fouhkgjgrhjgnisseur@example.com',
+        contactPhone: '012300023456789',
+        Bella: 'ghkjhjjf',
+      };
+      expect(await service.createSupplier(createSupplier)).toEqual(
+        'Supplier created successfully',
+      );
+    });
+  });
 });
