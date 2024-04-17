@@ -34,15 +34,13 @@ export class PrismaServiceMock {
         (supplier) =>
           supplier.id === params.where.id && supplier.deletedAt === null,
       );
-      if (!supplier) {
-        return null;
-      }
+
       supplier.name = params.data.name;
       supplier.SIRET = params.data.SIRET;
       supplier.contactEmail = params.data.contactEmail;
       supplier.contactPhone = params.data.contactPhone;
       supplier.updatedAt = new Date();
-      console.log('supplierMock', supplierMock);
+
       return 'Supplier updated successfully';
     }),
   };
