@@ -117,4 +117,20 @@ describe('SupplierService', () => {
       );
     });
   });
+
+  describe('softeDeleteSupplier', () => {
+    it('should delete a supplier', async () => {
+      const supplierId = 3;
+      expect(await service.softeDeleteSupplier(supplierId)).toEqual(
+        'Supplier deleted successfully',
+      );
+    });
+
+    it('should return null when supplier is not found', async () => {
+      const supplierId = 100;
+      await expect(service.softeDeleteSupplier(supplierId)).rejects.toThrow(
+        new HttpException('Supplier not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });
