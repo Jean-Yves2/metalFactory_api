@@ -24,7 +24,7 @@ export class UserPrismaMock {
     }),
     create: jest.fn().mockImplementation(() => {
       const data: CreateUserDto = userMockForCreate;
-      console.log('data', data);
+
       const address: CreateAddressDto = {
         street: '123 Maihgfggdn St',
         postalCode: '1233166654415',
