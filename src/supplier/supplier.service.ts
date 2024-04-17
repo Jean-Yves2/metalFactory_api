@@ -1,12 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
+import { Supplier } from '@prisma/client';
 
 @Injectable()
 export class SupplierService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAllSuppliers() {
+  async getAllSuppliers(): Promise<Supplier[]> {
     return this.prismaService.supplier.findMany();
   }
 
