@@ -30,4 +30,11 @@ describe('DeliveryController', () => {
       expect(result).toEqual(deliveryMock);
     });
   });
+
+  describe('getDeliveryById', () => {
+    it('should return a delivery by id', async () => {
+      const getDelivery = deliveryMock.find((delivery) => delivery.id === 1);
+      expect(await controller.findOne(1)).toEqual(getDelivery);
+    });
+  });
 });
