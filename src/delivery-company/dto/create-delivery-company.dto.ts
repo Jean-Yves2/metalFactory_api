@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDecimal } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
 export class CreateDeliveryCompanyDto {
   @IsNotEmpty()
@@ -6,14 +6,14 @@ export class CreateDeliveryCompanyDto {
   name: string;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   baseRate: number;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   ratePerKm: number;
 
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   weightSurcharge: number;
 }
