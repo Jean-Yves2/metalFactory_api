@@ -26,6 +26,6 @@ export const deliveryMock: Delivery[] = [
     deliveryStatus: DeliveryStatus.DELIVERED,
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
-    deletedAt: null,
+    deletedAt: new Date('2024-04-18T09:05:38.780Z'),
   },
 ];
