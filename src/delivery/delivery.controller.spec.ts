@@ -74,4 +74,12 @@ describe('DeliveryController', () => {
       );
     });
   });
+
+  describe('removeDelivery', () => {
+    it('should delete a delivery', async () => {
+      expect(await controller.remove(1)).toEqual(
+        'Delivery deleted successfully',
+      );
+    });
+  });
 });

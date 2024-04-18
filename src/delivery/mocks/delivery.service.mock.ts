@@ -50,4 +50,15 @@ export class DeliveryServiceMock {
 
       return 'Delivery updated successfully';
     });
+
+  softDelete = jest.fn().mockImplementation((id: number) => {
+    const index = deliveryMock.findIndex((delivery) => delivery.id === id);
+
+    deliveryMock[index] = {
+      ...deliveryMock[index],
+      deletedAt: new Date(),
+    };
+
+    return 'Delivery deleted successfully';
+  });
 }
