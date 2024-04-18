@@ -1,1 +1,32 @@
-export const deliveryMock = [];
+export const deliveryMock = [
+  {
+    id: 1,
+    name: 'Speedy Deliveries',
+    baseRate: '99',
+    ratePerKm: '75',
+    weightSurcharge: '5',
+    createdAt: new Date('2024-04-18T09:05:38.780Z'),
+    updatedAt: new Date('2024-04-18T09:05:38.780Z'),
+    deletedAt: null,
+  },
+  {
+    id: 2,
+    name: 'Speedy Deliveries',
+    baseRate: '2',
+    ratePerKm: '7',
+    weightSurcharge: '75',
+    createdAt: new Date('2024-04-18T09:05:38.780Z'),
+    updatedAt: new Date('2024-04-18T09:05:38.780Z'),
+    deletedAt: null,
+  },
+  {
+    id: 3,
+    name: 'Speedy Deliveries',
+    baseRate: '9',
+    ratePerKm: '25',
+    weightSurcharge: '95',
+    createdAt: new Date('2024-04-18T09:05:38.780Z'),
+    updatedAt: new Date('2024-04-18T09:05:38.780Z'),
+    deletedAt: null,
+  },
+];

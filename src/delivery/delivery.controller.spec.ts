@@ -3,6 +3,7 @@ import { DeliveryController } from './delivery.controller';
 import { DeliveryService } from './delivery.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { DeliveryServiceMock } from './mocks/delivery.service.mock';
+import { deliveryMock } from './mocks/delivery.mock';
 
 describe('DeliveryController', () => {
   let controller: DeliveryController;
@@ -21,5 +22,12 @@ describe('DeliveryController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('getAllDeliveries', () => {
+    it('should return an array of deliveries', async () => {
+      const result = await controller.findAll();
+      expect(result).toEqual(deliveryMock);
+    });
   });
 });
