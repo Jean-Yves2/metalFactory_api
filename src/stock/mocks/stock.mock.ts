@@ -21,6 +21,6 @@ export const stockMock: Stock[] = [
     lastUpdated: new Date('2024-04-18T09:05:38.780Z'),
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
-    deletedAt: null,
+    deletedAt: new Date('2024-04-18T09:05:38.780Z'),
   },
 ];
