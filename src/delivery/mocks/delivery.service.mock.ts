@@ -31,5 +31,23 @@ export class DeliveryServiceMock {
       return 'Delivery created successfully';
     });
 
-  updateDelivery = jest.fn();
+  updateDelivery = jest
+    .fn()
+    .mockImplementation((id: number, createDeliveryDto: CreateDeliveryDto) => {
+      const index = deliveryMock.findIndex((delivery) => delivery.id === id);
+
+      deliveryMock[index] = {
+        ...deliveryMock[index],
+        orderId: createDeliveryDto.orderId,
+        deliveryCompanyId: createDeliveryDto.deliveryCompanyId,
+        distance: createDeliveryDto.distance,
+        weight: new Decimal(createDeliveryDto.weight),
+        cost: new Decimal(createDeliveryDto.cost),
+        VATRate: new Decimal(createDeliveryDto.VATRate),
+        deliveryStatus: createDeliveryDto.deliveryStatus,
+        updatedAt: new Date(),
+      };
+
+      return 'Delivery updated successfully';
+    });
 }

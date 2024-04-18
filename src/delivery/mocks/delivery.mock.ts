@@ -1,6 +1,7 @@
+import { Delivery, DeliveryStatus } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export const deliveryMock = [
+export const deliveryMock: Delivery[] = [
   {
     id: 1,
     orderId: 1,
@@ -9,7 +10,7 @@ export const deliveryMock = [
     weight: new Decimal(102),
     cost: new Decimal(50.22),
     VATRate: new Decimal(22),
-    deliveryStatus: 'DELIVERED',
+    deliveryStatus: DeliveryStatus.DELIVERED,
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
     deletedAt: null,
@@ -22,7 +23,7 @@ export const deliveryMock = [
     weight: new Decimal(102),
     cost: new Decimal(50.22),
     VATRate: new Decimal(22),
-    deliveryStatus: 'DELIVERED',
+    deliveryStatus: DeliveryStatus.DELIVERED,
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
     deletedAt: null,
