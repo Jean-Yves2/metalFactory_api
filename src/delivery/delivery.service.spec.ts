@@ -3,7 +3,10 @@ import { DeliveryService } from './delivery.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { PrismaServiceMock } from './mocks/prisma.service.mock';
 import { deliveryMock } from './mocks/delivery.mock';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 describe('DeliveryService', () => {
   let service: DeliveryService;
@@ -39,6 +42,39 @@ describe('DeliveryService', () => {
         expect(error).toEqual(
           new InternalServerErrorException('Error getting all deliveries'),
         );
+      }
+    });
+  });
+
+  describe('getDeliveryById', () => {
+    it('should return the delivery with the given id', async () => {
+      expect(await service.getDeliveryById(1)).toEqual(
+        deliveryMock.find((delivery) => delivery.id === 1),
+      );
+    });
+
+    it('should throw NotFoundException when delivery is not found', async () => {
+      const id = 99; // This is an invalid id
+      jest
+        .spyOn(service['prismaService'].delivery, 'findUnique')
+        .mockResolvedValue(null); // Mocking the situation ⚠️ where no delivery is found
+
+      await expect(service.getDeliveryById(id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw InternalServerErrorException when there is an internal error', async () => {
+      const id = 1; // This is a valid id
+      jest
+        .spyOn(service['prismaService'].delivery, 'findUnique')
+        .mockRejectedValue(new Error('Internal Server Error'));
+
+      try {
+        await service.getDeliveryById(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.toString()).toContain('Error getting delivery with id 1');
       }
     });
   });

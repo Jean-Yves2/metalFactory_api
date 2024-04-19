@@ -1,4 +1,7 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { deliveryMock } from './delivery.mock';
 
 export class PrismaServiceMock {
@@ -12,6 +15,14 @@ export class PrismaServiceMock {
       } catch (error) {
         throw new InternalServerErrorException('Error getting all deliveries');
       }
+    }),
+
+    findUnique: jest.fn().mockImplementation(({ where: { id } }: any) => {
+      const delivery = deliveryMock.find((delivery) => delivery.id === id);
+      if (!delivery) {
+        throw new NotFoundException(`Delivery with ID ${id} not found`);
+      }
+      return delivery;
     }),
   };
 }
