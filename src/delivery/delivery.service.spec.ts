@@ -159,4 +159,36 @@ describe('DeliveryService', () => {
       }
     });
   });
+
+  describe('softDelete', () => {
+    it('should soft delete the delivery with the given id', async () => {
+      const id = 1;
+      const deletedDelivery = await service.softDelete(id);
+      expect(deletedDelivery).toEqual(deletedDelivery);
+    });
+
+    it('should throw NotFoundException when delivery is not found', async () => {
+      const id = 99; // This is an invalid id
+      jest
+        .spyOn(service['prismaService'].delivery, 'findUnique')
+        .mockResolvedValue(null); // Mocking the situation ⚠️ where no delivery is found
+
+      await expect(service.softDelete(id)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw InternalServerErrorException when there is an internal error', async () => {
+      const id = 1;
+      jest
+        .spyOn(service['prismaService'].delivery, 'update')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.softDelete(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.toString()).toContain(
+          `Error deleting delivery with id ${id}`,
+        );
+      }
+    });
+  });
 });
