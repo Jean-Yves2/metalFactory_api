@@ -95,4 +95,68 @@ describe('DeliveryService', () => {
       expect(createdDelivery).toEqual(createdDelivery);
     });
   });
+
+  describe('updateDelivery', () => {
+    it('should update the delivery with the given id', async () => {
+      const id = 1;
+      const dataForUpdateDelivery: CreateDeliveryDto = {
+        orderId: 1,
+        deliveryCompanyId: 1,
+        distance: 999,
+        weight: 999,
+        cost: 50,
+        VATRate: 2.2,
+        deliveryStatus: 'DELAYED',
+      };
+      const updatedDelivery = await service.updateDelivery(
+        id,
+        dataForUpdateDelivery,
+      );
+      expect(updatedDelivery).toEqual(updatedDelivery);
+    });
+
+    it('should throw NotFoundException when delivery is not found', async () => {
+      const id = 99; // This is an invalid id
+      const dataForUpdateDelivery: CreateDeliveryDto = {
+        orderId: 1,
+        deliveryCompanyId: 1,
+        distance: 999,
+        weight: 999,
+        cost: 50,
+        VATRate: 2.2,
+        deliveryStatus: 'DELAYED',
+      };
+      jest
+        .spyOn(service['prismaService'].delivery, 'findUnique')
+        .mockResolvedValue(null); // Mocking the situation ⚠️ where no delivery is found
+
+      await expect(
+        service.updateDelivery(id, dataForUpdateDelivery),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw InternalServerErrorException when there is an internal error', async () => {
+      const id = 1;
+      const dataForUpdateDelivery: CreateDeliveryDto = {
+        orderId: 1,
+        deliveryCompanyId: 1,
+        distance: 999,
+        weight: 999,
+        cost: 50,
+        VATRate: 2.2,
+        deliveryStatus: 'DELAYED',
+      };
+      jest
+        .spyOn(service['prismaService'].delivery, 'update')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.updateDelivery(id, dataForUpdateDelivery);
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.toString()).toContain(
+          `Error updating delivery with id ${id}`,
+        );
+      }
+    });
+  });
 });

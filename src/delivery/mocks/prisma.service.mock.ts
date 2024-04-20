@@ -43,5 +43,17 @@ export class PrismaServiceMock {
         };
         return newDelivery; // Return the created delivery object
       }),
+    update: jest.fn().mockImplementation(({ where: { id }, data }: any) => {
+      const delivery = deliveryMock.find((delivery) => delivery.id === id);
+      if (!delivery) {
+        throw new NotFoundException(`Delivery with ID ${id} not found`);
+      }
+      const updatedDelivery = {
+        ...delivery,
+        ...data,
+        updatedAt: new Date(),
+      };
+      return updatedDelivery;
+    }),
   };
 }
