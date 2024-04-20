@@ -94,6 +94,27 @@ describe('DeliveryService', () => {
       const createdDelivery = await service.createDelivery(newDelivery);
       expect(createdDelivery).toEqual(createdDelivery);
     });
+
+    it('should throw InternalServerErrorException when there is an internal error', async () => {
+      const newDelivery: CreateDeliveryDto = {
+        orderId: 1,
+        deliveryCompanyId: 1,
+        distance: 998,
+        weight: 998,
+        cost: 50,
+        VATRate: 2.2,
+        deliveryStatus: 'DELAYED',
+      };
+      jest
+        .spyOn(service['prismaService'].delivery, 'create')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.createDelivery(newDelivery);
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.toString()).toContain('Error creating delivery');
+      }
+    });
   });
 
   describe('updateDelivery', () => {
