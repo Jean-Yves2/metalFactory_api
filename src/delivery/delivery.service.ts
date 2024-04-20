@@ -48,7 +48,11 @@ export class DeliveryService {
       const { orderId, deliveryCompanyId, ...rest } = createDeliveryDto;
       return await this.prismaService.delivery.create({
         data: {
-          ...rest,
+          distance: rest.distance,
+          weight: rest.weight,
+          cost: rest.cost,
+          VATRate: rest.VATRate,
+          deliveryStatus: rest.deliveryStatus,
           order: {
             connect: {
               id: orderId,
