@@ -7,7 +7,12 @@ export class DeliveryCompanyServiceMock {
     );
     return allDeliveryCompanies;
   });
-  getDeliveryCompanyById = jest.fn();
+  getDeliveryCompanyById = jest.fn().mockImplementation((id: number) => {
+    return deliveryCompanyMock.find(
+      (deliveryCompany) =>
+        deliveryCompany.id === id && deliveryCompany.deletedAt === null,
+    );
+  });
   createDeliveryCompany = jest.fn();
   updateDeliveryCompany = jest.fn();
 }

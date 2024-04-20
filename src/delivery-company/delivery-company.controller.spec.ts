@@ -38,4 +38,14 @@ describe('DeliveryCompanyController', () => {
       expect(result).toEqual(search);
     });
   });
+
+  describe('getDeliveryCompanyById', () => {
+    it('should return a delivery company by id', async () => {
+      const id = 1; // 1 is verified result
+      const getCompany = deliveryCompanyMock.find(
+        (company) => company.id === id && company.deletedAt === null,
+      );
+      expect(await controller.findOne(id)).toEqual(getCompany);
+    });
+  });
 });
