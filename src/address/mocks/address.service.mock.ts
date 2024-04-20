@@ -1,4 +1,3 @@
-import { Decimal } from '@prisma/client/runtime/library';
 import { addressMock } from './address.mock';
 
 export class AddressServiceMock {
@@ -30,12 +29,10 @@ export class AddressServiceMock {
       (address) => address.id === id && address.deletedAt === null,
     );
 
-    addressMock[index].deletedAt = new Date();
-    addressMock[index].distanceToWarehouse = new Decimal(
-      addressMock[index].distanceToWarehouse,
-    );
-
-    const deletedAddress = { ...addressMock[index] };
-    return deletedAddress;
+    addressMock[index] = {
+      ...addressMock[index],
+      deletedAt: new Date(),
+    };
+    return 'Address deleted successfully';
   });
 }

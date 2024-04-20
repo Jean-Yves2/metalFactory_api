@@ -81,17 +81,7 @@ describe('AddressController', () => {
     it('should delete an address', async () => {
       const id = 1;
       const result = await controller.remove(id);
-      expect(result).toEqual({
-        id: id,
-        deletedAt: expect.any(Date),
-        city: 'City 1',
-        country: 'Country 1',
-        createdAt: new Date('2024-04-18T09:05:38.780Z'),
-        distanceToWarehouse: expect.any(Object), //* ⚠️we need to check the type ⚠️ **/
-        postalCode: '12345',
-        street: 'Street 1',
-        updatedAt: new Date('2024-04-18T09:05:38.780Z'),
-      });
+      expect(result).toEqual('Address deleted successfully');
     });
   });
 });
