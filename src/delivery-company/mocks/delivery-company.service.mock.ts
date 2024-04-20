@@ -35,5 +35,36 @@ export class DeliveryCompanyServiceMock {
         return 'Delivery company created successfully';
       },
     );
-  updateDeliveryCompany = jest.fn();
+  updateDeliveryCompany = jest
+    .fn()
+    .mockImplementation(
+      (id: number, createDeliveryCompanyDto: CreateDeliveryCompanyDto) => {
+        const index = deliveryCompanyMock.findIndex(
+          (deliveryCompany) =>
+            deliveryCompany.id === id && deliveryCompany.deletedAt === null,
+        );
+        deliveryCompanyMock[index] = {
+          ...deliveryCompanyMock[index],
+          name: createDeliveryCompanyDto.name,
+          baseRate: new Decimal(createDeliveryCompanyDto.baseRate),
+          ratePerKm: new Decimal(createDeliveryCompanyDto.ratePerKm),
+          weightSurcharge: new Decimal(
+            createDeliveryCompanyDto.weightSurcharge,
+          ),
+          updatedAt: new Date(),
+        };
+        return 'Delivery company updated successfully';
+      },
+    );
+  softDelete = jest.fn().mockImplementation((id: number) => {
+    const index = deliveryCompanyMock.findIndex(
+      (deliveryCompany) =>
+        deliveryCompany.id === id && deliveryCompany.deletedAt === null,
+    );
+    deliveryCompanyMock[index] = {
+      ...deliveryCompanyMock[index],
+      deletedAt: new Date(),
+    };
+    return 'Delivery company deleted';
+  });
 }

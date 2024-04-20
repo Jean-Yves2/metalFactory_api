@@ -62,4 +62,26 @@ describe('DeliveryCompanyController', () => {
       );
     });
   });
+
+  describe('updateDeliveryCompany', () => {
+    it('should update a delivery company', async () => {
+      const id = 1; // 1 is verified result
+      const dataForUpdateCompany = {
+        name: 'Delivery Company 1',
+        baseRate: 99,
+        ratePerKm: 99,
+        weightSurcharge: 99,
+      };
+      expect(await controller.update(id, dataForUpdateCompany)).toEqual(
+        'Delivery company updated successfully',
+      );
+    });
+  });
+
+  describe('removeDeliveryCompany', () => {
+    it('should remove a delivery company', async () => {
+      const id = 1; // 1 is verified result
+      expect(await controller.remove(id)).toEqual('Delivery company deleted');
+    });
+  });
 });
