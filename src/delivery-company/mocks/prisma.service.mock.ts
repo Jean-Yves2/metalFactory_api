@@ -35,6 +35,17 @@ export class DeliveryCompanyPrismaMock {
           return 'Delivery company created successfully';
         },
       ),
-    update: jest.fn(),
+    update: jest.fn().mockImplementation(({ where: { id }, data }: any) => {
+      const index = deliveryCompanyMock.findIndex(
+        (deliveryCompany) =>
+          deliveryCompany.id === id && deliveryCompany.deletedAt === null,
+      );
+      deliveryCompanyMock[index] = {
+        ...deliveryCompanyMock[index],
+        ...data,
+        updatedAt: new Date(),
+      };
+      return 'Delivery company updated successfully';
+    }),
   };
 }

@@ -121,4 +121,59 @@ describe('DeliveryCompanyService', () => {
       }
     });
   });
+
+  describe('updateDeliveryCompany', () => {
+    it('should update a delivery company', async () => {
+      const id = 1;
+      const updateDeliveryCompanyDto = {
+        name: 'Company B',
+        baseRate: 2000,
+        ratePerKm: 200,
+        weightSurcharge: 100,
+      };
+      const updatedDeliveryCompany = await service.updateDeliveryCompany(
+        id,
+        updateDeliveryCompanyDto,
+      );
+      expect(updatedDeliveryCompany).toEqual(
+        'Delivery company updated successfully',
+      );
+    });
+
+    it('should throw an error when the delivery company is not found', async () => {
+      const id = 99;
+      const updateDeliveryCompanyDto = {
+        name: 'Company B',
+        baseRate: 2000,
+        ratePerKm: 200,
+        weightSurcharge: 100,
+      };
+      try {
+        await service.updateDeliveryCompany(id, updateDeliveryCompanyDto);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+
+    it('should throw an error when there is an internal error', async () => {
+      const id = 1;
+      const updateDeliveryCompanyDto = {
+        name: 'Company B',
+        baseRate: 2000,
+        ratePerKm: 200,
+        weightSurcharge: 100,
+      };
+      jest
+        .spyOn(service['prismaService'].deliveryCompany, 'update')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.updateDeliveryCompany(id, updateDeliveryCompanyDto);
+      } catch (error) {
+        if (error instanceof Error) {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toEqual('Internal Server Error');
+        }
+      }
+    });
+  });
 });
