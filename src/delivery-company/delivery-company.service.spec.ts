@@ -175,5 +175,39 @@ describe('DeliveryCompanyService', () => {
         }
       }
     });
+
+    describe('softDelete', () => {
+      it('should soft delete a delivery company', async () => {
+        const id = 1;
+        const softDeletedDeliveryCompany = await service.softDelete(id);
+        expect(softDeletedDeliveryCompany).toEqual(
+          'Delivery company updated successfully',
+        );
+      });
+
+      it('should throw an error when the delivery company is not found', async () => {
+        const id = 99;
+        try {
+          await service.softDelete(id);
+        } catch (error) {
+          expect(error).toBeInstanceOf(Error);
+        }
+      });
+
+      it('should throw an error when there is an internal error', async () => {
+        const id = 1;
+        jest
+          .spyOn(service['prismaService'].deliveryCompany, 'update')
+          .mockRejectedValue(new Error('Error deleting delivery company'));
+        try {
+          await service.softDelete(id);
+        } catch (error) {
+          if (error instanceof Error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toEqual('Error deleting delivery company');
+          }
+        }
+      });
+    });
   });
 });
