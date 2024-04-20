@@ -48,4 +48,40 @@ describe('DeliveryCompanyService', () => {
       }
     });
   });
+
+  describe('getDeliveryCompanyById', () => {
+    it('should get a delivery company by ID', async () => {
+      const id = 1;
+      const deliveryCompany = deliveryCompanyMock.find(
+        (deliveryCompany) =>
+          deliveryCompany.id === id && deliveryCompany.deletedAt === null,
+      );
+      const foundDeliveryCompany = await service.getDeliveryCompanyById(id);
+      expect(foundDeliveryCompany).toEqual(deliveryCompany);
+    });
+
+    it('should throw an error when the delivery company is not found', async () => {
+      const id = 99;
+      try {
+        await service.getDeliveryCompanyById(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+      }
+    });
+
+    it('should throw an error when there is an internal error', async () => {
+      const id = 1;
+      jest
+        .spyOn(service['prismaService'].deliveryCompany, 'findUnique')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.getDeliveryCompanyById(id);
+      } catch (error) {
+        if (error instanceof Error) {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toEqual('Error getting delivery company by ID');
+        }
+      }
+    });
+  });
 });

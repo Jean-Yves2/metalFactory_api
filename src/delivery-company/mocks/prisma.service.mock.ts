@@ -8,7 +8,12 @@ export class DeliveryCompanyPrismaMock {
       );
       return allDeliveryCompanies;
     }),
-    findUnique: jest.fn(),
+    findUnique: jest.fn().mockImplementation(({ where: { id } }: any) => {
+      return deliveryCompanyMock.find(
+        (deliveryCompany) =>
+          deliveryCompany.id === id && deliveryCompany.deletedAt === null,
+      );
+    }),
     create: jest.fn(),
     update: jest.fn(),
   };
