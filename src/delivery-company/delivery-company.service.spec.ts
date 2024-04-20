@@ -84,4 +84,41 @@ describe('DeliveryCompanyService', () => {
       }
     });
   });
+
+  describe('createDeliveryCompany', () => {
+    it('should create a delivery company', async () => {
+      const createDeliveryCompanyDto = {
+        name: 'Company A',
+        baseRate: 1000,
+        ratePerKm: 100,
+        weightSurcharge: 50,
+      };
+      const newDeliveryCompany = await service.createDeliveryCompany(
+        createDeliveryCompanyDto,
+      );
+      expect(newDeliveryCompany).toEqual(
+        'Delivery company created successfully',
+      );
+    });
+
+    it('should throw an error when there is an internal error', async () => {
+      const createDeliveryCompanyDto = {
+        name: 'Company A',
+        baseRate: 1000,
+        ratePerKm: 100,
+        weightSurcharge: 50,
+      };
+      jest
+        .spyOn(service['prismaService'].deliveryCompany, 'create')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.createDeliveryCompany(createDeliveryCompanyDto);
+      } catch (error) {
+        if (error instanceof Error) {
+          expect(error).toBeInstanceOf(Error);
+          expect(error.message).toEqual('Error creating delivery company');
+        }
+      }
+    });
+  });
 });
