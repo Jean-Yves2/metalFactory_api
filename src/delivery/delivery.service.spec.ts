@@ -45,6 +45,17 @@ describe('DeliveryService', () => {
         );
       }
     });
+    it('should throw InternalServerErrorException when there is an internal error', async () => {
+      jest
+        .spyOn(service['prismaService'].delivery, 'findMany')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.getAllDeliveries();
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+        expect(error.toString()).toContain('Error getting all deliveries');
+      }
+    });
   });
 
   describe('getDeliveryById', () => {
