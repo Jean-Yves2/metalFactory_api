@@ -1,3 +1,4 @@
+import { Decimal } from '@prisma/client/runtime/library';
 import { addressMock } from './address.mock';
 
 export class AddressServiceMock {
@@ -13,6 +14,28 @@ export class AddressServiceMock {
     );
     return address;
   });
-  createAddress = jest.fn();
-  updateAddress = jest.fn();
+  createAddress = jest.fn().mockImplementation((address) => {
+    addressMock.push(address);
+    return address;
+  });
+  updateAddress = jest.fn().mockImplementation((id: number, address) => {
+    const index = addressMock.findIndex(
+      (address) => address.id === id && address.deletedAt === null,
+    );
+    addressMock[index] = address;
+    return address;
+  });
+  softDelete = jest.fn().mockImplementation((id: number) => {
+    const index = addressMock.findIndex(
+      (address) => address.id === id && address.deletedAt === null,
+    );
+
+    addressMock[index].deletedAt = new Date();
+    addressMock[index].distanceToWarehouse = new Decimal(
+      addressMock[index].distanceToWarehouse,
+    );
+
+    const deletedAddress = { ...addressMock[index] };
+    return deletedAddress;
+  });
 }
