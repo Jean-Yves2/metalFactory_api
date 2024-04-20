@@ -36,4 +36,15 @@ describe('AddressController', () => {
       expect(result).toEqual(allAddresses);
     });
   });
+
+  describe('getAddressById', () => {
+    it('should return an address by id', async () => {
+      const id = 1;
+      const result = await controller.findOne(id);
+      const address = addressMock.find(
+        (address) => address.id === id && address.deletedAt === null,
+      );
+      expect(result).toEqual(address);
+    });
+  });
 });
