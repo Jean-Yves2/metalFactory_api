@@ -3,6 +3,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { deliveryMock } from './delivery.mock';
+import { CreateDeliveryDto } from '../dto/create-delivery.dto';
 
 export class PrismaServiceMock {
   delivery = {
@@ -24,5 +25,23 @@ export class PrismaServiceMock {
       }
       return delivery;
     }),
+    create: jest
+      .fn()
+      .mockImplementation((createDeliveryDto: CreateDeliveryDto) => {
+        const newDelivery = {
+          id: deliveryMock.length + 1,
+          orderId: createDeliveryDto.orderId,
+          deliveryCompanyId: createDeliveryDto.deliveryCompanyId,
+          distance: createDeliveryDto.distance,
+          weight: createDeliveryDto.weight,
+          cost: createDeliveryDto.cost,
+          VATRate: createDeliveryDto.VATRate,
+          deliveryStatus: createDeliveryDto.deliveryStatus,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        };
+        return newDelivery; // Return the created delivery object
+      }),
   };
 }

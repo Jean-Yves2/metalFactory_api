@@ -6,7 +6,6 @@ import { DeliveryServiceMock } from './mocks/delivery.service.mock';
 import { deliveryMock } from './mocks/delivery.mock';
 import { DeliveryStatus } from '@prisma/client';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
-import { Decimal } from '@prisma/client/runtime/library';
 
 describe('DeliveryController', () => {
   let controller: DeliveryController;
@@ -47,9 +46,9 @@ describe('DeliveryController', () => {
         orderId: 1,
         deliveryCompanyId: 1,
         distance: 201,
-        weight: new Decimal(77.77),
-        cost: new Decimal(50),
-        VATRate: new Decimal(92),
+        weight: 77.77,
+        cost: 50,
+        VATRate: 92,
         deliveryStatus: DeliveryStatus.DELIVERED,
       };
       expect(await controller.create(newDelivery)).toEqual(
@@ -64,9 +63,9 @@ describe('DeliveryController', () => {
         orderId: 1,
         deliveryCompanyId: 1,
         distance: 999, // Test the update of the distance
-        weight: new Decimal(77.77),
-        cost: new Decimal(50),
-        VATRate: new Decimal(92),
+        weight: 77.77,
+        cost: 50,
+        VATRate: 92,
         deliveryStatus: DeliveryStatus.DELIVERED,
       };
       expect(await controller.update(1, dataForUpdateDelivery)).toEqual(

@@ -1,6 +1,11 @@
-import { IsNotEmpty, IsInt, IsDecimal, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsInt,
+  IsNumber,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 import { DeliveryStatus } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export class CreateDeliveryDto {
   @IsNotEmpty()
@@ -16,18 +21,19 @@ export class CreateDeliveryDto {
   distance: number;
 
   @IsNotEmpty()
-  @IsDecimal()
-  weight: Decimal; // IsDecimal in the prisma schema (auto-converted to IsDecimal by the database)
+  @IsNumber()
+  weight: number; // IsDecimal in the prisma schema (auto-converted to IsDecimal by the database)
 
   @IsNotEmpty()
-  @IsDecimal()
-  cost: Decimal; // IsDecimal in the prisma schema (auto-converted to IsDecimal by the database)
+  @IsNumber()
+  cost: number; // IsDecimal in the prisma schema (auto-converted to IsDecimal by the database)
 
   @IsNotEmpty()
-  @IsDecimal()
-  VATRate: Decimal; // IsDecimal in the prisma schema (auto-converted to IsDecimal by the database)
+  @IsNumber()
+  VATRate: number; // IsDecimal in the prisma schema (auto-converted to IsDecimal by the database)
 
   @IsNotEmpty()
+  @IsOptional()
   @IsEnum(DeliveryStatus)
   deliveryStatus: DeliveryStatus;
 }

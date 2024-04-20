@@ -7,6 +7,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { CreateDeliveryDto } from './dto/create-delivery.dto';
 
 describe('DeliveryService', () => {
   let service: DeliveryService;
@@ -76,6 +77,22 @@ describe('DeliveryService', () => {
         expect(error).toBeInstanceOf(InternalServerErrorException);
         expect(error.toString()).toContain('Error getting delivery with id 1');
       }
+    });
+  });
+
+  describe('createDelivery', () => {
+    it('should create a delivery', async () => {
+      const newDelivery: CreateDeliveryDto = {
+        orderId: 1,
+        deliveryCompanyId: 1,
+        distance: 201,
+        weight: 200,
+        cost: 50,
+        VATRate: 2.2,
+        deliveryStatus: 'DELAYED',
+      };
+      const createdDelivery = await service.createDelivery(newDelivery);
+      expect(createdDelivery).toEqual(createdDelivery);
     });
   });
 });
