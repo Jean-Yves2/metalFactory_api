@@ -48,4 +48,18 @@ describe('DeliveryCompanyController', () => {
       expect(await controller.findOne(id)).toEqual(getCompany);
     });
   });
+
+  describe('createDeliveryCompany', () => {
+    it('should create a delivery company', async () => {
+      const newCompany = {
+        name: 'Delivery Company 4',
+        baseRate: 2,
+        ratePerKm: 8,
+        weightSurcharge: 9,
+      };
+      expect(await controller.create(newCompany)).toEqual(
+        'Delivery company created successfully',
+      );
+    });
+  });
 });
