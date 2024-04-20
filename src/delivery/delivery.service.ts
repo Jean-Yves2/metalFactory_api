@@ -6,7 +6,7 @@ import {
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryDto } from './dto/update-delivery.dto';
 import { PrismaService } from '../database/prisma/prisma.service';
-import { Delivery } from '@prisma/client';
+import { Delivery, DeliveryStatus } from '@prisma/client';
 
 @Injectable()
 export class DeliveryService {
@@ -48,7 +48,11 @@ export class DeliveryService {
       const { orderId, deliveryCompanyId, ...rest } = createDeliveryDto;
       return await this.prismaService.delivery.create({
         data: {
-          ...rest,
+          distance: rest.distance,
+          weight: rest.weight,
+          cost: rest.cost,
+          VATRate: rest.VATRate,
+          deliveryStatus: DeliveryStatus.DELAYED,
           order: {
             connect: {
               id: orderId,
