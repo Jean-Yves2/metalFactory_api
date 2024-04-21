@@ -5,7 +5,10 @@ import { CreateAddressDto } from '../dto/create-address.dto';
 export class PrismaServiceMock {
   address = {
     findMany: jest.fn().mockImplementation(() => {
-      return addressMock;
+      const allAddresses = addressMock.filter(
+        (address) => address.deletedAt === null,
+      );
+      return allAddresses;
     }),
 
     findUnique: jest.fn().mockImplementation(({ where: { id } }: any) => {
