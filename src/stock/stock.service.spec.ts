@@ -101,4 +101,19 @@ describe('StockService', () => {
       );
     });
   });
+
+  describe('softDelete', () => {
+    it('should delete a stock', async () => {
+      const stockId = 1;
+      expect(await service.softDelete(stockId)).toEqual(
+        'Stock deleted successfully',
+      );
+    });
+    it('should return null when stock is not found', async () => {
+      const stockId = 100;
+      await expect(service.softDelete(stockId)).rejects.toThrow(
+        new HttpException('Stock not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });
