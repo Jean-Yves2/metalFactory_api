@@ -65,4 +65,40 @@ describe('StockService', () => {
       );
     });
   });
+
+  describe('updateStock', () => {
+    it('should update a stock', async () => {
+      const stockId = 1;
+      const updatedStock = {
+        warehouseId: 1,
+        productId: 1,
+        quantity: 100,
+        minThreshold: 10,
+        lastUpdated: new Date('2024-04-18T09:05:38.780Z'),
+        createdAt: new Date('2024-04-18T09:05:38.780Z'),
+        updatedAt: new Date('2024-04-18T09:05:38.780Z'),
+        deletedAt: null,
+      };
+      expect(await service.updateStock(stockId, updatedStock)).toEqual(
+        'Stock updated successfully',
+      );
+    });
+
+    it('should return null when stock is not found', async () => {
+      const stockId = 100;
+      const updatedStock = {
+        warehouseId: 1,
+        productId: 1,
+        quantity: 100,
+        minThreshold: 10,
+        lastUpdated: new Date('2024-04-18T09:05:38.780Z'),
+        createdAt: new Date('2024-04-18T09:05:38.780Z'),
+        updatedAt: new Date('2024-04-18T09:05:38.780Z'),
+        deletedAt: null,
+      };
+      await expect(service.updateStock(stockId, updatedStock)).rejects.toThrow(
+        new HttpException('Stock not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });

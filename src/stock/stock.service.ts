@@ -40,7 +40,7 @@ export class StockService {
       where: { id },
     });
     if (!stock) {
-      throw new NotFoundException(`Stock with ID ${id} not found`);
+      throw new NotFoundException(`Stock not found`);
     }
     return this.prismaService.stock.update({
       where: { id },
