@@ -17,7 +17,7 @@ export class WarehouseService {
       where: { id },
     });
     if (!warehouse) {
-      throw new NotFoundException(`Warehouse with ID ${id} not found`);
+      throw new NotFoundException(`Warehouse not found`);
     }
     return warehouse;
   }

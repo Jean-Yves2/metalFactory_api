@@ -3,6 +3,8 @@ import { WarehouseService } from './warehouse.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { PrismaServiceMock } from './mocks/prisma.service.mock';
 import { warehouseMock } from './mocks/warehouse.mock';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 describe('WarehouseService', () => {
   let service: WarehouseService;
 
@@ -27,6 +29,23 @@ describe('WarehouseService', () => {
   describe('getAllWarehouse', () => {
     it('should return all warehouses', async () => {
       expect(await service.getAllWarehouses()).toEqual(warehouseMock);
+    });
+  });
+
+  describe('getWarehouseById', () => {
+    it('should return a warehouse by id', async () => {
+      const getWarehouse = warehouseMock.find(
+        (warehouse) => warehouse.id === 1,
+      );
+      expect(await service.getWarehouseById(1)).toEqual(getWarehouse);
+    });
+
+    it('should throw HttpException when warehouse is not found', async () => {
+      const nonExistingWarehouseId = 100;
+      const getUserPromise = service.getWarehouseById(nonExistingWarehouseId);
+      await expect(getUserPromise).rejects.toThrow(
+        new HttpException('Warehouse not found', HttpStatus.NOT_FOUND),
+      );
     });
   });
 });
