@@ -36,4 +36,16 @@ describe('WarehouseController', () => {
       expect(await controller.findOne(1)).toEqual(getWarehouse);
     });
   });
+
+  describe('createWarehouse', () => {
+    it('should create a warehouse', async () => {
+      const newWarehouse = {
+        name: 'Nom du fsfsdfghgoujhkhrnjkljlkisseur',
+        addressId: 15,
+      };
+      expect(await controller.create(newWarehouse)).toEqual(
+        'Warehouse created successfully',
+      );
+    });
+  });
 });
