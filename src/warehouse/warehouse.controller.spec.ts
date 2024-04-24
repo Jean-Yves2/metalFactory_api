@@ -42,6 +42,9 @@ describe('WarehouseController', () => {
       const newWarehouse = {
         name: 'Nom du fsfsdfghgoujhkhrnjkljlkisseur',
         addressId: 15,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        deletedAt: null,
       };
       expect(await controller.create(newWarehouse)).toEqual(
         'Warehouse created successfully',

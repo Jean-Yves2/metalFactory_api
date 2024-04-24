@@ -98,4 +98,20 @@ describe('WarehouseService', () => {
       );
     });
   });
+
+  describe('softDelete', () => {
+    it('should delete a warehouse', async () => {
+      const warehouseId = 3;
+      expect(await service.softDelete(warehouseId)).toEqual(
+        'Warehouse deleted successfully',
+      );
+    });
+
+    it('should return null when warehouse is not found', async () => {
+      const warehouseId = 100;
+      await expect(service.softDelete(warehouseId)).rejects.toThrow(
+        new HttpException('Warehouse not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });
