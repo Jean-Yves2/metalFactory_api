@@ -48,4 +48,20 @@ describe('WarehouseService', () => {
       );
     });
   });
+
+  describe('createWarehouse', () => {
+    it('should create a warehouse', async () => {
+      const createWarehouse = {
+        id: 1,
+        name: 'Pagac, Predovic and Sanford',
+        addressId: 73,
+        createdAt: new Date('2024-03-19T11:32:13.557Z'),
+        updatedAt: new Date('2024-03-19T11:32:13.557Z'),
+        deletedAt: null,
+      };
+      expect(await service.createWarehouse(createWarehouse)).toEqual(
+        'Warehouse created successfully',
+      );
+    });
+  });
 });
