@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { Stock } from '@prisma/client';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
-import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class StockService {
@@ -13,43 +12,43 @@ export class StockService {
     return this.prismaService.stock.findMany();
   }
 
-  async getStockById(id: number): Promise<Stock> {
+  async getStockById(id: number) {
     const stock = await this.prismaService.stock.findUnique({
       where: { id },
     });
     if (!stock) {
-      throw new NotFoundException(`Stock not found`);
+      throw new HttpException('Stock not found', HttpStatus.NOT_FOUND);
     }
     return stock;
   }
 
-  async createStock(createStockDto: CreateStockDto): Promise<Stock> {
-    return this.prismaService.stock.create({
+  async createStock(createStockDto: CreateStockDto) {
+    await this.prismaService.stock.create({
       data: {
         ...createStockDto,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     });
+    return 'Stock created successfully';
   }
 
-  async updateStock(
-    id: number,
-    updateStockDto: UpdateStockDto,
-  ): Promise<Stock> {
+  async updateStock(id: number, updateStockDto: UpdateStockDto) {
     const stock = await this.prismaService.stock.findUnique({
-      where: { id },
+      where: { id: id, deletedAt: null },
     });
     if (!stock) {
-      throw new NotFoundException(`Stock not found`);
+      throw new HttpException('Stock not found', HttpStatus.NOT_FOUND);
     }
-    return this.prismaService.stock.update({
-      where: { id },
+
+    await this.prismaService.stock.update({
+      where: { id: id },
       data: {
         ...updateStockDto,
         updatedAt: new Date(),
       },
     });
+    return 'Stock updated successfully';
   }
 
   async softDelete(id: number) {
