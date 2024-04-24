@@ -64,4 +64,38 @@ describe('WarehouseService', () => {
       );
     });
   });
+
+  describe('updateWarehouse', () => {
+    it('should update a warehouse', async () => {
+      const warehouseId = 3;
+      const updatedWarehouse = {
+        id: 1,
+        name: 'Pagac, Predovic and Sanford',
+        addressId: 73,
+        createdAt: new Date('2024-03-19T11:32:13.557Z'),
+        updatedAt: new Date('2024-03-19T11:32:13.557Z'),
+        deletedAt: null,
+      };
+      expect(
+        await service.updateWarehouse(warehouseId, updatedWarehouse),
+      ).toEqual('Warehouse updated successfully');
+    });
+
+    it('should return null when supplier is not found', async () => {
+      const warehouseId = 100;
+      const updatedWarehouse = {
+        id: 1,
+        name: 'Pagac, Predovic and Sanford',
+        addressId: 73,
+        createdAt: new Date('2024-03-19T11:32:13.557Z'),
+        updatedAt: new Date('2024-03-19T11:32:13.557Z'),
+        deletedAt: null,
+      };
+      await expect(
+        service.updateWarehouse(warehouseId, updatedWarehouse),
+      ).rejects.toThrow(
+        new HttpException('Warehouse not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });
