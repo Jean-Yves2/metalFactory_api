@@ -42,7 +42,7 @@ export class WarehouseServiceMock {
       },
     );
 
-  softeDeleteWarehouse = jest.fn().mockImplementation((id: number) => {
+  softDelete = jest.fn().mockImplementation((id: number) => {
     const warehouse = warehouseMock.find((warehouse) => warehouse.id === id);
     const deleteWarehouse = {
       ...warehouse,

@@ -65,4 +65,17 @@ describe('WarehouseController', () => {
       });
     });
   });
+
+  describe('deleteWarehouse', () => {
+    it('should delete a Warehouse', async () => {
+      expect(await controller.remove(3)).toEqual({
+        id: 3,
+        name: 'Quitzon, Medhurst and Mann',
+        addressId: 57,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        deletedAt: expect.any(Date),
+      }); // We don't return anything when we delete a supplier
+    });
+  });
 });
