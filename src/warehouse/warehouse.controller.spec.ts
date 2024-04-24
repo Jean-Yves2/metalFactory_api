@@ -48,4 +48,21 @@ describe('WarehouseController', () => {
       );
     });
   });
+
+  describe('updateWarehouse', () => {
+    it('should update a warehouse', async () => {
+      const dataForUpdateWarehouse = {
+        name: 'New Name of the Warehouse',
+        addressId: 57,
+      };
+      expect(await controller.update(3, dataForUpdateWarehouse)).toEqual({
+        id: 3,
+        name: 'New Name of the Warehouse',
+        addressId: 57,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+        deletedAt: null,
+      });
+    });
+  });
 });
