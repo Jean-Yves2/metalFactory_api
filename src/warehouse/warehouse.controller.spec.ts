@@ -27,4 +27,13 @@ describe('WarehouseController', () => {
       expect(await controller.findAll()).toEqual(warehouseMock);
     });
   });
+
+  describe('getWarehouserById', () => {
+    it('should return a warehouse by id', async () => {
+      const getWarehouse = warehouseMock.find(
+        (warehouse) => warehouse.id === 1,
+      );
+      expect(await controller.findOne(1)).toEqual(getWarehouse);
+    });
+  });
 });
