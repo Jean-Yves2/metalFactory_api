@@ -9,6 +9,7 @@ import {
 
 import { DiscountType } from '@prisma/client';
 import { Quote } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export class CreateDiscountDto {
   @IsNotEmpty()
@@ -17,7 +18,7 @@ export class CreateDiscountDto {
 
   @IsNotEmpty()
   @IsDecimal()
-  discountPercent: number;
+  discountPercent: Decimal;
 
   @IsNotEmpty()
   @IsDate()
@@ -33,7 +34,7 @@ export class CreateDiscountDto {
 
   @IsOptional()
   @IsDecimal()
-  minPurchaseAmount?: number;
+  minPurchaseAmount?: Decimal;
 
   @IsNotEmpty()
   discountType: DiscountType;
