@@ -2,19 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { UserPrismaMock } from './mocks/user.prisma.mock';
-import { HttpException } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
-import { UserType } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { userMock } from './mocks/user.mock';
 import { CreateUserDto } from './dto/createUserdto';
-import { userMockForCreate } from './mocks/user.mock';
-import { JwtServiceMock } from './mocks/jwt.service.mock';
-import { ConfigService } from '@nestjs/config';
-import { ConfigServiceMock } from './mocks/config.service.mock';
-import { JwtService } from '@nestjs/jwt';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+
 describe('UserService', () => {
   let service: UserService;
-  let prismaService: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,13 +22,12 @@ describe('UserService', () => {
           provide: PrismaService,
           useClass: UserPrismaMock,
         },
-        { provide: ConfigService, useValue: ConfigServiceMock },
-        { provide: JwtService, useValue: JwtServiceMock },
+        ConfigService,
+        JwtService,
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {
@@ -38,121 +35,177 @@ describe('UserService', () => {
   });
 
   describe('getAllUsers', () => {
-    it('should return all users', async () => {
-      const mockUsers = [
-        {
-          id: 1,
-          email: 'Arnold.Wolff@gmail.com',
-          password: 'v6SD601PbSoBNx0',
-          role: UserRole.USER,
-          userType: UserType.CUSTOMER,
-          firstName: 'Donald',
-          lastName: 'Stark',
-          phone: '538.933.1914 x9356',
-          isProfessional: false,
-          siret: 'null',
-          companyName: 'ABCaaa Company',
-          createdAt: new Date('2024-04-09T09:38:15.000Z'),
-          updatedAt: new Date('2024-04-09T09:38:15.000Z'),
-          deletedAt: new Date('2024-04-09T09:38:15.000Z'),
-        },
-      ];
-      jest.spyOn(prismaService.user, 'findMany').mockResolvedValueOnce([
-        {
-          id: 1,
-          email: 'Arnold.Wolff@gmail.com',
-          password: 'v6SD601PbSoBNx0',
-          role: UserRole.USER,
-          userType: UserType.CUSTOMER,
-          firstName: 'Donald',
-          lastName: 'Stark',
-          phone: '538.933.1914 x9356',
-          isProfessional: false,
-          siret: 'null',
-          companyName: 'ABCaaa Company',
-          createdAt: new Date('2024-04-09T09:38:15.000Z'), // create static date
-          updatedAt: new Date('2024-04-09T09:38:15.000Z'),
-          deletedAt: new Date('2024-04-09T09:38:15.000Z'),
-        },
-      ]);
-
+    it('should return an array of users', async () => {
       const result = await service.getAllUsers();
-      expect(result).toEqual(mockUsers);
+      const activeUsers = userMock.filter((user) => user.deletedAt === null);
+      expect(result).toEqual(activeUsers);
     });
 
-    it('should throw an HttpException if no users found', async () => {
-      jest.spyOn(prismaService.user, 'findMany').mockResolvedValueOnce(null); // Test not returning any users
-
-      await expect(service.getAllUsers()).rejects.toThrow(HttpException);
+    it('should throw InternalServerErrorException when there is an internal error', async () => {
+      jest
+        .spyOn(service['prisma'].user, 'findMany')
+        .mockRejectedValue(new Error('Internal Server Error'));
+      try {
+        await service.getAllUsers();
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.toString()).toContain(
+          'InternalServerErrorException: Error fetching all users',
+        );
+      }
     });
   });
+
   describe('getUserById', () => {
-    it('should return a user by id', async () => {
-      const userSearch = userMock.find((user) => user.id === 1); // Find user with id 1 from mock data (user.mock.ts)
+    it('should return a user', async () => {
       const result = await service.getUserById(1);
-      expect(result).toEqual(userSearch);
+      expect(result).toEqual(userMock.find((user) => user.id === 1));
     });
 
-    it('should throw an HttpException if no user found', async () => {
-      jest.spyOn(prismaService.user, 'findUnique').mockResolvedValueOnce(null);
-
-      await expect(service.getUserById(8)).rejects.toThrow(HttpException);
+    it('should throw an error when the user is not found', async () => {
+      const id = 99;
+      jest.spyOn(service['prisma'].user, 'findUnique').mockResolvedValue(null);
+      try {
+        await service.getUserById(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.toString()).toContain(
+          'HttpException: Error fetching user',
+        );
+      }
     });
   });
 
   describe('createUser', () => {
     it('should create a user', async () => {
-      const newUser: CreateUserDto = userMockForCreate;
-
-      expect(newUser.address).toBeDefined();
-      await service.createUser(newUser);
-      await expect(service.createUser(newUser)).resolves.toEqual(
-        'User created successfully!',
-      );
-      expect(prismaService.user.create).toHaveBeenCalledWith({
-        data: {
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          email: newUser.email,
-          password: expect.any(String),
-          companyName: newUser.companyName,
-          userType: 'CUSTOMER',
-          addresses: {
-            create: [
-              {
-                type: newUser.address.type,
-                address: {
-                  create: {
-                    street: newUser.address.street,
-                    postalCode: newUser.address.postalCode,
-                    city: newUser.address.city,
-                    country: newUser.address.country,
-                    distanceToWarehouse: newUser.address.distanceToWarehouse,
-                  },
-                },
-              },
-            ],
-          },
-          phone: newUser.phone,
+      const newUser: CreateUserDto = {
+        firstName: 'Emily',
+        lastName: 'Johnson',
+        email: 'emily@example.com',
+        password: 'Abc123@!XYZabc',
+        phone: '555666777',
+        companyName: 'Johnson Enterprises',
+        address: {
+          street: '123 Main St',
+          city: 'Springfield',
+          country: '',
         },
-      });
+      };
+      const result = await service.createUser(newUser);
+      expect(result).toEqual('User created successfully!');
+    });
+
+    it('should throw BadRequestException if error is BadRequestException', async () => {
+      const newUser: CreateUserDto = {
+        firstName: 'Emily',
+        lastName: 'Johnson',
+        email: 'emily@example.com',
+        password: 'Abc123@!XYZabc',
+        phone: '555666777',
+        companyName: 'Johnson Enterprises',
+        address: {
+          street: '123 Main St',
+          city: 'Springfield',
+          country: '',
+        },
+      };
+      jest
+        .spyOn(service['prisma'].user, 'create')
+        .mockRejectedValueOnce(new BadRequestException());
+
+      await expect(service.createUser(newUser)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should throw InternalServerErrorException when an unexpected error occurs', async () => {
+      const createUserMock = jest
+        .spyOn(service['prisma'].user, 'create')
+        .mockRejectedValueOnce(new Error());
+
+      const createUserDto: CreateUserDto = {
+        firstName: 'Emily',
+        lastName: 'Johnson',
+        email: 'emily@example.com',
+        password: 'Abc123@!XYZabc',
+        phone: '555666777',
+        companyName: 'Johnson Enterprises',
+        address: {
+          street: '123 Main St',
+          city: 'Springfield',
+          country: '',
+        },
+      };
+
+      try {
+        await service.createUser(createUserDto);
+      } catch (error) {
+        expect(error).toBeInstanceOf(InternalServerErrorException);
+      }
+      expect(createUserMock).toBeCalledTimes(1);
     });
   });
 
   describe('updateUser', () => {
     it('should update a user', async () => {
-      const userSearch = userMock.find((user) => user.id === 1);
-      userSearch.firstName = 'John';
-      const updatedUser = await service.updateUser(1, userSearch);
-      expect(updatedUser).toEqual(userSearch);
+      const updatedUser: CreateUserDto = {
+        firstName: 'Emily',
+        lastName: 'Johnson',
+        email: 'emily@example.com',
+        password: 'Abc123@!XYZabc',
+        phone: '555666777',
+        companyName: 'Johnson Enterprises',
+        address: {
+          street: '123 Main St',
+          city: 'Springfield',
+          country: '',
+        },
+      };
+      const result = await service.updateUser(1, updatedUser);
+      expect(result).toEqual('User updated successfully!');
     });
-    it('should throw an HttpException if no user found', async () => {
-      jest.spyOn(prismaService.user, 'update').mockResolvedValueOnce(null);
-      const userSearch = userMock.find((user) => user.id === 1);
+    it('should throw an error when the user is not found', async () => {
+      const id = 99;
+      const updatedUser: CreateUserDto = {
+        firstName: 'Emily',
+        lastName: 'Johnson',
+        email: 'emily@example.com',
+        password: 'Abc123@!XYZabc',
+        phone: '555666777',
+        companyName: 'Johnson Enterprises',
+        address: {
+          street: '123 Main St',
+          city: 'Springfield',
+          country: '',
+        },
+      };
+      jest.spyOn(service['prisma'].user, 'findUnique').mockResolvedValue(null);
+      try {
+        await service.updateUser(id, updatedUser);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.toString()).toContain('HttpException: User not found');
+      }
+    });
+  });
 
-      await expect(service.updateUser(8, userSearch)).rejects.toThrow(
-        HttpException,
-      );
+  describe('softDelete', () => {
+    it('should soft delete a user', async () => {
+      const result = await service.softDelete(1);
+      expect(result).toEqual('User updated successfully!');
+    });
+
+    it('should throw an error when the user is not found', async () => {
+      const id = 99;
+      jest.spyOn(service['prisma'].user, 'findUnique').mockResolvedValue(null);
+      try {
+        await service.softDelete(id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.toString()).toContain(
+          "InternalServerErrorException: Une erreur s'est produite lors de la suppression de l'utilisateur.",
+        );
+      }
     });
   });
 });

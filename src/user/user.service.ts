@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateUserDto } from './dto/createUserdto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,151 +18,185 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllUsers() {
-    const users = await this.prisma.user.findMany({
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        role: true,
-      },
-    });
+    try {
+      const users = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+        },
+      });
 
-    if (!users) {
-      throw new HttpException('Users not found', HttpStatus.NOT_FOUND);
+      return users;
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching all users');
     }
-
-    return users;
   }
 
   async getUserById(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: id,
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        role: true,
-      },
-    });
-
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: id,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+        },
+      });
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      return user;
+    } catch (error) {
+      throw new HttpException(
+        'Error fetching user',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    return user;
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const { firstName, lastName, email, password, companyName, phone } =
-      createUserDto;
-
-    const passwordDto = new PasswordDto();
-    passwordDto.password = password;
-
     try {
+      const { firstName, lastName, email, password, companyName, phone } =
+        createUserDto;
+
+      const passwordDto = new PasswordDto();
+      passwordDto.password = password;
+
       await validateOrReject(passwordDto);
-    } catch (errors) {
-      const errorMessage = Object.values(errors[0].constraints).join(', ');
-      throw new BadRequestException('Mot de passe invalide: ' + errorMessage);
-    }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-    const createAddressDto = createUserDto.address;
+      const createAddressDto = createUserDto.address;
 
-    await this.prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-        companyName,
-        userType: 'CUSTOMER', // default to customer
-        addresses: {
-          create: [
-            {
-              type: createAddressDto.type,
-              address: {
-                create: {
-                  street: createAddressDto.street,
-                  postalCode: createAddressDto.postalCode,
-                  city: createAddressDto.city,
-                  country: createAddressDto.country,
-                  distanceToWarehouse: createAddressDto.distanceToWarehouse,
+      await this.prisma.user.create({
+        data: {
+          firstName,
+          lastName,
+          email,
+          password: hashedPassword,
+          companyName,
+          userType: 'CUSTOMER', // default to customer
+          addresses: {
+            create: [
+              {
+                type: createAddressDto.type,
+                address: {
+                  create: {
+                    street: createAddressDto.street,
+                    postalCode: createAddressDto.postalCode,
+                    city: createAddressDto.city,
+                    country: createAddressDto.country,
+                    distanceToWarehouse: createAddressDto.distanceToWarehouse,
+                  },
                 },
               },
-            },
-          ],
+            ],
+          },
+          phone,
         },
-        phone,
-      },
-    });
+      });
 
-    return 'User created successfully!';
+      return 'User created successfully!';
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      } else {
+        throw new InternalServerErrorException(
+          "Une erreur s'est produite lors de la création de l'utilisateur.",
+        );
+      }
+    }
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { id: id, deletedAt: null },
-    });
+    try {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { id: id, deletedAt: null },
+      });
 
-    if (!existingUser) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+      if (!existingUser) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
 
-    const dataToUpdate = {} as UpdateUserDto;
-    for (const key in updateUserDto) {
-      if (
-        updateUserDto.hasOwnProperty(key) &&
-        updateUserDto[key] !== existingUser[key]
-      ) {
-        dataToUpdate[key] = updateUserDto[key];
+      const dataToUpdate = {} as UpdateUserDto;
+      for (const key in updateUserDto) {
+        if (
+          updateUserDto.hasOwnProperty(key) &&
+          updateUserDto[key] !== existingUser[key]
+        ) {
+          dataToUpdate[key] = updateUserDto[key];
+        }
+      }
+
+      if (dataToUpdate.password) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(dataToUpdate.password, salt);
+        dataToUpdate.password = hashedPassword;
+      }
+
+      return await this.prisma.user.update({
+        where: { id },
+        data: {
+          ...dataToUpdate,
+          updatedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException(
+          "Une erreur s'est produite lors de la création de l'utilisateur.",
+        );
+      } else {
+        throw error;
       }
     }
-    if (dataToUpdate.password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(dataToUpdate.password, salt);
-      dataToUpdate.password = hashedPassword;
-    }
-    return await this.prisma.user.update({
-      where: { id },
-      data: {
-        ...dataToUpdate,
-        updatedAt: new Date(),
-      },
-    });
   }
 
   async softDelete(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: id },
-    });
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: id },
+      });
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      return await this.prisma.user.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        "Une erreur s'est produite lors de la suppression de l'utilisateur.",
+      );
     }
-    return await this.prisma.user.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
-    });
   }
 
   async findUserByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: email },
-    });
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email: email },
+      });
 
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        "Une erreur s'est produite lors de la recherche de l'utilisateur.",
+      );
     }
-
-    return user;
   }
 }

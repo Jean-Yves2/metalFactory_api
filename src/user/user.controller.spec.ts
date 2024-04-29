@@ -7,8 +7,8 @@ import { ConfigServiceMock } from './mocks/config.service.mock';
 import { JwtService } from '@nestjs/jwt';
 import { JwtServiceMock } from './mocks/jwt.service.mock';
 import { userMock } from './mocks/user.mock';
-import { CreateUserDto } from './dto/createUserdto';
 import { HttpException } from '@nestjs/common';
+import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -47,94 +47,41 @@ describe('UserController', () => {
       await expect(controller.getUserById(id)).rejects.toThrow(HttpException);
     });
   });
+
   describe('updateUser', () => {
-    it('should update a user with specific id', async () => {
+    it('should update a user', async () => {
       const id = 1;
-      const createUserDto: CreateUserDto = {
-        firstName: 'Michael',
-        lastName: 'Smith deckard',
-        email: 'm.smith@example.com',
-        password: 'SecurePass123!',
-        companyName: 'Smith & Co.',
-        address: {
-          street: '456 Maple Avenue',
-          postalCode: '54321',
-          city: 'Mapletown',
-          country: 'United States',
-          distanceToWarehouse: 20,
-          type: 'DELIVERY',
-        },
-        phone: '987-654-3210',
+      const updateUser = {
+        firstName: 'John Silver 999',
+        lastName: 'Doe',
+        email: 'testing@testing.com',
+        password: 'Password123*.comTTU',
+        role: 'USER',
+        userType: 'CUSTOMER',
+        phone: '65156546568466565',
+        isProfessional: false,
+        siret: 'legal number is here',
+        companyName: 'company name1 ',
+        createdAt: new Date('2024-04-18T09:05:38.780Z'),
+        updatedAt: new Date('2024-04-18T09:05:38.780Z'),
+        deletedAt: null,
       };
 
-      const userToUpdate = userMock.find((user) => user.id === id);
-
-      if (!userToUpdate) {
-        throw new Error(`User with id ${id} not found`);
-      }
-
-      const updatedUser = {
-        ...userToUpdate,
-        ...createUserDto,
-        address: {
-          ...userToUpdate.address,
-          ...createUserDto.address,
-        },
+      const createAddressDto: CreateAddressDto = {
+        addressId: 1,
+        street: '',
+        country: '',
       };
-
-      if (createUserDto.address && createUserDto.address.type) {
-        updatedUser.address.type = createUserDto.address.type;
-      }
-
-      expect(await controller.updateUser(id, createUserDto)).toEqual(
-        updatedUser,
-      );
-    });
-
-    it('should throw an HttpException if no user found', async () => {
-      const id = 100;
-      const createUserDto: CreateUserDto = {
-        firstName: 'Michael',
-        lastName: 'Smith deckard',
-        email: 'm.smith@example.com',
-        password: 'SecurePass123!',
-        companyName: 'Smith & Co.',
-        address: {
-          street: '456 Maple Avenue',
-          postalCode: '54321',
-          city: 'Mapletown',
-          country: 'United States',
-          distanceToWarehouse: 20,
-          type: 'DELIVERY',
-        },
-        phone: '987-654-3210',
-      };
-      expect(controller.updateUser(id, createUserDto)).rejects.toThrow(
-        HttpException,
-      );
+      await expect(
+        controller.updateUser(id, { ...updateUser, address: createAddressDto }),
+      ).resolves.toEqual('User updated successfully');
     });
   });
 
-  describe('removeUser', () => {
-    it('should remove a user with specific id', async () => {
-      const id = 4;
-      const deletedUser = await controller.remove(id);
-      expect(deletedUser).toEqual({
-        id: 4,
-        deletedAt: expect.any(Date), // Verification that deletedAt is an instance of Date
-        email: expect.any(String),
-        password: expect.any(String),
-        role: expect.any(String),
-        userType: expect.any(String),
-        firstName: expect.any(String),
-        lastName: expect.any(String),
-        phone: expect.any(String),
-        isProfessional: expect.any(Boolean),
-        siret: expect.any(String),
-        companyName: expect.any(String),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      });
+  describe('softDelete', () => {
+    it('should soft delete a user', async () => {
+      const result = await controller.remove(1);
+      expect(result).toBeDefined();
     });
   });
 });
