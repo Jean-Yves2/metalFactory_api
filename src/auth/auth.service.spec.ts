@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/createUserdto';
-import { userMock } from 'src/user/mocks/user.mock';
+import { userMock } from '../user/mocks/user.mock';
 import { User, UserRole, UserType } from '@prisma/client';
 
 describe('AuthService', () => {
@@ -19,12 +19,12 @@ describe('AuthService', () => {
       createUser: jest.fn().mockImplementation((createUserDto) => {
         const newUser: User = {
           id: userMock.length + 1,
-          email: createUserDto.data.email,
-          password: createUserDto.data.password,
+          email: createUserDto.email,
+          password: createUserDto.password,
           role: UserRole.USER,
           userType: UserType.CUSTOMER,
-          firstName: createUserDto.data.firstName,
-          lastName: createUserDto.data.lastName,
+          firstName: createUserDto.firstName,
+          lastName: createUserDto.lastName,
           phone: '',
           isProfessional: false,
           siret: '',
