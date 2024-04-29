@@ -1,31 +1,36 @@
-import { IsNumber, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Decimal } from '@prisma/client/runtime/library';
+import { IsDecimal, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name?: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  basePrice: number;
+  @IsDecimal()
+  basePrice: Decimal;
 
   @IsNotEmpty()
-  @IsNumber()
-  unitPriceExclTax: number;
+  @IsDecimal()
+  unitPriceExclTax: Decimal;
 
   @IsNotEmpty()
-  @IsNumber()
-  VATRate: number;
+  @IsDecimal()
+  VATRate: Decimal;
 
   @IsNotEmpty()
-  @IsNumber()
-  marginPercent: number;
+  @IsDecimal()
+  marginPercent: Decimal;
+
+  @IsNotEmpty()
+  @IsDecimal()
+  sellingPrice: Decimal;
 
   @IsOptional()
-  @IsNumber()
-  linearWeight?: number;
+  @IsDecimal()
+  linearWeight?: Decimal;
 }

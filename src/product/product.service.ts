@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
+import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from '@prisma/client';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -12,55 +12,76 @@ export class ProductService {
     return this.prismaService.product.findMany();
   }
 
-  async getProductById(id: number): Promise<Product> {
+  async getProductById(id: number) {
     const product = await this.prismaService.product.findUnique({
-      where: { id },
+      where: { id: id, deletedAt: null },
     });
+
     if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
+
     return product;
   }
 
-  async createProduct(createProductDto: CreateProductDto): Promise<Product> {
-    return this.prismaService.product.create({
+  async createProduct(createProductDto: CreateProductDto) {
+    await this.prismaService.product.create({
       data: {
-        ...createProductDto,
-        createdAt: new Date(),
+        name: createProductDto.name,
+        description: createProductDto.description,
+        basePrice: createProductDto.basePrice,
+        unitPriceExclTax: createProductDto.unitPriceExclTax,
+        VATRate: createProductDto.VATRate,
+        marginPercent: createProductDto.marginPercent,
+        linearWeight: createProductDto.linearWeight,
+        sellingPrice: createProductDto.sellingPrice,
         updatedAt: new Date(),
       },
     });
+    return 'Product created successfully';
   }
 
-  async updateProduct(
-    id: number,
-    updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
+  async updateProduct(id: number, updateProductDto: UpdateProductDto) {
     const product = await this.prismaService.product.findUnique({
-      where: { id },
+      where: { id: id, deletedAt: null },
     });
+
     if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
-    return this.prismaService.product.update({
-      where: { id },
+
+    await this.prismaService.product.update({
+      where: { id: id },
       data: {
-        ...updateProductDto,
+        name: updateProductDto.name,
+        description: updateProductDto.description,
+        basePrice: updateProductDto.basePrice,
+        unitPriceExclTax: updateProductDto.unitPriceExclTax,
+        VATRate: updateProductDto.VATRate,
+        marginPercent: updateProductDto.marginPercent,
+        linearWeight: updateProductDto.linearWeight,
+        sellingPrice: updateProductDto.sellingPrice,
         updatedAt: new Date(),
       },
     });
+    return 'Product updated successfully';
   }
 
-  async softDelete(id: number): Promise<Product> {
+  async softDelete(id: number) {
     const product = await this.prismaService.product.findUnique({
-      where: { id, deletedAt: null },
+      where: { id: id, deletedAt: null },
     });
+
     if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
-    return this.prismaService.product.update({
-      where: { id },
-      data: { deletedAt: new Date() },
+
+    await this.prismaService.product.update({
+      where: { id: id },
+      data: {
+        deletedAt: new Date(),
+      },
     });
+    return 'Product deleted successfully';
   }
 }
