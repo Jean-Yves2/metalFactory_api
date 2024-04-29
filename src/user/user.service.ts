@@ -18,21 +18,21 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllUsers() {
-    const users = await this.prisma.user.findMany({
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        role: true,
-      },
-    });
+    try {
+      const users = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          role: true,
+        },
+      });
 
-    if (!users) {
-      throw new HttpException('Users not found', HttpStatus.NOT_FOUND);
+      return users;
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching all users');
     }
-
-    return users;
   }
 
   async getUserById(id: number) {
@@ -151,9 +151,13 @@ export class UserService {
         },
       });
     } catch (error) {
-      throw new InternalServerErrorException(
-        "Une erreur s'est produite lors de la mise à jour de l'utilisateur.",
-      );
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException(
+          "Une erreur s'est produite lors de la création de l'utilisateur.",
+        );
+      } else {
+        throw error;
+      }
     }
   }
 

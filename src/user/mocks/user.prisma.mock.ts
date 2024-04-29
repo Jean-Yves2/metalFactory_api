@@ -1,73 +1,46 @@
-import { CreateAddressDto } from '../../address/dto/create-address.dto';
-import { userMock, userMockForCreate } from './user.mock';
-import { CreateUserDto } from '../dto/createUserdto';
-import { HttpException, HttpStatus } from '@nestjs/common';
-
+import { User, UserRole, UserType } from '@prisma/client';
+import { userMock } from './user.mock';
+import { NotFoundException } from '@nestjs/common';
 export class UserPrismaMock {
   user = {
     findMany: jest.fn().mockImplementation(() => {
-      return userMock.map((user) => {
-        return {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-        };
-      });
+      const allUsers = userMock.filter((user) => user.deletedAt === null);
+      return allUsers;
     }),
-    findUnique: jest.fn().mockImplementation((params) => {
-      const foundUser = userMock.find((user) => user.id === params.where.id);
-      if (!foundUser) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    findUnique: jest.fn().mockImplementation(({ where: { id } }) => {
+      const user = userMock.find(
+        (user) => user.id === id && user.deletedAt === null,
+      );
+      if (user === undefined) {
+        throw new NotFoundException('Utilisateur introuvable.');
       }
-      return foundUser;
+      return user;
     }),
-    create: jest.fn().mockImplementation(() => {
-      const data: CreateUserDto = userMockForCreate;
-
-      const address: CreateAddressDto = {
-        street: '123 Maihgfggdn St',
-        postalCode: '1233166654415',
-        city: 'Exampdhgjgfgfle City',
-        country: 'Examplfggjde Country',
-        distanceToWarehouse: 10,
-        type: 'DELIVERY',
-      };
-
-      const newUser = {
+    create: jest.fn().mockImplementation((createUserDto) => {
+      const newUser: User = {
         id: userMock.length + 1,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        companyName: data.companyName,
-        phone: data.phone,
-        address: {
-          street: address.street,
-          postalCode: address.postalCode,
-          city: address.city,
-          country: address.country,
-          distanceToWarehouse: address.distanceToWarehouse,
-          type: address.type,
-        },
+        email: createUserDto.data.email,
+        password: createUserDto.data.password, //createUserDto.data.password,
+        role: UserRole.USER,
+        userType: UserType.CUSTOMER,
+        firstName: createUserDto.data.firstName,
+        lastName: createUserDto.data.lastName,
+        phone: '',
+        isProfessional: false,
+        siret: '',
+        companyName: '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
       };
 
-      userMock.push({
-        ...newUser,
-        address: {
-          ...newUser.address,
-          type: 'DELIVERY',
-        },
-      });
-      return 'User created successfully!';
+      userMock.push(newUser);
+      return newUser;
     }),
-
-    update: jest.fn().mockImplementation((params) => {
-      const existingUser = userMock.find((user) => user.id === params.where.id);
-      if (!existingUser) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-      return existingUser;
+    update: jest.fn().mockImplementation((id, updateUserDto) => {
+      const updatedUser = { ...id, ...updateUserDto };
+      userMock[userMock.indexOf(id)] = updatedUser;
+      return 'User updated successfully!';
     }),
   };
 }
