@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SupplierOrderService } from './supplier-order.service';
 import { SupplierOrderController } from './supplier-order.controller';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [DatabaseModule],

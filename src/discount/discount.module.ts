@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DiscountService } from './discount.service';
 import { DiscountController } from './discount.controller';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [DatabaseModule],
