@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { FakerController } from './faker.controller';
 import { FakerService } from './faker.service';
-import { PrismaService } from 'src/database/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
+import { PrismaService } from '../../database/prisma/prisma.service';
+import { UserService } from '../../user/user.service';
 
 @Module({
   controllers: [FakerController],
