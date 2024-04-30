@@ -1,50 +1,48 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
-  Delete,
-  Body,
-  Param,
-  HttpStatus,
-  HttpCode,
-  ParseIntPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get()
-  findAll() {
+  async getAllOrders() {
     return this.orderService.getAllOrders();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async getOrderById(@Param('id', ParseIntPipe) id: number) {
     return this.orderService.getOrderById(id);
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() createOrderDto: CreateOrderDto) {
+  @UsePipes(ValidationPipe)
+  async createOrder(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.createOrder(createOrderDto);
   }
 
   @Put(':id')
-  update(
+  async updateOrder(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateOrderDto: UpdateOrderDto,
+    @Body() createOrderDto: CreateOrderDto,
   ) {
-    return this.orderService.updateOrder(id, updateOrderDto);
+    return this.orderService.updateOrder(id, createOrderDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.orderService.softDelete(id);
+  async deleteOrder(@Param('id', ParseIntPipe) id: number) {
+    return this.orderService.deleteOrder(id);
   }
 }

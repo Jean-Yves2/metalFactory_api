@@ -1,5 +1,6 @@
 import { IsInt, IsDate, IsDecimal, IsNotEmpty } from 'class-validator';
 import { OrderStatus } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export class CreateOrderDto {
   @IsInt()
@@ -12,10 +13,10 @@ export class CreateOrderDto {
   status: OrderStatus;
 
   @IsDecimal()
-  totalExclTax: number;
+  totalExclTax: Decimal;
 
   @IsDecimal()
-  totalInclTax: number;
+  totalInclTax: Decimal;
 
   @IsInt()
   deliveryAddressId: number;
