@@ -6,8 +6,6 @@ import { of } from 'rxjs';
 
 describe('OpenRouteService', () => {
   let service: OpenRouteService;
-  let httpService: HttpService;
-  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,8 +31,6 @@ describe('OpenRouteService', () => {
     }).compile();
 
     service = module.get<OpenRouteService>(OpenRouteService);
-    httpService = module.get<HttpService>(HttpService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   it('should be defined', () => {
