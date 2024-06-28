@@ -6,7 +6,6 @@ import { UpdateWebAnalyticsDto } from './dto/update-web-analytics.dto';
 
 describe('WebAnalyticsController', () => {
   let controller: WebAnalyticsController;
-  let service: WebAnalyticsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,7 +25,6 @@ describe('WebAnalyticsController', () => {
     }).compile();
 
     controller = module.get<WebAnalyticsController>(WebAnalyticsController);
-    service = module.get<WebAnalyticsService>(WebAnalyticsService);
   });
 
   it('should be defined', () => {
