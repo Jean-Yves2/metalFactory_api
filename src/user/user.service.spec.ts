@@ -92,7 +92,7 @@ describe('UserService', () => {
         },
       };
       const result = await service.createUser(newUser);
-      expect(result).toEqual('User created successfully!');
+      expect(result.message).toEqual('User created successfully!');
     });
 
     it('should throw BadRequestException if error is BadRequestException', async () => {

@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateUserDto } from './dto/createUserdto';
@@ -12,10 +13,12 @@ import * as bcrypt from 'bcrypt';
 import { PasswordDto } from './dto/password.dto';
 import { validateOrReject } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(UserService.name);
 
   async getAllUsers() {
     try {
@@ -105,8 +108,22 @@ export class UserService {
         },
       });
 
-      return 'User created successfully!';
+      return {
+        message: 'User created successfully!',
+      };
     } catch (error) {
+      console.log('Erreur du serveur : ', error);
+
+      this.logger.error('Error creating user:', error);
+
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new BadRequestException(
+          `Email "${createUserDto.email}" is already in use.`,
+        );
+      }
       if (error instanceof BadRequestException) {
         throw error;
       } else {
