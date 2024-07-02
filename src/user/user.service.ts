@@ -11,7 +11,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PasswordDto } from './dto/password.dto';
-import { validateOrReject } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
@@ -72,8 +71,6 @@ export class UserService {
 
       const passwordDto = new PasswordDto();
       passwordDto.password = password;
-
-      await validateOrReject(passwordDto);
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);

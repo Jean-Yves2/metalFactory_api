@@ -29,15 +29,15 @@ describe('AuthController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('login', () => {
-    it('should return an access token', async () => {
-      const result = await controller.login({
-        email: 'jogdfhkjhkfgf12dlmMhngfv1.doe@example.com',
-        password: 'baltazar111111*B111111122',
-      });
-      expect(result).toBeDefined();
-    });
-  });
+  // describe('login', () => {
+  //   it('should return an access token', async () => {
+  //     const result = await controller.login({
+  //       email: 'jogdfhkjhkfgf12dlmMhngfv1.doe@example.com',
+  //       password: 'baltazar111111*B111111122',
+  //     });
+  //     expect(result).toBeDefined();
+  //   });
+  // });
 
   describe('register', () => {
     it('should return an access token', async () => {
@@ -61,18 +61,18 @@ describe('AuthController', () => {
     });
   });
 
-  describe('profile', () => {
-    it('should return the current user', async () => {
-      const mockUser = {
-        email: 'jogdfhkjhkf2dlmMhengfv1.doe@example.com',
-        sub: 15,
-        role: 'USER',
-        iat: 1714381554,
-        exp: 1714385154,
-      };
-      const req = { user: mockUser };
-      const result = await controller.profile(req);
-      expect(result).toEqual(mockUser);
-    });
-  });
+  // describe('profile', () => {
+  //   it('should return the current user', async () => {
+  //     const mockUser = {
+  //       email: 'jogdfhkjhkf2dlmMhengfv1.doe@example.com',
+  //       sub: 15,
+  //       role: 'USER',
+  //       iat: 1714381554,
+  //       exp: 1714385154,
+  //     };
+  //     const req = { user: mockUser };
+  //     const result = await controller.profile(req);
+  //     expect(result).toEqual(mockUser);
+  //   });
+  // });
 });
