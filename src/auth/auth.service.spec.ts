@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../database/prisma/prisma.service';
-import { UnauthorizedException } from '@nestjs/common';
+//import { UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/createUserdto';
 import { userMock } from '../user/mocks/user.mock';
 import { User, UserRole, UserType } from '@prisma/client';
