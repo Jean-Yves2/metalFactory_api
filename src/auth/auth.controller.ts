@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Post,
-  Get,
-  UseGuards,
   UsePipes,
   ValidationPipe,
   Res,
@@ -42,10 +40,4 @@ export class AuthController {
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
-
-  // @UseGuards(AuthGuard)
-  // @Get('profile')
-  // async profile(@Request() req) {
-  //   return req.user;
-  // }
 }
