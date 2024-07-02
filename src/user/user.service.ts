@@ -73,8 +73,6 @@ export class UserService {
       const passwordDto = new PasswordDto();
       passwordDto.password = password;
 
-      await validateOrReject(passwordDto);
-
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
