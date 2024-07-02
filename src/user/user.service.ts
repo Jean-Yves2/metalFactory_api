@@ -11,7 +11,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PasswordDto } from './dto/password.dto';
-import { validateOrReject } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
