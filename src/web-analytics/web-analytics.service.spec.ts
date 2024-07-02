@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WebAnalyticsService } from './web-analytics.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { CreateWebAnalyticsDto } from './dto/create-web-analytics.dto';
+//import { CreateWebAnalyticsDto } from './dto/create-web-analytics.dto';
 
 describe('WebAnalyticsService', () => {
   let service: WebAnalyticsService;
