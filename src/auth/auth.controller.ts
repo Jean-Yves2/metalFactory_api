@@ -6,20 +6,35 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
-  Request,
+  Res,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/createUserdto';
-import { AuthGuard } from '../guards/auth.guard';
+import { Request, Response } from 'express';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() { email, password }: LoginDto) {
-    return this.authService.login(email, password);
+  async login(
+    @Body() { email, password }: LoginDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const user = this.authService.validateUser(email, password);
+
+    const token = this.authService.createToken(await user);
+
+    res.setHeader(
+      'Set-Cookie',
+      this.authService.getCookieWithJwtToken(await token),
+    );
+
+    return res.json({ message: 'Connexion réussie' });
   }
 
   @Post('register')
@@ -28,9 +43,9 @@ export class AuthController {
     return this.authService.register(createUserDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  async profile(@Request() req) {
-    return req.user;
-  }
+  // @UseGuards(AuthGuard)
+  // @Get('profile')
+  // async profile(@Request() req) {
+  //   return req.user;
+  // }
 }
