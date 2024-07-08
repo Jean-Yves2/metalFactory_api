@@ -5,12 +5,11 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/createUserdto';
-import { Request, Response } from 'express';
+import { Response as ExpressResponse } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -19,24 +18,46 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() { email, password }: LoginDto,
-    @Req() req: Request,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: ExpressResponse,
   ) {
-    const user = this.authService.validateUser(email, password);
+    const tokens = await this.authService.login(email, password);
 
-    const token = this.authService.createToken(await user);
+    res.setHeader('Set-Cookie', [
+      this.authService.getCookieWithJwtToken(tokens.access_token),
+      this.authService.getCookieWithJwtRefreshToken(tokens.refresh_token),
+    ]);
 
-    res.setHeader(
-      'Set-Cookie',
-      this.authService.getCookieWithJwtToken(await token),
-    );
-
-    return res.json({ message: 'Connexion réussie' });
+    return { access_token: tokens.access_token };
   }
 
   @Post('register')
   @UsePipes(ValidationPipe)
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
+  }
+
+  @Post('refresh-token')
+  async refreshToken(
+    @Body('refresh_token') refreshToken: string,
+    @Res({ passthrough: true }) res: ExpressResponse,
+  ) {
+    const newTokens = await this.authService.refreshTokens(refreshToken);
+
+    res.setHeader(
+      'Set-Cookie',
+      this.authService.getCookieWithJwtToken(newTokens.access_token),
+    );
+
+    return { access_token: newTokens.access_token };
+  }
+
+  @Post('logout')
+  logout(@Res() res: ExpressResponse) {
+    res.setHeader('Set-Cookie', [
+      `access_token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=None`,
+      `refresh_token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=None`,
+    ]);
+
+    return res.json({ message: 'Logout successful' });
   }
 }
