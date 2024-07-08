@@ -5,12 +5,10 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/createUserdto';
-import { Response } from 'express';
 import { Response as ExpressResponse } from 'express';
 
 @Controller('auth')
@@ -20,7 +18,7 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() { email, password }: LoginDto,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: ExpressResponse,
   ) {
     const tokens = await this.authService.login(email, password);
 
@@ -41,7 +39,7 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(
     @Body('refresh_token') refreshToken: string,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: ExpressResponse,
   ) {
     const newTokens = await this.authService.refreshTokens(refreshToken);
 
@@ -56,8 +54,8 @@ export class AuthController {
   @Post('logout')
   logout(@Res() res: ExpressResponse) {
     res.setHeader('Set-Cookie', [
-      `access_token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-      `refresh_token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+      `access_token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=None`,
+      `refresh_token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure; SameSite=None`,
     ]);
 
     return res.json({ message: 'Logout successful' });
