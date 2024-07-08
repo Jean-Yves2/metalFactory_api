@@ -54,13 +54,38 @@ export class AuthService {
 
   async createToken(user: User) {
     const payload = { email: user.email, sub: user.id, role: user.role };
-    return { access_token: await this.jwtService.signAsync(payload) };
+    return {
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '1h',
+      }),
+      refresh_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+      }),
+    };
   }
 
-  getCookieWithJwtToken(token: { access_token: string }): string {
-    return `access_token=${token.access_token}; HttpOnly; Path=/; Max-Age=${
-      60 * 60 * 24
-    }`; // the cookie will be valid for 1 day
+  getCookieWithJwtToken(token: string): string {
+    return `access_token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24}`; // 1 day
+  }
+  getCookieWithJwtRefreshToken(refreshToken: string): string {
+    return `refresh_token=${refreshToken}; HttpOnly; Path=/; Max-Age=${
+      7 * 24 * 60 * 60
+    }`; // 7 days
+  }
+
+  async refreshTokens(refreshToken: string) {
+    try {
+      const { email, sub, role } =
+        await this.jwtService.verifyAsync(refreshToken);
+      const payload = { email, sub, role };
+      const accessToken = await this.jwtService.signAsync(payload, {
+        expiresIn: '1h',
+      });
+
+      return { access_token: accessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 
   async register(createUserDto) {
@@ -69,6 +94,20 @@ export class AuthService {
       throw new BadRequestException(passwordError);
     }
     return this.userService.createUser(createUserDto);
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.validateUser(email, password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const { access_token, refresh_token } = await this.createToken(user);
+
+    return {
+      access_token,
+      refresh_token,
+    };
   }
 
   async logout(session: any): Promise<{ message: string }> {
