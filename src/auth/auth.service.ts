@@ -7,6 +7,7 @@ import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import { LoginResponseDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -96,7 +97,7 @@ export class AuthService {
     return this.userService.createUser(createUserDto);
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await this.validateUser(email, password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -107,6 +108,12 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userType: user.userType,
+        role: user.role,
+      },
     };
   }
 

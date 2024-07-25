@@ -20,14 +20,20 @@ export class AuthController {
     @Body() { email, password }: LoginDto,
     @Res({ passthrough: true }) res: ExpressResponse,
   ) {
-    const tokens = await this.authService.login(email, password);
+    const { access_token, refresh_token, user } = await this.authService.login(
+      email,
+      password,
+    );
 
     res.setHeader('Set-Cookie', [
-      this.authService.getCookieWithJwtToken(tokens.access_token),
-      this.authService.getCookieWithJwtRefreshToken(tokens.refresh_token),
+      this.authService.getCookieWithJwtToken(access_token),
+      this.authService.getCookieWithJwtRefreshToken(refresh_token),
     ]);
 
-    return { access_token: tokens.access_token };
+    return res.json({
+      access_token,
+      user,
+    });
   }
 
   @Post('register')
