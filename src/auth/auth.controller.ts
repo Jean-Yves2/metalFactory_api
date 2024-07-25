@@ -30,10 +30,9 @@ export class AuthController {
       this.authService.getCookieWithJwtRefreshToken(refresh_token),
     ]);
 
-    return res.json({
-      access_token,
+    return {
       user,
-    });
+    };
   }
 
   @Post('register')
