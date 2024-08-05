@@ -17,8 +17,8 @@ export class CreateUserDto {
   @IsOptional()
   password: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   companyName: string;
 
   @IsOptional()

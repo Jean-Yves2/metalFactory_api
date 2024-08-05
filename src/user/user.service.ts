@@ -28,6 +28,7 @@ export class UserService {
           lastName: true,
           email: true,
           role: true,
+          userType: true,
         },
       });
 
@@ -50,6 +51,7 @@ export class UserService {
           lastName: true,
           email: true,
           role: true,
+          isProfessional: true,
         },
       });
       if (!user) {
