@@ -23,6 +23,8 @@ model User {
   orders         Order[]
   quotes         Quote[]
   webAnalytics   WebAnalytics[]
+  cart           Cart?
+  favorites      Favorite[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   deletedAt      DateTime?      @map("deleted_at")
@@ -167,6 +169,9 @@ model Product {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   deletedAt          DateTime?           @map("deleted_at")
+
+  cartItems CartItem[]
+  favorites Favorite[]
 }
 
 model Stock {
@@ -336,4 +341,41 @@ enum PaymentStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?  @map("deleted_at")
+}
+
+model CartItem {
+  id        Int       @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int
+  cart      Cart      @relation(fields: [cartId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([cartId, productId])
+}
+
+model Favorite {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  productId Int
+  user      User      @relation(fields: [userId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([userId, productId])
 }
