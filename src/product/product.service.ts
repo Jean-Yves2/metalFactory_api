@@ -3,6 +3,7 @@ import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from '@prisma/client';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProductService {
@@ -25,20 +26,44 @@ export class ProductService {
   }
 
   async createProduct(createProductDto: CreateProductDto) {
-    await this.prismaService.product.create({
-      data: {
-        name: createProductDto.name,
-        description: createProductDto.description,
-        basePrice: createProductDto.basePrice,
-        unitPriceExclTax: createProductDto.unitPriceExclTax,
-        VATRate: createProductDto.VATRate,
-        marginPercent: createProductDto.marginPercent,
-        linearWeight: createProductDto.linearWeight,
-        sellingPrice: createProductDto.sellingPrice,
-        updatedAt: new Date(),
-      },
+    try {
+      const newProduct = await this.prismaService.product.create({
+        data: {
+          name: createProductDto.name,
+          description: createProductDto.description,
+          basePrice: new Decimal(createProductDto.basePrice),
+          unitPriceExclTax: new Decimal(createProductDto.unitPriceExclTax),
+          VATRate: new Decimal(createProductDto.VATRate),
+          marginPercent: new Decimal(createProductDto.marginPercent),
+          sellingPrice: new Decimal(createProductDto.sellingPrice),
+          linearWeight: createProductDto.linearWeight ? new Decimal(createProductDto.linearWeight) : null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+      return 'Product created successfully';
+    } catch (error) {
+      throw new Error(`Failed to create product: ${error}`);
+    }
+  }
+ 
+  async createManyProducts(products: CreateProductDto[]) {
+    const productInputs = products.map(product => ({
+      name: product.name,
+      description: product.description,
+      basePrice: new Decimal(product.basePrice),
+      unitPriceExclTax: new Decimal(product.unitPriceExclTax),
+      VATRate: new Decimal(product.VATRate),
+      marginPercent: new Decimal(product.marginPercent),
+      sellingPrice: new Decimal(product.sellingPrice),
+      linearWeight: product.linearWeight ? new Decimal(product.linearWeight) : null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+
+    return this.prismaService.product.createMany({
+      data: productInputs,
     });
-    return 'Product created successfully';
   }
 
   async updateProduct(id: number, updateProductDto: UpdateProductDto) {

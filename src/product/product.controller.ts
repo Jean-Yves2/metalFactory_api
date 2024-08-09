@@ -31,6 +31,12 @@ export class ProductController {
     return this.productService.createProduct(createProductDto);
   }
 
+  @Post('many')
+  createMany(@Body() products: CreateProductDto[]) {
+    return this.productService.createManyProducts(products
+    );
+  }
+
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
