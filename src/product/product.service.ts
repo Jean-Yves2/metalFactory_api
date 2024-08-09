@@ -27,7 +27,7 @@ export class ProductService {
 
   async createProduct(createProductDto: CreateProductDto) {
     try {
-      const newProduct = await this.prismaService.product.create({
+      await this.prismaService.product.create({
         data: {
           name: createProductDto.name,
           description: createProductDto.description,
