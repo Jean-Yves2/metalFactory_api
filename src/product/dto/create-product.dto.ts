@@ -1,36 +1,70 @@
 import { Decimal } from '@prisma/client/runtime/library';
-import { IsDecimal, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsPositive } from 'class-validator';
 
 export class CreateProductDto {
-  @IsNotEmpty()
   @IsString()
-  name?: string;
+  name: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsNotEmpty()
-  @IsDecimal()
-  basePrice: Decimal;
+  @IsNumber()
+  @IsPositive()
+  basePrice: number;
 
-  @IsNotEmpty()
-  @IsDecimal()
-  unitPriceExclTax: Decimal;
+  @IsNumber()
+  @IsPositive()
+  unitPriceExclTax: number;
 
-  @IsNotEmpty()
-  @IsDecimal()
-  VATRate: Decimal;
+  @IsNumber()
+  @IsPositive()
+  VATRate: number;
 
-  @IsNotEmpty()
-  @IsDecimal()
-  marginPercent: Decimal;
-
-  @IsNotEmpty()
-  @IsDecimal()
-  sellingPrice: Decimal;
+  @IsNumber()
+  @IsPositive()
+  marginPercent: number;
 
   @IsOptional()
-  @IsDecimal()
-  linearWeight?: Decimal;
+  @IsNumber()
+  sellingPrice?: number = 0;
+
+  @IsOptional()
+  @IsNumber()
+  linearWeight?: number;
+
+  @IsOptional()
+  @IsNumber()
+  thickness?: number;
+
+  @IsOptional()
+  @IsNumber()
+  height?: number;
+
+  @IsOptional()
+  @IsNumber()
+  width?: number;
+
+  @IsOptional()
+  @IsNumber()
+  diameter?: number;
+
+  @IsOptional()
+  @IsNumber()
+  circumference?: number;
+
+  @IsOptional()
+  @IsNumber()
+  sectionArea?: number;
+
+  @IsOptional()
+  @IsNumber()
+  weight?: number;
+
+  @IsString()
+  matiere: string;
+
+  @IsNumber()
+  @IsPositive()
+  productCode: number;
 }

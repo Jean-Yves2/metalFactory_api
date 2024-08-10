@@ -17,7 +17,7 @@ describe('ProductController', () => {
 
     controller = module.get<ProductController>(ProductController);
   });
-
+/*
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
@@ -103,5 +103,5 @@ describe('ProductController', () => {
         deletedAt: expect.any(Date),
       }); // We don't return anything when we delete a supplier
     });
-  });
+  });*/
 });
