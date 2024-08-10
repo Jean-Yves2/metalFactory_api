@@ -24,8 +24,6 @@ import { PaymentModule } from './payment/payment.module';
 import { OpenRouteModule } from './open-route/open-route.module';
 import { FakerModule } from './services/faker/faker.module';
 import { ConfigModule } from '@nestjs/config';
-import { CartModule } from './cart/cart.module';
-import { CartItemModule } from './cart-item/cart-item.module';
 import { FavoriteModule } from './favorite/favorite.module';
 //import { AuthGuard } from 'src/guards/auth.guard'; //activate this when you want to use the global guard
 //import { APP_GUARD } from '@nestjs/core'; //activate this when you want to use the global guard
@@ -56,8 +54,6 @@ import { FavoriteModule } from './favorite/favorite.module';
     PaymentModule,
     OpenRouteModule,
     FakerModule,
-    CartModule,
-    CartItemModule,
     FavoriteModule,
   ],
   controllers: [AppController],
