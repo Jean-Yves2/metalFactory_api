@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import * as cookieParser from 'cookie-parser';
 import { sessionMiddleware } from './middleware/session.middleware';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,13 +14,10 @@ async function bootstrap() {
   });
 
   app.use(cookieParser());
-  app.use(sessionMiddleware);
+  //app.use(sessionMiddleware);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.use(morgan('dev'));
 
   await app.listen(3000);
 }

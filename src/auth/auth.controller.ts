@@ -5,11 +5,15 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
+  UseGuards,
+  Get,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/createUserdto';
 import { Response as ExpressResponse } from 'express';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +37,13 @@ export class AuthController {
     return {
       user,
     };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('check-auth')
+  checkAuth(@Req() req: any) {
+    console.log('Request Headers:', req.headers);
+    return { isAuthenticated: !!req.user, user: req.user || null };
   }
 
   @Post('register')

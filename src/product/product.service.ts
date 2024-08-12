@@ -13,6 +13,17 @@ export class ProductService {
     return this.prismaService.product.findMany();
   }
 
+  async getProductsByRange(min: number, max: number): Promise<Product[]> {
+    return this.prismaService.product.findMany({
+      where: {
+        productCode: {
+          gte: min,
+          lte: max,
+        },
+      },
+    });
+  }
+
   async getProductById(id: number) {
     const product = await this.prismaService.product.findUnique({
       where: { id: id, deletedAt: null },
@@ -28,6 +39,12 @@ export class ProductService {
   
   async createProduct(createProductDto: CreateProductDto) {
     return this.prismaService.product.create({
+      data: createProductDto,
+    });
+  }
+
+  async createManyProducts(createProductDto: CreateProductDto[]) {
+    return this.prismaService.product.createMany({
       data: createProductDto,
     });
   }
