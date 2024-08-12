@@ -6,16 +6,18 @@ import { AuthGuard } from '../guards/auth.guard';
 @Controller('favorites')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
-  
+
   @UseGuards(AuthGuard)
-  @Post()
+  @Post(':productCode')
   async addFavorite(@Req() req: Request, @Param('productCode') productCode: number) {
-    const userId = req.user?.id;
+    console.log('req.user:', req.user);
+    const userId = req.user?.sub;
     return this.favoritesService.addFavorite(userId, productCode);
   }
-  @Delete()
+  @UseGuards(AuthGuard)
+  @Delete(':productCode')
   async removeFavorite(@Req() req: Request, @Param('productCode') productCode: number) {
-    const userId = (req.user as any)['id'];
+    const userId = req.user?.sub;
     return this.favoritesService.removeFavorite(userId, productCode);
   }
 
