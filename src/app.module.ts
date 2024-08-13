@@ -27,7 +27,6 @@ import { ConfigModule } from '@nestjs/config';
 import { FavoriteModule } from './favorite/favorite.module';
 //import { AuthGuard } from 'src/guards/auth.guard'; //activate this when you want to use the global guard
 //import { APP_GUARD } from '@nestjs/core'; //activate this when you want to use the global guard
-import { NomDuModuleModule } from './nom-du-module/nom-du-module.module';
 import { CartModule } from './cart/cart.module';
 
 @Module({
@@ -57,7 +56,6 @@ import { CartModule } from './cart/cart.module';
     OpenRouteModule,
     FakerModule,
     FavoriteModule,
-    NomDuModuleModule,
     CartModule,
   ],
   controllers: [AppController],
