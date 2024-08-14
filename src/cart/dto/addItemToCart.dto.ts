@@ -1,7 +1,6 @@
 import { IsInt, IsPositive, IsNumber } from 'class-validator';
 
 export class AddItemToCartDto {
-
   @IsInt()
   @IsPositive()
   productCode: number;

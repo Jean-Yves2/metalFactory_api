@@ -8,7 +8,7 @@ export class FavoritesService {
 
   async addFavorite(userId: number, productCode: number): Promise<Favorite> {
     const numericProductCode = Number(productCode);
-    
+
     if (isNaN(numericProductCode)) {
       throw new Error('Invalid product code');
     }
@@ -21,10 +21,9 @@ export class FavoritesService {
     });
   }
 
-
   async removeFavorite(userId: number, productCode: number): Promise<Favorite> {
     const numericProductCode = Number(productCode);
-    
+
     if (isNaN(numericProductCode)) {
       throw new Error('Invalid product code');
     }
@@ -32,7 +31,7 @@ export class FavoritesService {
       where: {
         userId_productCode: {
           userId,
-          productCode : numericProductCode,
+          productCode: numericProductCode,
         },
       },
     });
@@ -48,6 +47,6 @@ export class FavoritesService {
       },
     });
 
-    return favorites.map(favorite => favorite.product);
+    return favorites.map((favorite) => favorite.product);
   }
 }

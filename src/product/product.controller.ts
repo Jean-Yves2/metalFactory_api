@@ -47,46 +47,46 @@ export class ProductController {
         min = 57;
         max = 73;
         break;
-        case 'inox1':
-          min = 74;
-          max = 82;
-          break;
-        case 'inox2':
-          min = 83;
-          max = 91;
-          break;
-        case 'inox3':
-          min = 92;
-          max = 109;
-          break;
-        case 'inox4':
-          min = 110;
-          max = 124;
-          break;
-        case 'inox5':
-          min = 125;
-          max = 134;
-          break;
-          case 'galva1':
-            min = 135;
-            max = 138;
-            break;
-          case 'galva2':
-            min = 139;
-            max = 149;
-            break;
-          case 'galva3':
-            min = 150;
-            max = 160;
-            break;
-          case 'galva4':
-            min = 161;
-            max = 169;
-            break;
-          case 'galva5':
-            min = 170;
-            max = 172;
-            break;
+      case 'inox1':
+        min = 74;
+        max = 82;
+        break;
+      case 'inox2':
+        min = 83;
+        max = 91;
+        break;
+      case 'inox3':
+        min = 92;
+        max = 109;
+        break;
+      case 'inox4':
+        min = 110;
+        max = 124;
+        break;
+      case 'inox5':
+        min = 125;
+        max = 134;
+        break;
+      case 'galva1':
+        min = 135;
+        max = 138;
+        break;
+      case 'galva2':
+        min = 139;
+        max = 149;
+        break;
+      case 'galva3':
+        min = 150;
+        max = 160;
+        break;
+      case 'galva4':
+        min = 161;
+        max = 169;
+        break;
+      case 'galva5':
+        min = 170;
+        max = 172;
+        break;
       default:
         return [];
     }
@@ -104,7 +104,7 @@ export class ProductController {
     return this.productService.createProduct(createProductDto);
   }
 
-@Post('many')
+  @Post('many')
   createMany(@Body() createProductDto: CreateProductDto[]) {
     return this.productService.createManyProducts(createProductDto);
   }

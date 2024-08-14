@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Module({
   controllers: [FavoritesController],
-  providers: [FavoritesService, PrismaService,JwtService],
+  providers: [FavoritesService, PrismaService, JwtService],
   exports: [FavoritesService],
 })
 export class FavoriteModule {}

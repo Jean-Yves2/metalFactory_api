@@ -36,7 +36,6 @@ export class ProductService {
     return product;
   }
 
-  
   async createProduct(createProductDto: CreateProductDto) {
     return this.prismaService.product.create({
       data: createProductDto,
@@ -48,7 +47,6 @@ export class ProductService {
       data: createProductDto,
     });
   }
- 
 
   async updateProduct(id: number, updateProductDto: UpdateProductDto) {
     const product = await this.prismaService.product.findUnique({

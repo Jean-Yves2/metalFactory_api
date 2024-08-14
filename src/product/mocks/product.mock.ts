@@ -2,7 +2,7 @@ import { Product } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
 export const productMock: Product[] = [
- /* {
+  /* {
     id: 1,
     name: 'name one',
     description: 'description one',
