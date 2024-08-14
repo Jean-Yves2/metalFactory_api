@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  UseGuards,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddItemToCartDto } from './dto/addItemToCart.dto';
-import { RemoveItemFromCartDto } from './dto/removeItemFromCart.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Request } from 'express';
 
@@ -17,7 +25,10 @@ export class CartController {
 
   @Post('item')
   @UseGuards(AuthGuard)
-  async addItemToCart(@Req() req: any, @Body() addItemToCartDto: AddItemToCartDto) {
+  async addItemToCart(
+    @Req() req: any,
+    @Body() addItemToCartDto: AddItemToCartDto,
+  ) {
     const userId = req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
@@ -25,17 +36,20 @@ export class CartController {
     return this.cartService.addItemToCart(userId, addItemToCartDto);
   }
 
-
-  @UseGuards(AuthGuard)
   @Get()
+  @UseGuards(AuthGuard)
   getCartByUserId(@Req() req: Request) {
     const userId = req.user?.sub;
+    console.log('userId', userId);
     return this.cartService.getCartByUserId(userId);
   }
 
   @UseGuards(AuthGuard)
   @Delete('item')
-  removeItemFromCart(@Req() req: Request, @Body() body: { productCode: number }) {
+  removeItemFromCart(
+    @Req() req: Request,
+    @Body() body: { productCode: number },
+  ) {
     const userId = req.user?.sub;
     const { productCode } = body;
     return this.cartService.removeItemFromCart(userId, productCode);

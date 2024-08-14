@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma/prisma.service'; 
-import { RemoveItemFromCartDto } from './dto/removeItemFromCart.dto';
+import { PrismaService } from '../database/prisma/prisma.service';
 import { AddItemToCartDto } from './dto/addItemToCart.dto';
-
 
 @Injectable()
 export class CartService {
-  constructor(
-    private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
   async createCart(userId: number) {
     return this.prisma.cart.create({
@@ -16,7 +13,6 @@ export class CartService {
   }
 
   async addItemToCart(userId: number, addItemToCartDto: AddItemToCartDto) {
-
     let cart = await this.prisma.cart.findUnique({ where: { userId } });
     if (!cart) {
       cart = await this.prisma.cart.create({ data: { userId } });
@@ -49,7 +45,13 @@ export class CartService {
   async getCartByUserId(userId: number) {
     const cart = await this.prisma.cart.findUnique({
       where: { userId },
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
     });
 
     if (!cart) {
