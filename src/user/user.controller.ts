@@ -23,6 +23,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get() // GET /user to get all users
+  @Roles(['COMMERCIAL'])
+  @UseGuards(RoleGuard)
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }

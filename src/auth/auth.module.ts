@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserService } from '../user/user.service';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../database/database.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RoleGuard } from '../guards/role.guard';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     ConfigModule.forRoot(),
   ],
-  providers: [AuthService, UserService],
+  providers: [AuthService, UserService, RoleGuard],
   controllers: [AuthController],
 })
 export class AuthModule {}
