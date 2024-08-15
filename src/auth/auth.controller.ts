@@ -8,6 +8,7 @@ import {
   UseGuards,
   Get,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -64,7 +65,10 @@ export class AuthController {
       this.authService.getCookieWithJwtToken(newTokens.access_token),
     );
 
-    return { access_token: newTokens.access_token };
+    return { message: 'Token refreshed successfully' };
+  }
+  catch(error) {
+    throw new UnauthorizedException('Invalid refresh token');
   }
 
   @Post('logout')
