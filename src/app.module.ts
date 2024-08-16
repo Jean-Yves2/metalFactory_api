@@ -28,6 +28,8 @@ import { FavoriteModule } from './favorite/favorite.module';
 //import { AuthGuard } from 'src/guards/auth.guard'; //activate this when you want to use the global guard
 //import { APP_GUARD } from '@nestjs/core'; //activate this when you want to use the global guard
 import { CartModule } from './cart/cart.module';
+import { CommercialController } from './commercial/commercial.controller';
+import { CommercialModule } from './commercial/commercial.module';
 
 @Module({
   imports: [
@@ -57,6 +59,7 @@ import { CartModule } from './cart/cart.module';
     FakerModule,
     FavoriteModule,
     CartModule,
+    CommercialModule,
   ],
   controllers: [AppController],
   providers: [
