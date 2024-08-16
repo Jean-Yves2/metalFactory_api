@@ -12,6 +12,10 @@ export class CreateAddressDto {
   street: string;
 
   @IsOptional()
+  @IsPostalCode()
+  postalCode?: string;
+
+  @IsOptional()
   @IsString()
   city?: string;
 
@@ -21,6 +25,18 @@ export class CreateAddressDto {
   country: string;
 
   @IsOptional()
-  @IsPostalCode()
-  postalCode?: string;
+  @IsString()
+  distanceToWarehouse?: number;
+
+  @IsOptional()
+  @IsString()
+  userId?: number;
+
+  @IsOptional()
+  @IsString()
+  addressId?: number;
+
+  @IsOptional()
+  @IsString()
+  type?: 'DELIVERY' | 'BILLING';
 }

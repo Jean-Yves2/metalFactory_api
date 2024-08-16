@@ -21,9 +21,18 @@ import { DeliveryCompanyModule } from './delivery-company/delivery-company.modul
 import { DeliveryModule } from './delivery/delivery.module';
 import { WebAnalyticsModule } from './web-analytics/web-analytics.module';
 import { PaymentModule } from './payment/payment.module';
+import { OpenRouteModule } from './open-route/open-route.module';
+import { FakerModule } from './services/faker/faker.module';
+import { ConfigModule } from '@nestjs/config';
+import { FavoriteModule } from './favorite/favorite.module';
+import { CartModule } from './cart/cart.module';
+import { CommercialModule } from './commercial/commercial.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     OrderModule,
     ProductModule,
@@ -43,8 +52,17 @@ import { PaymentModule } from './payment/payment.module';
     DeliveryModule,
     WebAnalyticsModule,
     PaymentModule,
+    OpenRouteModule,
+    FakerModule,
+    FavoriteModule,
+    CartModule,
+    CommercialModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [
+    AppService,
+    PrismaService,
+    //{ provide: APP_GUARD, useClass: AuthGuard }, // I disabled this to allow public routes for testing (I will enable it later) if you want to use faker module don't forget to disable this
+  ],
 })
 export class AppModule {}

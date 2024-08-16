@@ -23,8 +23,11 @@ model User {
   orders         Order[]
   quotes         Quote[]
   webAnalytics   WebAnalytics[]
+  cart           Cart?
+  favorites      Favorite[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?      @map("deleted_at")
 }
 
 model UserAddress {
@@ -51,7 +54,7 @@ model Address {
   suppliers           Supplier[]
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
-  deletedAt           DateTime?    @map("deleted_at")
+  deletedAt           DateTime?     @map("deleted_at")
 }
 
 model Order {
@@ -69,20 +72,22 @@ model Order {
   payments          Payment[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
 
   @@index([orderDate])
 }
 
 model OrderLine {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   orderId   Int
   productId Int
   quantity  Int
   cutLength Decimal
-  order     Order    @relation(fields: [orderId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  order     Order     @relation(fields: [orderId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 }
 
 model Quote {
@@ -98,19 +103,22 @@ model Quote {
   discount                Discount?   @relation(fields: [discountId], references: [id])
   createdAt               DateTime    @default(now())
   updatedAt               DateTime    @updatedAt
+  deletedAt               DateTime?   @map("deleted_at")
 }
 
 model QuoteLine {
-  id              Int      @id @default(autoincrement())
-  quoteId         Int
-  productId       Int
-  quantity        Int
-  unitPrice       Decimal
-  discountApplied Boolean  @default(false)
-  quote           Quote    @relation(fields: [quoteId], references: [id])
-  product         Product  @relation(fields: [productId], references: [id])
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                Int       @id @default(autoincrement())
+  quoteId           Int
+  productId         Int
+  quantity          Int
+  unitPrice         Decimal
+  discountApplied   Boolean   @default(false)
+  finalSellingPrice Decimal?
+  quote             Quote     @relation(fields: [quoteId], references: [id])
+  product           Product   @relation(fields: [productId], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime? @map("deleted_at")
 }
 
 enum AddressType {
@@ -121,7 +129,10 @@ enum AddressType {
 enum UserRole {
   USER
   ADMIN
-  INTERNAL_USER
+  COMMERCIAL
+  SUPPLY_MANAGER
+  ORDER_PREPARATION
+  DELIVERY_SERVICE
 }
 
 enum UserType {
@@ -148,18 +159,31 @@ model Product {
   id                 Int                 @id @default(autoincrement())
   name               String
   description        String?
-  basePrice          Decimal
-  unitPriceExclTax   Decimal
-  VATRate            Decimal
-  marginPercent      Decimal
-  sellingPrice       Decimal             @default(0)
-  linearWeight       Decimal?
+  basePrice          Float
+  unitPriceExclTax   Float
+  VATRate            Float
+  marginPercent      Float
+  sellingPrice       Float               @default(0)
+  linearWeight       Float?
+  thickness          Float?
+  height             Float?
+  width              Float?
+  diameter           Float?
+  circumference      Float?
+  sectionArea        Float?
+  weight             Float?
+  matiere            String              @default("")
+  productCode        Int                 @unique @default(0)
   stocks             Stock[]
   orderLines         OrderLine[]
   quoteLines         QuoteLine[]
   supplierOrderLines SupplierOrderLine[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?           @map("deleted_at")
+
+  cartItems CartItem[]
+  favorites Favorite[]
 }
 
 model Stock {
@@ -173,16 +197,18 @@ model Stock {
   warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime? @map("deleted_at")
 }
 
 model Warehouse {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
   addressId Int
-  address   Address  @relation(fields: [addressId], references: [id])
+  address   Address   @relation(fields: [addressId], references: [id])
   stocks    Stock[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 }
 
 model Discount {
@@ -197,6 +223,7 @@ model Discount {
   quotes            Quote[]
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+  deletedAt         DateTime?    @map("deleted_at")
 }
 
 enum DiscountType {
@@ -216,6 +243,7 @@ model Supplier {
   supplierOrders SupplierOrder[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?       @map("deleted_at")
 }
 
 model SupplierOrder {
@@ -228,6 +256,7 @@ model SupplierOrder {
   supplierOrderLines   SupplierOrderLine[]
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
+  deletedAt            DateTime?           @map("deleted_at")
 }
 
 model SupplierOrderLine {
@@ -243,6 +272,7 @@ model SupplierOrderLine {
   product          Product       @relation(fields: [productId], references: [id])
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?     @map("deleted_at")
 }
 
 model DeliveryCompany {
@@ -254,6 +284,7 @@ model DeliveryCompany {
   deliveries      Delivery[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+  deletedAt       DateTime?  @map("deleted_at")
 }
 
 model Delivery {
@@ -269,17 +300,19 @@ model Delivery {
   deliveryCompany   DeliveryCompany @relation(fields: [deliveryCompanyId], references: [id])
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+  deletedAt         DateTime?       @map("deleted_at")
 }
 
 model WebAnalytics {
-  visitId   Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   pageURL   String
   visitDate DateTime
   userId    Int?
   sessionID String
-  user      User?    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user      User?     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 }
 
 model Payment {
@@ -293,6 +326,7 @@ model Payment {
   order         Order         @relation(fields: [orderId], references: [id])
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?     @map("deleted_at")
 }
 
 enum SupplierOrderStatus {
@@ -319,4 +353,42 @@ enum PaymentStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?  @map("deleted_at")
+}
+
+model CartItem {
+  id          Int       @id @default(autoincrement())
+  cartId      Int
+  productCode Int       @default(0)
+  quantity    Int
+  length      Float
+  cart        Cart      @relation(fields: [cartId], references: [id])
+  product     Product   @relation(fields: [productCode], references: [productCode])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@unique([cartId, productCode])
+}
+
+model Favorite {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  productCode Int       @default(0)
+  user        User      @relation(fields: [userId], references: [id])
+  product     Product   @relation(fields: [productCode], references: [productCode])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime? @map("deleted_at")
+
+  @@unique([userId, productCode])
 }
