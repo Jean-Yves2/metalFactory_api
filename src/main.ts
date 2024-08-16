@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import * as cookieParser from 'cookie-parser';
-import { sessionMiddleware } from './middleware/session.middleware';
 import * as morgan from 'morgan';
 
 async function bootstrap() {

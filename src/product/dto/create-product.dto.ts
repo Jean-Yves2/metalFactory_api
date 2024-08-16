@@ -1,4 +1,3 @@
-import { Decimal } from '@prisma/client/runtime/library';
 import { IsString, IsOptional, IsNumber, IsPositive } from 'class-validator';
 
 export class CreateProductDto {

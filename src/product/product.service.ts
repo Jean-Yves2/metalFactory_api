@@ -3,7 +3,6 @@ import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from '@prisma/client';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProductService {

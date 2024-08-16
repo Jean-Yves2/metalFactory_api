@@ -3,9 +3,6 @@ import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
 //import { PrismaService } from '../database/prisma/prisma.service';
 import { ProductServiceMock } from './mocks/product.service.mock';
-import { productMock } from './mocks/product.mock';
-import { Decimal } from '@prisma/client/runtime/library';
-
 describe('ProductController', () => {
   let controller: ProductController;
 

@@ -1,5 +1,3 @@
-import { productMock } from './product.mock';
-import { CreateProductDto } from '../dto/create-product.dto';
 export class PrismaServiceMock {
   /* product = {
     findMany: jest.fn().mockImplementation(() => {

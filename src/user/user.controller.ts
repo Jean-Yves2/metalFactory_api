@@ -10,8 +10,6 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';

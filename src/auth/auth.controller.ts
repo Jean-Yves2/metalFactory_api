@@ -67,7 +67,7 @@ export class AuthController {
 
     return { message: 'Token refreshed successfully' };
   }
-  catch(error) {
+  catch() {
     throw new UnauthorizedException('Invalid refresh token');
   }
 
