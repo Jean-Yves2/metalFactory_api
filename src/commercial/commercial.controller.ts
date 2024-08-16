@@ -1,10 +1,20 @@
 import { Controller, Get, Param, Patch, Body } from '@nestjs/common';
 import { CommercialService } from './commercial.service';
 import { QuoteStatus } from '@prisma/client';
+import { QuoteService } from '../quote/quote.service';
+import { get } from 'http';
 
 @Controller('commercial')
 export class CommercialController {
-  constructor(private readonly commercialService: CommercialService) {}
+  constructor(
+    private readonly commercialService: CommercialService,
+    private readonly quoteService: QuoteService,
+  ) {}
+
+  @Get('quotes')
+  getAllQuotesWithoutException() {
+    return this.quoteService.getAllQuotesWithoutException();
+  }
 
   @Get('quotes/:status')
   getQuotesByStatus(@Param('status') status: QuoteStatus) {
