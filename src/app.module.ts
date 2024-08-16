@@ -25,10 +25,7 @@ import { OpenRouteModule } from './open-route/open-route.module';
 import { FakerModule } from './services/faker/faker.module';
 import { ConfigModule } from '@nestjs/config';
 import { FavoriteModule } from './favorite/favorite.module';
-//import { AuthGuard } from 'src/guards/auth.guard'; //activate this when you want to use the global guard
-//import { APP_GUARD } from '@nestjs/core'; //activate this when you want to use the global guard
 import { CartModule } from './cart/cart.module';
-import { CommercialController } from './commercial/commercial.controller';
 import { CommercialModule } from './commercial/commercial.module';
 
 @Module({
