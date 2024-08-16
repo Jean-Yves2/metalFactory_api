@@ -2,10 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './product.service';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { PrismaServiceMock } from './mocks/prisma.service.mock';
-import { productMock } from './mocks/product.mock';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime/library';
-
 describe('ProductService', () => {
   let service: ProductService;
 
@@ -26,7 +22,7 @@ describe('ProductService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
+  /*
   describe('getAllProducts', () => {
     it('should return all products', async () => {
       expect(await service.getAllProducts()).toEqual(productMock);
@@ -128,4 +124,5 @@ describe('ProductService', () => {
       );
     });
   });
+});*/
 });

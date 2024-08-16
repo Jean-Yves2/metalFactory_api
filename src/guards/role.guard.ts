@@ -1,8 +1,15 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRole } from '@prisma/client';
+import { Request } from 'express';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -15,18 +22,20 @@ export class RoleGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.get<UserRole[]>(
       'roles',
-      context.getHandler(), // getHandler() returns the handler method of the route expamle:[AsyncFunction: getUserById]
+      context.getHandler(),
     );
 
-    if (!requiredRoles) {
+    if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const request = context.switchToHttp().getRequest<Request>();
+    const token =
+      this.extractTokenFromHeader(request) ||
+      this.extractTokenFromCookie(request);
 
     if (!token) {
-      return false;
+      throw new UnauthorizedException('No token provided');
     }
 
     try {
@@ -35,19 +44,24 @@ export class RoleGuard implements CanActivate {
       });
       const userRole = payload.role;
 
-      const hasRequiredRole = requiredRoles.some((role) => userRole === role);
+      const hasRequiredRole = requiredRoles.includes(userRole);
 
-      return hasRequiredRole;
-    } catch {
-      return false;
+      if (!hasRequiredRole) {
+        throw new ForbiddenException('Insufficient role');
+      }
+
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token or insufficient role');
     }
   }
 
-  private extractTokenFromHeader(request: any): string | undefined {
-    const authHeader = request.headers.authorization;
-    if (authHeader && authHeader.split(' ')[0] === 'Bearer') {
-      return authHeader.split(' ')[1];
-    }
-    return undefined;
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
+  }
+
+  private extractTokenFromCookie(request: Request): string | undefined {
+    return request.cookies['access_token'];
   }
 }

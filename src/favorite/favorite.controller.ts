@@ -1,47 +1,44 @@
 import {
   Controller,
   Post,
-  Body,
-  Patch,
-  Param,
   Delete,
   Get,
+  Param,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
-import { FavoriteService } from './favorite.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
+import { Request } from 'express';
+import { FavoritesService } from './favorite.service';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('favorites')
-export class FavoriteController {
-  constructor(private readonly favoriteService: FavoriteService) {}
+export class FavoritesController {
+  constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Post()
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
-    return this.favoriteService.addToFavorites(createFavoriteDto);
-  }
-
-  @Get(':userId')
-  findAll(@Param('userId') userId: string) {
-    return this.favoriteService.getFavorites(+userId);
-  }
-
-  @Patch(':userId/:productId')
-  update(
-    @Param('userId') userId: string,
-    @Param('productId') productId: string,
-    @Body() updateFavoriteDto: UpdateFavoriteDto,
+  @UseGuards(AuthGuard)
+  @Post(':productCode')
+  async addFavorite(
+    @Req() req: Request,
+    @Param('productCode') productCode: number,
   ) {
-    return this.favoriteService.updateFavorite(+userId, {
-      ...updateFavoriteDto,
-      productId: +productId,
-    });
+    console.log('req.user:', req.user);
+    const userId = req.user?.sub;
+    return this.favoritesService.addFavorite(userId, productCode);
+  }
+  @UseGuards(AuthGuard)
+  @Delete(':productCode')
+  async removeFavorite(
+    @Req() req: Request,
+    @Param('productCode') productCode: number,
+  ) {
+    const userId = req.user?.sub;
+    return this.favoritesService.removeFavorite(userId, productCode);
   }
 
-  @Delete(':userId/:productId')
-  remove(
-    @Param('userId') userId: string,
-    @Param('productId') productId: string,
-  ) {
-    return this.favoriteService.softDelete(+userId, +productId);
+  @UseGuards(AuthGuard)
+  @Get()
+  async getFavorites(@Req() req: Request) {
+    const userId = req.user['id'];
+    return this.favoritesService.getFavorites(userId);
   }
 }

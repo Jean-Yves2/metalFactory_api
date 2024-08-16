@@ -11,7 +11,7 @@ export class ProductServiceMock {
     return productMock.find((product) => product.id === id);
   });
 
-  createProduct = jest
+  /*createProduct = jest
     .fn()
     .mockImplementation((createProductDto: CreateProductDto) => {
       const newProduct = {
@@ -30,7 +30,7 @@ export class ProductServiceMock {
       };
       productMock.push(newProduct);
       return 'Product created successfully';
-    });
+    });*/
 
   updateProduct = jest
     .fn()

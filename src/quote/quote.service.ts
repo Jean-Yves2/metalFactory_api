@@ -105,4 +105,8 @@ export class QuoteService {
       );
     }
   }
+
+  async getAllQuotesWithoutException(): Promise<Quote[]> {
+    return await this.prismaService.quote.findMany();
+  }
 }

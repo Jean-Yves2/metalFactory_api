@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtServiceMock } from './mocks/jwt.service.mock';
 import { userMock } from './mocks/user.mock';
 import { HttpException } from '@nestjs/common';
-import { CreateAddressDto } from 'src/address/dto/create-address.dto';
+import { CreateAddressDto } from '../address/dto/create-address.dto';
 
 describe('UserController', () => {
   let controller: UserController;

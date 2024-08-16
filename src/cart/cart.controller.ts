@@ -1,40 +1,57 @@
 import {
   Controller,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
   Get,
+  Post,
+  Delete,
+  Body,
+  UseGuards,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { AddItemToCartDto } from './dto/addItemToCart.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { Request } from 'express';
 
-@Controller('carts')
+@Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.createCart(createCartDto);
+  createCart(@Body('userId') userId: number) {
+    return this.cartService.createCart(userId);
   }
 
-  @Patch(':userId')
-  update(
-    @Param('userId') userId: string,
-    @Body() updateCartDto: UpdateCartDto,
+  @Post('item')
+  @UseGuards(AuthGuard)
+  async addItemToCart(
+    @Req() req: any,
+    @Body() addItemToCartDto: AddItemToCartDto,
   ) {
-    return this.cartService.updateCart(+userId, updateCartDto);
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+    return this.cartService.addItemToCart(userId, addItemToCartDto);
   }
 
-  @Get(':userId')
-  findOne(@Param('userId') userId: string) {
-    return this.cartService.getCart(+userId);
+  @Get()
+  @UseGuards(AuthGuard)
+  getCartByUserId(@Req() req: Request) {
+    const userId = req.user?.sub;
+    console.log('userId', userId);
+    return this.cartService.getCartByUserId(userId);
   }
 
-  @Delete(':userId')
-  remove(@Param('userId') userId: string) {
-    return this.cartService.softDelete(+userId);
+  @UseGuards(AuthGuard)
+  @Delete('item')
+  removeItemFromCart(
+    @Req() req: Request,
+    @Body() body: { productCode: number },
+  ) {
+    const userId = req.user?.sub;
+    const { productCode } = body;
+    return this.cartService.removeItemFromCart(userId, productCode);
   }
 }

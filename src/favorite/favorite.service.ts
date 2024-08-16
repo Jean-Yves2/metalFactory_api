@@ -1,102 +1,52 @@
-import {
-  Injectable,
-  NotFoundException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Favorite, Product } from '@prisma/client';
 import { PrismaService } from '../database/prisma/prisma.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { UpdateFavoriteDto } from './dto/update-favorite.dto';
-import { Favorite } from '@prisma/client';
 
 @Injectable()
-export class FavoriteService {
+export class FavoritesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async addToFavorites(
-    createFavoriteDto: CreateFavoriteDto,
-  ): Promise<Favorite> {
-    try {
-      return await this.prisma.favorite.create({
-        data: createFavoriteDto,
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Error adding to favorites');
+  async addFavorite(userId: number, productCode: number): Promise<Favorite> {
+    const numericProductCode = Number(productCode);
+
+    if (isNaN(numericProductCode)) {
+      throw new Error('Invalid product code');
     }
+
+    return this.prisma.favorite.create({
+      data: {
+        userId,
+        productCode: numericProductCode,
+      },
+    });
   }
 
-  async getFavorites(userId: number): Promise<Favorite[]> {
-    try {
-      return await this.prisma.favorite.findMany({
-        where: {
-          userId,
-          deletedAt: null,
-        },
-        include: { product: true },
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Error getting favorites');
-    }
-  }
+  async removeFavorite(userId: number, productCode: number): Promise<Favorite> {
+    const numericProductCode = Number(productCode);
 
-  async updateFavorite(
-    userId: number,
-    updateFavoriteDto: UpdateFavoriteDto,
-  ): Promise<Favorite> {
-    const favorite = await this.prisma.favorite.findUnique({
+    if (isNaN(numericProductCode)) {
+      throw new Error('Invalid product code');
+    }
+    return this.prisma.favorite.delete({
       where: {
-        userId_productId: {
+        userId_productCode: {
           userId,
-          productId: updateFavoriteDto.productId,
+          productCode: numericProductCode,
         },
       },
     });
-
-    if (!favorite) {
-      throw new NotFoundException(`Favorite not found`);
-    }
-
-    try {
-      return await this.prisma.favorite.update({
-        where: {
-          userId_productId: {
-            userId,
-            productId: updateFavoriteDto.productId,
-          },
-        },
-        data: updateFavoriteDto,
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Error updating favorite');
-    }
   }
 
-  async softDelete(userId: number, productId: number): Promise<Favorite> {
-    const favorite = await this.prisma.favorite.findUnique({
+  async getFavorites(userId: number): Promise<Product[]> {
+    const favorites = await this.prisma.favorite.findMany({
       where: {
-        userId_productId: {
-          userId,
-          productId,
-        },
+        userId,
+      },
+      include: {
+        product: true,
       },
     });
-    if (!favorite) {
-      throw new NotFoundException(`Favorite not found`);
-    }
 
-    try {
-      return await this.prisma.favorite.update({
-        where: {
-          userId_productId: {
-            userId,
-            productId,
-          },
-        },
-        data: {
-          deletedAt: new Date(),
-        },
-      });
-    } catch (error) {
-      throw new InternalServerErrorException('Error removing from favorites');
-    }
+    return favorites.map((favorite) => favorite.product);
   }
 }

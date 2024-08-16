@@ -5,11 +5,16 @@ import {
   UsePipes,
   ValidationPipe,
   Res,
+  UseGuards,
+  Get,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from '../user/dto/createUserdto';
 import { Response as ExpressResponse } from 'express';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -35,6 +40,13 @@ export class AuthController {
     };
   }
 
+  @UseGuards(AuthGuard)
+  @Get('check-auth')
+  checkAuth(@Req() req: any) {
+    console.log('Request Headers:', req.headers);
+    return { isAuthenticated: !!req.user, user: req.user || null };
+  }
+
   @Post('register')
   @UsePipes(ValidationPipe)
   async register(@Body() createUserDto: CreateUserDto) {
@@ -53,7 +65,10 @@ export class AuthController {
       this.authService.getCookieWithJwtToken(newTokens.access_token),
     );
 
-    return { access_token: newTokens.access_token };
+    return { message: 'Token refreshed successfully' };
+  }
+  catch() {
+    throw new UnauthorizedException('Invalid refresh token');
   }
 
   @Post('logout')
