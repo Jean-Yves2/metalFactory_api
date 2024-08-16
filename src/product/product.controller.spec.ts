@@ -17,10 +17,11 @@ describe('ProductController', () => {
 
     controller = module.get<ProductController>(ProductController);
   });
-  /*
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+  /*
   describe('getAllProducts', () => {
     it('should return all products', async () => {
       expect(await controller.findAll()).toEqual(productMock);
