@@ -30,6 +30,9 @@ jobs:
         run: npm run lint
 
       - name: Run tests
+        env:
+          MONGODB_URL: mongodb://localhost/test
+          DATABASE_URL: postgresql://user:password@localhost:5432/testdb
         run: npm run test
 
       - name: Build project
