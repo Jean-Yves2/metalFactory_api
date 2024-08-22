@@ -3,20 +3,22 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../database/prisma/prisma.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateWebAnalyticsDto } from './dto/create-web-analytics.dto';
 import { UpdateWebAnalyticsDto } from './dto/update-web-analytics.dto';
-import { WebAnalytics } from '@prisma/client';
+import { WebAnalytics } from './schemas/web-analytics.schema';
 
 @Injectable()
 export class WebAnalyticsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @InjectModel(WebAnalytics.name)
+    private readonly webAnalyticsModel: Model<WebAnalytics>,
+  ) {}
 
   async getAllWebAnalytics(): Promise<WebAnalytics[]> {
     try {
-      return await this.prismaService.webAnalytics.findMany({
-        where: { deletedAt: null },
-      });
+      return await this.webAnalyticsModel.find({ deletedAt: null }).exec();
     } catch (error) {
       throw new InternalServerErrorException(
         'Error fetching all web analytics',
@@ -24,11 +26,13 @@ export class WebAnalyticsService {
     }
   }
 
-  async getWebAnalyticsById(id: number): Promise<WebAnalytics> {
+  async getWebAnalyticsById(id: Types.ObjectId): Promise<WebAnalytics> {
     try {
-      const webAnalytics = await this.prismaService.webAnalytics.findUnique({
-        where: { id, deletedAt: null },
-      });
+      const webAnalytics = await this.webAnalyticsModel
+        .findById(id)
+        .where({ deletedAt: null })
+        .exec();
+
       if (!webAnalytics) {
         throw new NotFoundException(`Web analytics with ID ${id} not found`);
       }
@@ -47,35 +51,35 @@ export class WebAnalyticsService {
     createWebAnalyticsDto: CreateWebAnalyticsDto,
   ): Promise<WebAnalytics> {
     try {
-      return await this.prismaService.webAnalytics.create({
-        data: {
-          ...createWebAnalyticsDto,
-          createdAt: new Date(),
-        },
-      });
+      const createdWebAnalytics = await this.webAnalyticsModel.create(
+        createWebAnalyticsDto,
+      );
+      return createdWebAnalytics;
     } catch (error) {
-      throw new InternalServerErrorException('Error creating web analytics');
+      throw new InternalServerErrorException('Failed to create web analytics');
     }
   }
 
   async updateWebAnalytics(
-    id: number,
+    id: Types.ObjectId,
     updateWebAnalyticsDto: UpdateWebAnalyticsDto,
   ): Promise<WebAnalytics> {
     try {
-      const webAnalytics = await this.prismaService.webAnalytics.findUnique({
-        where: { id, deletedAt: null },
-      });
+      const webAnalytics = await this.webAnalyticsModel
+        .findById(id)
+        .where({ deletedAt: null })
+        .exec();
+
       if (!webAnalytics) {
         throw new NotFoundException(`Web analytics with ID ${id} not found`);
       }
-      return await this.prismaService.webAnalytics.update({
-        where: { id },
-        data: {
-          ...updateWebAnalyticsDto,
-          updatedAt: new Date(),
-        },
+
+      webAnalytics.set({
+        ...updateWebAnalyticsDto,
+        updatedAt: new Date(),
       });
+
+      return await webAnalytics.save();
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -86,20 +90,19 @@ export class WebAnalyticsService {
     }
   }
 
-  async softDeleteWebAnalytics(id: number): Promise<WebAnalytics> {
+  async softDeleteWebAnalytics(id: Types.ObjectId): Promise<WebAnalytics> {
     try {
-      const webAnalytics = await this.prismaService.webAnalytics.findUnique({
-        where: { id, deletedAt: null },
-      });
+      const webAnalytics = await this.webAnalyticsModel
+        .findById(id)
+        .where({ deletedAt: null })
+        .exec();
+
       if (!webAnalytics) {
         throw new NotFoundException(`Web analytics with ID ${id} not found`);
       }
-      return await this.prismaService.webAnalytics.update({
-        where: { id },
-        data: {
-          deletedAt: new Date(),
-        },
-      });
+
+      webAnalytics.deletedAt = new Date();
+      return await webAnalytics.save();
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

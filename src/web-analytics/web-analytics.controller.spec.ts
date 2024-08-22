@@ -3,9 +3,13 @@ import { WebAnalyticsController } from './web-analytics.controller';
 import { WebAnalyticsService } from './web-analytics.service';
 import { CreateWebAnalyticsDto } from './dto/create-web-analytics.dto';
 import { UpdateWebAnalyticsDto } from './dto/update-web-analytics.dto';
+import { NotFoundException } from '@nestjs/common';
+import { Types } from 'mongoose';
+import { WebAnalytics } from './schemas/web-analytics.schema';
 
 describe('WebAnalyticsController', () => {
   let controller: WebAnalyticsController;
+  let service: WebAnalyticsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,33 +18,48 @@ describe('WebAnalyticsController', () => {
         {
           provide: WebAnalyticsService,
           useValue: {
-            getAllWebAnalytics: jest.fn().mockResolvedValue([]),
-            getWebAnalyticsById: jest.fn().mockResolvedValue({}),
-            createWebAnalytics: jest.fn().mockResolvedValue({}),
-            updateWebAnalytics: jest.fn().mockResolvedValue({}),
-            softDeleteWebAnalytics: jest.fn().mockResolvedValue({}),
+            getWebAnalyticsById: jest.fn(),
+            createWebAnalytics: jest.fn(),
+            updateWebAnalytics: jest.fn(),
+            softDeleteWebAnalytics: jest.fn(),
           },
         },
       ],
     }).compile();
 
     controller = module.get<WebAnalyticsController>(WebAnalyticsController);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
-  describe('findAll', () => {
-    it('should return an array of web analytics', async () => {
-      await expect(controller.findAll()).resolves.toEqual([]);
-    });
+    service = module.get<WebAnalyticsService>(WebAnalyticsService);
   });
 
   describe('findOne', () => {
     it('should return a single web analytics record', async () => {
-      const id = 1;
-      await expect(controller.findOne(id)).resolves.toEqual({});
+      const id = new Types.ObjectId();
+      const result = {
+        _id: id,
+        pageURL: 'https://example.com',
+        visitDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      } as WebAnalytics;
+
+      jest.spyOn(service, 'getWebAnalyticsById').mockResolvedValue(result);
+
+      expect(await controller.findOne(id.toHexString())).toEqual(result);
+    });
+
+    it('should throw NotFoundException when the record is not found', async () => {
+      const id = new Types.ObjectId();
+
+      jest
+        .spyOn(service, 'getWebAnalyticsById')
+        .mockRejectedValue(
+          new NotFoundException(`Web analytics with ID ${id} not found`),
+        );
+
+      await expect(controller.findOne(id.toHexString())).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -49,32 +68,90 @@ describe('WebAnalyticsController', () => {
       const createWebAnalyticsDto: CreateWebAnalyticsDto = {
         pageURL: 'http://example.com',
         visitDate: new Date(),
-        sessionID: 'session123',
       };
-      await expect(controller.create(createWebAnalyticsDto)).resolves.toEqual(
-        {},
-      );
+      const result = {
+        _id: new Types.ObjectId(),
+        ...createWebAnalyticsDto,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      } as WebAnalytics;
+
+      jest.spyOn(service, 'createWebAnalytics').mockResolvedValue(result);
+      expect(await controller.create(createWebAnalyticsDto)).toEqual(result);
     });
   });
 
   describe('update', () => {
     it('should update a web analytics record', async () => {
-      const id = 1;
+      const id = new Types.ObjectId();
       const updateWebAnalyticsDto: UpdateWebAnalyticsDto = {
         pageURL: 'http://example.com',
         visitDate: new Date(),
-        sessionID: 'session123',
       };
+      const result = {
+        _id: id,
+        ...updateWebAnalyticsDto,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      } as WebAnalytics;
+
+      jest.spyOn(service, 'updateWebAnalytics').mockResolvedValue(result);
+
+      expect(
+        await controller.update(id.toHexString(), updateWebAnalyticsDto),
+      ).toEqual(result);
+    });
+
+    it('should throw NotFoundException when the record to update is not found', async () => {
+      const id = new Types.ObjectId();
+      const updateWebAnalyticsDto: UpdateWebAnalyticsDto = {
+        pageURL: 'http://example.com',
+        visitDate: new Date(),
+      };
+
+      jest
+        .spyOn(service, 'updateWebAnalytics')
+        .mockRejectedValue(
+          new NotFoundException(`Web analytics with ID ${id} not found`),
+        );
+
       await expect(
-        controller.update(id, updateWebAnalyticsDto),
-      ).resolves.toEqual({});
+        controller.update(id.toHexString(), updateWebAnalyticsDto),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('remove', () => {
     it('should soft delete a web analytics record', async () => {
-      const id = 1;
-      await expect(controller.remove(id)).resolves.toEqual({});
+      const id = new Types.ObjectId();
+      const result = {
+        _id: id,
+        pageURL: 'http://example.com',
+        visitDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+      } as WebAnalytics;
+
+      jest.spyOn(service, 'softDeleteWebAnalytics').mockResolvedValue(result);
+
+      expect(await controller.remove(id.toHexString())).toEqual(result);
+    });
+
+    it('should throw NotFoundException when the record to delete is not found', async () => {
+      const id = new Types.ObjectId();
+
+      jest
+        .spyOn(service, 'softDeleteWebAnalytics')
+        .mockRejectedValue(
+          new NotFoundException(`Web analytics with ID ${id} not found`),
+        );
+
+      await expect(controller.remove(id.toHexString())).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
