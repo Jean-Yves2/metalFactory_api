@@ -17,7 +17,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(morgan('dev'));
-
-  await app.listen(process.env.NODE_ENV || 3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, () => {
+    console.log('You Win! Server is running on port:', port);
+  });
 }
 bootstrap();
