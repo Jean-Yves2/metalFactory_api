@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 config();
 
 async function seed() {
-  await connect(process.env.MONGODB_URL as string);
+  await connect(process.env.ORMONGO_URL as string);
 
   const WebAnalyticsModel = connection.model(
     'web-analytics',
