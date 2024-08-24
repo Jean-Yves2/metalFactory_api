@@ -18,6 +18,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.use(morgan('dev'));
 
-  await app.listen(3000);
+  await app.listen(process.env.NODE_ENV || 3000);
 }
 bootstrap();
