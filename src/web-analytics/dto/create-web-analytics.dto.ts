@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsInt,
-  IsString,
-  IsDateString,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
 
 export class CreateWebAnalyticsDto {
   @IsNotEmpty()
@@ -14,12 +8,4 @@ export class CreateWebAnalyticsDto {
   @IsNotEmpty()
   @IsDateString()
   visitDate: Date;
-
-  @IsOptional()
-  @IsInt()
-  userId?: number;
-
-  @IsNotEmpty()
-  @IsString()
-  sessionID: string;
 }

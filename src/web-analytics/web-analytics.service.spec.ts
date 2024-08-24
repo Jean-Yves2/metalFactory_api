@@ -1,174 +1,256 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WebAnalyticsService } from './web-analytics.service';
-import { PrismaService } from '../database/prisma/prisma.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
-//import { CreateWebAnalyticsDto } from './dto/create-web-analytics.dto';
+import { getModelToken } from '@nestjs/mongoose';
+import { WebAnalytics } from './schemas/web-analytics.schema';
+import { Model, Types } from 'mongoose';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+
+class MockModel {
+  constructor(private data?: any) {}
+  save = jest.fn().mockResolvedValue(this.data);
+  static find = jest.fn();
+  static findById = jest.fn();
+  static findOne = jest.fn();
+  static exec = jest.fn();
+}
 
 describe('WebAnalyticsService', () => {
   let service: WebAnalyticsService;
-  let prismaService: PrismaService;
+  let model: Model<WebAnalytics>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [WebAnalyticsService, PrismaService],
+      providers: [
+        WebAnalyticsService,
+        {
+          provide: getModelToken(WebAnalytics.name),
+          useValue: MockModel,
+        },
+      ],
     }).compile();
 
     service = module.get<WebAnalyticsService>(WebAnalyticsService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    model = module.get<Model<WebAnalytics>>(getModelToken(WebAnalytics.name));
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('getAllWebAnalytics', () => {
-    it('should return all web analytics', async () => {
-      const result = []; // Remplacer par des données réelles si nécessaire
-      jest
-        .spyOn(prismaService.webAnalytics, 'findMany')
-        .mockResolvedValue(result);
-      expect(await service.getAllWebAnalytics()).toEqual(result);
+    it('should return all web analytics data', async () => {
+      const mockData = [
+        {
+          _id: '507f191e810c19729de860ea',
+          pageURL: 'https://example.com',
+          visitDate: new Date(),
+        },
+        {
+          _id: '507f191e810c19729de860eb',
+          pageURL: 'https://another.com',
+          visitDate: new Date(),
+        },
+      ];
+
+      MockModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockData),
+      });
+
+      const result = await service.getAllWebAnalytics();
+      expect(result).toHaveLength(2);
+      expect(result[0].pageURL).toBe('https://example.com');
+    });
+
+    it('should throw InternalServerErrorException on errors', async () => {
+      MockModel.find.mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('Database error')),
+      });
+
+      await expect(service.getAllWebAnalytics()).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
   describe('getWebAnalyticsById', () => {
     it('should return web analytics by id', async () => {
-      const result = {
-        id: 1,
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      const mockData = {
+        _id: id,
         pageURL: 'https://example.com',
         visitDate: new Date(),
-        userId: 1,
-        sessionID: 'session123',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
       };
-      jest
-        .spyOn(prismaService.webAnalytics, 'findUnique')
-        .mockResolvedValue(result);
-      expect(await service.getWebAnalyticsById(1)).toEqual(result);
+
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(mockData),
+      });
+
+      const result = await service.getWebAnalyticsById(id);
+      expect(result).toEqual(mockData);
     });
 
-    it('should throw HttpException when web analytics is not found', async () => {
-      jest
-        .spyOn(prismaService.webAnalytics, 'findUnique')
-        .mockResolvedValue(null);
-      await expect(service.getWebAnalyticsById(100)).rejects.toThrow(
-        new HttpException(
-          'Web analytics with ID 100 not found',
-          HttpStatus.NOT_FOUND,
-        ),
+    it('should throw NotFoundException when web analytics is not found', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(service.getWebAnalyticsById(id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw InternalServerErrorException on unexpected errors', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockRejectedValue(new Error('Database error')),
+      });
+
+      await expect(service.getWebAnalyticsById(id)).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
   });
-  //** ⚠️ Les methodes dynamiques créent des erreurs lors de l'execution des tests car elles varient en fonction de la vitesse de la machine ⚠️
-  // describe('createWebAnalytics', () => {
-  //   it('should create web analytics', async () => {
-  //     const createWebAnalyticsDto: CreateWebAnalyticsDto = {
-  //       pageURL: 'https://example.com',
-  //       visitDate: new Date(),
-  //       userId: 1,
-  //       sessionID: 'session123',
-  //     };
-  //     const result = {
-  //       id: 1,
-  //       ...createWebAnalyticsDto,
-  //       createdAt: new Date(),
-  //       updatedAt: new Date(),
-  //       deletedAt: null,
-  //     };
-  //     jest.spyOn(prismaService.webAnalytics, 'create').mockResolvedValue({
-  //       ...result,
-  //       userId: createWebAnalyticsDto.userId,
-  //       deletedAt: result.deletedAt || new Date(),
-  //     });
-  //     await expect(
-  //       service.createWebAnalytics(createWebAnalyticsDto),
-  //     ).resolves.toEqual({
-  //       ...result,
-  //       deletedAt: result.deletedAt || new Date(),
-  //     });
-  //   });
-  // });
 
-  describe('updateWebAnalytics', () => {
-    it('should update web analytics', async () => {
-      const updateWebAnalyticsDto = {
-        pageURL: 'https://example.com/updated',
+  describe('createWebAnalytics', () => {
+    it('should create web analytics with correct data', async () => {
+      const createWebAnalyticsDto = {
+        pageURL: 'https://example.com',
         visitDate: new Date(),
-        userId: 1,
-        sessionID: 'session123',
       };
-      const result = { ...updateWebAnalyticsDto, id: 1, updatedAt: new Date() };
-      jest.spyOn(prismaService.webAnalytics, 'findUnique').mockResolvedValue({
-        ...result,
-        createdAt: new Date(),
-        deletedAt: null,
-      });
-      jest.spyOn(prismaService.webAnalytics, 'update').mockResolvedValue({
-        ...result,
-        createdAt: new Date(),
-        deletedAt: null,
-      });
-      expect(
-        await service.updateWebAnalytics(1, updateWebAnalyticsDto),
-      ).toEqual({
-        ...result,
+      const mockData = {
+        ...createWebAnalyticsDto,
         createdAt: expect.any(Date),
-        deletedAt: null,
-      });
+      };
+
+      (model as any).create = jest.fn().mockResolvedValue(mockData);
+
+      const result = await service.createWebAnalytics(createWebAnalyticsDto);
+      expect(result).toEqual(mockData);
     });
 
-    it('should throw HttpException when web analytics is not found', async () => {
-      jest
-        .spyOn(prismaService.webAnalytics, 'findUnique')
-        .mockResolvedValue(null);
+    it('should throw InternalServerErrorException on error', async () => {
+      (model as any).create = jest
+        .fn()
+        .mockRejectedValue(new Error('Database error'));
+
       await expect(
-        service.updateWebAnalytics(100, {
-          pageURL: 'https://example.com/updated',
+        service.createWebAnalytics({
+          pageURL: 'https://example.com',
           visitDate: new Date(),
-          userId: 1,
-          sessionID: 'session123',
         }),
-      ).rejects.toThrow(
-        new HttpException(
-          'Web analytics with ID 100 not found',
-          HttpStatus.NOT_FOUND,
-        ),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('updateWebAnalytics', () => {
+    it('should update web analytics with correct data', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      const updateWebAnalyticsDto = { pageURL: 'https://updated.com' };
+      const mockData = {
+        _id: id,
+        pageURL: 'https://example.com',
+        visitDate: new Date(),
+        set: jest.fn(),
+        save: jest.fn(),
+      };
+
+      mockData.set.mockReturnThis();
+      mockData.save.mockResolvedValue({
+        _id: id,
+        ...updateWebAnalyticsDto,
+        updatedAt: expect.any(Date),
+      });
+
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(mockData),
+      });
+
+      const result = await service.updateWebAnalytics(
+        id,
+        updateWebAnalyticsDto,
       );
+      expect(result.pageURL).toBe('https://updated.com');
+    });
+
+    it('should throw NotFoundException if web analytics is not found during update', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(
+        service.updateWebAnalytics(id, { pageURL: 'https://updated.com' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw InternalServerErrorException on update error', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockRejectedValue(new Error('Database error')),
+      });
+
+      await expect(
+        service.updateWebAnalytics(id, { pageURL: 'https://updated.com' }),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
   describe('softDeleteWebAnalytics', () => {
-    it('should soft delete web analytics', async () => {
-      const result = {
-        id: 1,
+    it('should soft delete web analytics by setting deletedAt', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      const mockData = {
+        _id: id,
         pageURL: 'https://example.com',
         visitDate: new Date(),
-        userId: 1,
-        sessionID: 'session123',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: new Date(),
+        deletedAt: null,
+        save: jest.fn().mockResolvedValue({
+          _id: id,
+          pageURL: 'https://example.com',
+          visitDate: expect.any(Date),
+          deletedAt: expect.any(Date),
+        }),
       };
-      jest
-        .spyOn(prismaService.webAnalytics, 'findUnique')
-        .mockResolvedValue(result);
-      jest
-        .spyOn(prismaService.webAnalytics, 'update')
-        .mockResolvedValue(result);
-      expect(await service.softDeleteWebAnalytics(1)).toEqual(result);
+
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(mockData),
+      });
+
+      const result = await service.softDeleteWebAnalytics(id);
+      expect(result.deletedAt).toBeDefined();
     });
 
-    it('should throw HttpException when web analytics is not found', async () => {
-      jest
-        .spyOn(prismaService.webAnalytics, 'findUnique')
-        .mockResolvedValue(null);
-      await expect(service.softDeleteWebAnalytics(100)).rejects.toThrow(
-        new HttpException(
-          'Web analytics with ID 100 not found',
-          HttpStatus.NOT_FOUND,
-        ),
+    it('should throw NotFoundException if web analytics is not found during delete', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await expect(service.softDeleteWebAnalytics(id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw InternalServerErrorException on delete error', async () => {
+      const id = new Types.ObjectId('507f1f77bcf86cd799439011');
+      MockModel.findById.mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockRejectedValue(new Error('Database error')),
+      });
+
+      await expect(service.softDeleteWebAnalytics(id)).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
   });

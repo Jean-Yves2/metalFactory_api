@@ -8,11 +8,12 @@ import {
   Param,
   HttpStatus,
   HttpCode,
-  ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { WebAnalyticsService } from './web-analytics.service';
 import { CreateWebAnalyticsDto } from './dto/create-web-analytics.dto';
 import { UpdateWebAnalyticsDto } from './dto/update-web-analytics.dto';
+import { Types } from 'mongoose';
 
 @Controller('web-analytics')
 export class WebAnalyticsController {
@@ -24,8 +25,9 @@ export class WebAnalyticsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.webAnalyticsService.getWebAnalyticsById(id);
+  async findOne(@Param('id') id: string) {
+    const objectId = this.validateObjectId(id);
+    return this.webAnalyticsService.getWebAnalyticsById(objectId);
   }
 
   @Post()
@@ -35,18 +37,27 @@ export class WebAnalyticsController {
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
+  async update(
+    @Param('id') id: string,
     @Body() updateWebAnalyticsDto: UpdateWebAnalyticsDto,
   ) {
+    const objectId = this.validateObjectId(id);
     return this.webAnalyticsService.updateWebAnalytics(
-      id,
+      objectId,
       updateWebAnalyticsDto,
     );
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.webAnalyticsService.softDeleteWebAnalytics(id);
+  async remove(@Param('id') id: string) {
+    const objectId = this.validateObjectId(id);
+    return this.webAnalyticsService.softDeleteWebAnalytics(objectId);
+  }
+
+  private validateObjectId(id: string): Types.ObjectId {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Invalid ID format');
+    }
+    return new Types.ObjectId(id);
   }
 }

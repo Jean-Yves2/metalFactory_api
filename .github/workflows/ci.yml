@@ -30,6 +30,8 @@ jobs:
         run: npm run lint
 
       - name: Run tests
+        env:
+          NODE_ENV: test
         run: npm run test
 
       - name: Build project
