@@ -21,7 +21,7 @@ import { WebAnalyticsController } from './web-analytics.controller';
           };
         }
         return {
-          uri: configService.get<string>('MONGODB_URL'),
+          uri: configService.get<string>('ORMONGO_URL'),
         };
       },
       inject: [ConfigService],
