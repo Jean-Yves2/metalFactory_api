@@ -11,6 +11,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
 import { User } from './interfaces/user.interface';
@@ -20,6 +21,7 @@ import { Roles } from '../decorators/roles.decorator';
 import { AuthGuard } from '../guards/auth.guard';
 import { Request } from 'express';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   // Inject the UserService
@@ -27,6 +29,8 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get('profil')
+  @ApiOperation({ summary: 'Get My Profil' })
+  @ApiResponse({ status: 200, description: 'Get Profil User but no id' })
   async getMyProfil(@Req() req: Request) {
     const userId = req.user?.sub;
     console.log('userId 6556', await this.userService.getMyProfile(userId));
