@@ -33,7 +33,6 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Get Profil User but no id' })
   async getMyProfil(@Req() req: Request) {
     const userId = req.user?.sub;
-    console.log('userId 6556', await this.userService.getMyProfile(userId));
     return this.userService.getMyProfile(userId);
   }
 
