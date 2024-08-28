@@ -8,6 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger'; // Importation de l'ApiOperation
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -17,11 +18,13 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Obtenir la liste de tous les produits' })
   findAll() {
     return this.productService.getAllProducts();
   }
 
   @Get(':type')
+  @ApiOperation({ summary: 'Obtenir des produits en fonction de leur type' })
   async getProductByType(@Param('type') type: string) {
     let min = 0;
     let max = 0;
@@ -95,21 +98,25 @@ export class ProductController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtenir un produit par son ID' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productService.getProductById(id);
   }
 
   @Post()
+  @ApiOperation({ summary: 'Créer un nouveau produit' })
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.createProduct(createProductDto);
   }
 
   @Post('many')
+  @ApiOperation({ summary: 'Créer plusieurs produits' })
   createMany(@Body() createProductDto: CreateProductDto[]) {
     return this.productService.createManyProducts(createProductDto);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Mettre à jour un produit par son ID' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
@@ -118,6 +125,7 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Supprimer (soft delete) un produit par son ID' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productService.softDelete(id);
   }

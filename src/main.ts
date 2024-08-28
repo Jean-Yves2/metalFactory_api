@@ -23,10 +23,12 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Métal Factory API')
-    .setDescription('The cats API description')
-    .setVersion('1.0')
+    .setDescription(
+      'Metal Factory est une plateforme de vente en ligne spécialisée dans la fourniture de métaux de haute qualité. Notre API permet de gérer les produits métalliques, les commandes et les utilisateurs, facilitant ainsi une intégration fluide avec nos systèmes internes et externes.',
+    )
+    .setVersion('1.1.0')
     .addBearerAuth()
-    .addTag('cats')
+    .addTag('Metal Factory')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
