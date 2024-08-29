@@ -22,7 +22,6 @@ import { WebAnalyticsController } from './web-analytics.controller';
         }
         return {
           uri: configService.get('ORMONGO_URL'),
-
         };
       },
       inject: [ConfigService],
