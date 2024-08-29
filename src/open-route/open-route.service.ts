@@ -39,7 +39,7 @@ export class OpenRouteService {
     }
   }
 
-  async getGeocode(address: string): Promise<any> {
+  async getGeoCode(address: string): Promise<any> {
     try {
       const response = await firstValueFrom(
         this.httpService.get(

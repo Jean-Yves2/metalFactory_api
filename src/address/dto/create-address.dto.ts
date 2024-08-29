@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsPostalCode,
   IsAlpha,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateAddressDto {
@@ -12,7 +13,7 @@ export class CreateAddressDto {
   street: string;
 
   @IsOptional()
-  @IsPostalCode()
+  // @IsPostalCode()
   postalCode?: string;
 
   @IsOptional()
@@ -27,6 +28,14 @@ export class CreateAddressDto {
   @IsOptional()
   @IsString()
   distanceToWarehouse?: number;
+
+  @IsOptional()
+  @IsNumber()
+  nearestWarehouseId?: number;
+
+  @IsOptional()
+  @IsString()
+  geoCode?: string;
 
   @IsOptional()
   @IsString()

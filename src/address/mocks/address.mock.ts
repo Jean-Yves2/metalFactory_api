@@ -1,5 +1,4 @@
 import { Address } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export const addressMock: Address[] = [
   {
@@ -8,7 +7,9 @@ export const addressMock: Address[] = [
     postalCode: '12345',
     city: 'City 1',
     country: 'Country 1',
-    distanceToWarehouse: new Decimal(20),
+    distanceToWarehouse: 20,
+    nearestWarehouseId: 1,
+    geoCode: '12345',
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
     deletedAt: null,
@@ -19,7 +20,9 @@ export const addressMock: Address[] = [
     postalCode: '12345',
     city: 'City 2',
     country: 'Country 2',
-    distanceToWarehouse: new Decimal(20),
+    distanceToWarehouse: 20,
+    nearestWarehouseId: 1,
+    geoCode: '12345',
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
     deletedAt: new Date('2024-04-18T09:05:38.780Z'),
@@ -30,7 +33,9 @@ export const addressMock: Address[] = [
     postalCode: '12345',
     city: 'City 3',
     country: 'Country 3',
-    distanceToWarehouse: new Decimal(20),
+    distanceToWarehouse: 20,
+    nearestWarehouseId: 1,
+    geoCode: '12345',
     createdAt: new Date('2024-04-18T09:05:38.780Z'),
     updatedAt: new Date('2024-04-18T09:05:38.780Z'),
     deletedAt: null,

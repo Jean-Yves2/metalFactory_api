@@ -46,7 +46,9 @@ model Address {
   postalCode          String
   city                String
   country             String        @default("France")
-  distanceToWarehouse Decimal       @default(0.0)
+  distanceToWarehouse Float       @default(0.0)
+  nearestWarehouseId  Int?
+  geoCode             String?
   userAddresses       UserAddress[]
   orders              Order[]
   warehouses          Warehouse[]
