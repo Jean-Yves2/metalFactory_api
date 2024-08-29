@@ -22,6 +22,7 @@ model User {
   addresses      UserAddress[]
   orders         Order[]
   quotes         Quote[]
+  webAnalytics   WebAnalytics[]
   cart           Cart?
   favorites      Favorite[]
   createdAt      DateTime       @default(now())
@@ -82,6 +83,7 @@ model OrderLine {
   productId Int
   quantity  Int
   cutLength Decimal
+  unitPrice Float     @default(0)
   order     Order     @relation(fields: [orderId], references: [id])
   product   Product   @relation(fields: [productId], references: [id])
   createdAt DateTime  @default(now())
@@ -181,8 +183,9 @@ model Product {
   updatedAt          DateTime            @updatedAt
   deletedAt          DateTime?           @map("deleted_at")
 
-  cartItems CartItem[]
-  favorites Favorite[]
+  cartItems      CartItem[]
+  favorites      Favorite[]
+  priceHistories ProductPriceHistory[]
 }
 
 model Stock {
@@ -306,6 +309,9 @@ model WebAnalytics {
   id        Int       @id @default(autoincrement())
   pageURL   String
   visitDate DateTime
+  userId    Int?
+  sessionID String
+  user      User?     @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime? @map("deleted_at")
@@ -367,6 +373,7 @@ model CartItem {
   productCode Int       @default(0)
   quantity    Int
   length      Float
+  price       Float     @default(0)
   cart        Cart      @relation(fields: [cartId], references: [id])
   product     Product   @relation(fields: [productCode], references: [productCode])
   createdAt   DateTime  @default(now())
@@ -387,4 +394,15 @@ model Favorite {
   deletedAt   DateTime? @map("deleted_at")
 
   @@unique([userId, productCode])
+}
+
+model ProductPriceHistory {
+  id        Int       @id @default(autoincrement())
+  productId Int
+  price     Decimal
+  validFrom DateTime
+  validTo   DateTime?
+  product   Product   @relation(fields: [productId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

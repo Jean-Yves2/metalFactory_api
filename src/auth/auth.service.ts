@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { LoginResponseDto } from './dto/login.dto';
+import { TokensResponse } from './dto/tokensResponse';
 
 @Injectable()
 export class AuthService {
@@ -66,25 +67,29 @@ export class AuthService {
   }
 
   getCookieWithJwtToken(token: string): string {
-    return `access_token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24}`; // 1 day
+    return `access_token=${token}; HttpOnly; Path=/; Secure; SameSite=None; Max-Age=${
+      60 * 60 * 24
+    }`; // 1 day
   }
   getCookieWithJwtRefreshToken(refreshToken: string): string {
-    return `refresh_token=${refreshToken}; HttpOnly; Path=/; Max-Age=${
+    return `refresh_token=${refreshToken}; HttpOnly; Path=/; Secure; SameSite=None; Max-Age=${
       7 * 24 * 60 * 60
     }`; // 7 days
   }
 
-  async refreshTokens(refreshToken: string) {
+  async refreshTokens(refreshToken: string): Promise<TokensResponse> {
     try {
       const { email, sub, role } =
         await this.jwtService.verifyAsync(refreshToken);
-      const payload = { email, sub, role };
-      const accessToken = await this.jwtService.signAsync(payload, {
-        expiresIn: '1h',
-      });
+
+      const accessToken = await this.jwtService.signAsync(
+        { email, sub, role },
+        { expiresIn: '1h' },
+      );
 
       return { access_token: accessToken };
     } catch (error) {
+      console.error('Error refreshing token:', error);
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
