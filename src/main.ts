@@ -28,7 +28,18 @@ async function bootstrap() {
     )
     .setVersion('1.1.0')
     .addBearerAuth()
-    .addTag('Metal Factory')
+    .addTag('Products', 'Endpoints pour la gestion des produits métalliques')
+    .addTag('Orders', 'Endpoints pour la gestion des commandes')
+    .addTag('Users', 'Endpoints pour la gestion des utilisateurs')
+    .addTag(
+      'Auth',
+      "Endpoints pour l'authentification et la gestion des jetons",
+    )
+    .addTag('Favorites', 'Endpoints pour la gestion des favoris')
+    .addTag('Commercial', 'Endpoints pour les utilisateurs commerciaux')
+    .addTag('Supplier Orders', 'Endpoints pour les commandes fournisseur')
+    .addTag('Payments', 'Endpoints pour la gestion des paiements')
+    .addTag('Quotes', 'Endpoints pour la gestion des devis')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

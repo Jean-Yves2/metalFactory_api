@@ -50,14 +50,12 @@ export class UserController {
     return this.userService.updateUser(id, createUserDto);
   }
   @Delete(':id')
-  @UseGuards(RoleGuard)
   @Roles(['ADMIN', 'INTERNAL_USER'])
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.softDelete(id);
   }
   @Get() // GET /user to get all users
   @Roles(['COMMERCIAL', 'ADMIN'])
-  @UseGuards(RoleGuard)
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }
