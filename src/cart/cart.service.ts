@@ -36,6 +36,7 @@ export class CartService {
         productCode: addItemToCartDto.productCode,
         quantity: addItemToCartDto.quantity,
         length: addItemToCartDto.length,
+        price: 0,
       },
     });
 
@@ -76,5 +77,29 @@ export class CartService {
         productCode,
       },
     });
+  }
+
+  async getCartValue(userId: number): Promise<number> {
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!cart || cart.items.length === 0) {
+      return 0;
+    }
+
+    const totalValue = cart.items.reduce((total, item) => {
+      const itemTotal = item.product.sellingPrice * item.quantity;
+      return total + itemTotal;
+    }, 0);
+
+    return totalValue;
   }
 }
