@@ -59,6 +59,6 @@ export class FavoritesController {
     summary: "Obtenir la liste des produits favoris d'un utilisateur",
   })
   async getUserFavorites(@Param('id') id: number) {
-    return this.favoritesService.getFavorites(id);
+    return this.favoritesService.getFavorites(Number(id));
   }
 }
