@@ -1,25 +1,33 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+
+  // Configurer CORS
   app.enableCors({
-    origin: process.env.LOCAL_WEB_SERVEUR, // frontend url for development
+    origin: configService.get<string>('LOCAL_WEB_SERVEUR'),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
   app.use(cookieParser());
-  //app.use(sessionMiddleware);
+
+  app.use(morgan('dev'));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  app.use(morgan('dev'));
-  const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0', () => {
-    console.log('You Win! Server is running on port:', port);
-  });
+  const port = configService.get<number>('PORT', 3000);
+
+  await app.listen(port, '0.0.0.0');
+  console.log(
+    `Server is running. You can access it at http://localhost:${port}`,
+  );
 }
+
 bootstrap();

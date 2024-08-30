@@ -1,49 +1,45 @@
-name: metal-factory
+version: '3.8'
+
 services:
   api:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://user:password@localhost:5432/redline
-      ORMONGO_URL: mongodb://user:password@localhost:27017/mg_redline
+      DATABASE_URL: postgresql://user:password@postgres:5432/nestjs_db
+      MONGODB_URL: mongodb://root:rootpassword@mongo:27017/nestjs_db?authSource=admin
     depends_on:
-      - db
+      - postgres
       - mongo
+    command: npm run start:dev
 
-  db:
-    image: postgres:15-alpine
-    ports:
-      - '5432:5432'
+  postgres:
+    image: postgres:14-alpine
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: redline
+      POSTGRES_DB: nestjs_db
+    ports:
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
+    image: mongo:5
     environment:
-      MONGO_INITDB_DATABASE: mg_redline
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
 volumes:
-  db_data:
+  postgres_data:
   mongo_data:
-
-
-
-
-
-
-
-
