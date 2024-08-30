@@ -56,6 +56,7 @@ export class UserController {
   }
   @Get() // GET /user to get all users
   @Roles(['COMMERCIAL', 'ADMIN'])
+  @UseGuards(RoleGuard)
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }

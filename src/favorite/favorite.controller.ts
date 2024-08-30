@@ -11,6 +11,8 @@ import { Request } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FavoritesService } from './favorite.service';
 import { AuthGuard } from '../guards/auth.guard';
+import { RoleGuard } from '../guards/role.guard';
+import { Roles } from '../decorators/roles.decorator';
 
 @ApiTags('Favorites')
 @Controller('favorites')
@@ -48,5 +50,15 @@ export class FavoritesController {
   async getFavorites(@Req() req: Request) {
     const userId = req.user['id'];
     return this.favoritesService.getFavorites(userId);
+  }
+
+  @Roles(['COMMERCIAL', 'ADMIN'])
+  @UseGuards(RoleGuard)
+  @Get(':id')
+  @ApiOperation({
+    summary: "Obtenir la liste des produits favoris d'un utilisateur",
+  })
+  async getUserFavorites(@Param('id') id: number) {
+    return this.favoritesService.getFavorites(id);
   }
 }
