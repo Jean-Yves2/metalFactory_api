@@ -12,6 +12,6 @@ export const sessionMiddleware = session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 1000 * 60 * 60 * 24 * 7, // the cookie will be valid for 1 week
+    maxAge: 1000 * 60 * 60 * 24 * 7,
   },
 });

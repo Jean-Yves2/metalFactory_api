@@ -111,4 +111,17 @@ export class QuoteService {
       include: { client: true },
     });
   }
+
+  async getQuoteByIdWithQuoteLines(id: number): Promise<Quote> {
+    return await this.prismaService.quote.findUnique({
+      where: { id },
+      include: {
+        quoteLines: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+  }
 }

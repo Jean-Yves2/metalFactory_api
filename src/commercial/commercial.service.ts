@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { QuoteStatus } from '@prisma/client';
 
@@ -22,47 +26,20 @@ export class CommercialService {
     });
   }
 
-  // Appliquer une ristourne à un devis
-  async applyDiscountToQuote(quoteId: number, discountId: number) {
-    // Récupérer la ristourne
-    const discount = await this.prisma.discount.findUnique({
-      where: { id: discountId },
-    });
+  async applyGlobalDiscountToQuote(quoteId: number, discountPercent: number) {
+    console.log('quoteId', quoteId);
+    console.log('discountPercent', discountPercent);
+    return { success: true };
+  }
 
-    if (!discount) throw new Error('Discount not found');
-
-    // Récupérer le devis
-    const quote = await this.prisma.quote.findUnique({
-      where: { id: quoteId },
-      include: { quoteLines: true },
-    });
-
-    if (!quote) throw new Error('Quote not found');
-
-    // Calculer le prix après réduction
-    const totalPriceAfterDiscount = discount.global
-      ? Number(quote.totalPrice) -
-        (Number(discount.discountPercent) / 100) * Number(quote.totalPrice)
-      : quote.totalPrice;
-
-    // Mettre à jour le devis avec la réduction
-    const updatedQuote = await this.prisma.quote.update({
-      where: { id: quoteId },
-      data: {
-        discountId: discount.id,
-        totalPriceAfterDiscount: totalPriceAfterDiscount,
-      },
-    });
-
-    // Appliquer la ristourne par article si non globale
-    if (!discount.global) {
-      await this.prisma.quoteLine.updateMany({
-        where: { quoteId },
-        data: { discountApplied: true },
-      });
-    }
-
-    return updatedQuote;
+  // Appliquer une réduction spécifique par article (produit)
+  async applyProductDiscountToQuote(
+    quoteId: number,
+    productDiscounts: { [productId: number]: number },
+  ) {
+    console.log('quoteId', quoteId);
+    console.log('productDiscounts', productDiscounts);
+    return null;
   }
 
   // Calculer le prix de vente pour un produit avec une marge
@@ -71,9 +48,17 @@ export class CommercialService {
       where: { id: productId },
     });
 
-    if (!product) throw new Error('Product not found');
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
 
-    const margin = marginPercent || product.marginPercent || 20;
+    const margin =
+      marginPercent !== undefined ? marginPercent : product.marginPercent || 20;
+
+    if (margin < 0 || margin > 100) {
+      throw new BadRequestException('Invalid margin percent');
+    }
+
     const sellingPrice = product.basePrice * (1 + margin / 100);
 
     return this.prisma.product.update({

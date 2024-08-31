@@ -53,4 +53,9 @@ export class QuoteController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.quoteService.softDelete(id);
   }
+
+  @Get('user/:id')
+  getQuoteByIdWithQuoteLines(@Param('id', ParseIntPipe) id: number) {
+    return this.quoteService.getQuoteByIdWithQuoteLines(id);
+  }
 }

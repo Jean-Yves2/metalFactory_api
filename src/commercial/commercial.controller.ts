@@ -1,8 +1,10 @@
-import { Controller, Get, Param, Patch, Body } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Body, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CommercialService } from './commercial.service';
 import { QuoteStatus } from '@prisma/client';
 import { QuoteService } from '../quote/quote.service';
+import { GlobalDiscountDto } from './dto/globalDiscount.dto';
+import { ProductDiscountsDto } from './dto/productDiscount.dto';
 
 @ApiTags('Commercial')
 @Controller('commercial')
@@ -57,13 +59,6 @@ export class CommercialController {
     status: 400,
     description: 'ID du devis ou ID de la réduction invalide.',
   })
-  applyDiscountToQuote(
-    @Param('quoteId') quoteId: number,
-    @Body('discountId') discountId: number,
-  ) {
-    return this.commercialService.applyDiscountToQuote(quoteId, discountId);
-  }
-
   @Patch('products/:productId/price')
   @ApiOperation({ summary: 'Calculer le prix de vente d’un produit' })
   @ApiResponse({
@@ -81,6 +76,27 @@ export class CommercialController {
     return this.commercialService.calculateSellingPrice(
       productId,
       marginPercent,
+    );
+  }
+
+  // Appliquer une réduction globale à un devis
+  @Post('discount/global')
+  async applyGlobalDiscountToQuote(
+    @Body() globalDiscountDto: GlobalDiscountDto,
+  ) {
+    const { discount, quoteId } = globalDiscountDto;
+    return this.commercialService.applyGlobalDiscountToQuote(discount, quoteId);
+  }
+
+  // Appliquer des réductions par produit dans un devis
+  @Post('discount/product')
+  async applyProductDiscountToQuote(
+    @Body() productDiscountsDto: ProductDiscountsDto,
+  ) {
+    const { quoteId, productDiscounts } = productDiscountsDto;
+    return this.commercialService.applyProductDiscountToQuote(
+      quoteId,
+      productDiscounts,
     );
   }
 }
