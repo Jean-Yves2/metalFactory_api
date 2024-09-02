@@ -3,7 +3,6 @@ import { CreateStockDto } from '../dto/create-stock.dto';
 export class StockServiceMock {
   getAllStocks = jest.fn().mockImplementation(() => {
     const activeStock = stockMock.filter((stock) => stock.deletedAt === null);
-    console.log('activeStock : ', activeStock);
     return activeStock;
   });
   getStockById = jest.fn().mockImplementation((id: number) => {

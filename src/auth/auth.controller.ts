@@ -53,7 +53,6 @@ export class AuthController {
     summary: "Vérification de l'authentification de l'utilisateur",
   })
   checkAuth(@Req() req: any) {
-    console.log('Request Headers:', req.headers);
     return { isAuthenticated: !!req.user, user: req.user || null };
   }
 

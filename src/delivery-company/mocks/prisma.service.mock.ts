@@ -30,7 +30,6 @@ export class DeliveryCompanyPrismaMock {
             updatedAt: new Date(),
             deletedAt: null,
           };
-          console.log(newDeliveryCompany);
 
           return 'Delivery company created successfully';
         },

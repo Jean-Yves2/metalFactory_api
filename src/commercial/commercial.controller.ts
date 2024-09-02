@@ -4,7 +4,6 @@ import { CommercialService } from './commercial.service';
 import { QuoteStatus } from '@prisma/client';
 import { QuoteService } from '../quote/quote.service';
 import { GlobalDiscountDto } from './dto/globalDiscount.dto';
-import { ProductDiscountsDto } from './dto/productDiscount.dto';
 
 @ApiTags('Commercial')
 @Controller('commercial')
@@ -45,7 +44,6 @@ export class CommercialController {
   })
   @ApiResponse({ status: 400, description: 'ID de client invalide.' })
   getOrderHistory(@Param('clientId') clientId: number) {
-    console.log('clientId', clientId);
     return this.commercialService.getOrderHistory(Number(clientId));
   }
 
@@ -79,7 +77,6 @@ export class CommercialController {
     );
   }
 
-  // Appliquer une réduction globale à un devis
   @Post('discount/global')
   async applyGlobalDiscountToQuote(
     @Body() globalDiscountDto: GlobalDiscountDto,
@@ -88,12 +85,8 @@ export class CommercialController {
     return this.commercialService.applyGlobalDiscountToQuote(discount, quoteId);
   }
 
-  // Appliquer des réductions par produit dans un devis
   @Post('discount/product')
-  async applyProductDiscountToQuote(
-    @Body() productDiscountsDto: ProductDiscountsDto,
-  ) {
-    const { quoteId, productDiscounts } = productDiscountsDto;
+  async applyProductDiscountToQuote(@Body() { quoteId, productDiscounts }) {
     return this.commercialService.applyProductDiscountToQuote(
       quoteId,
       productDiscounts,

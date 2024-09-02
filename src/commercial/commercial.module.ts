@@ -6,6 +6,7 @@ import { RoleGuard } from '../guards/role.guard';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { QuoteService } from '../quote/quote.service';
+import { DiscountService } from '../discount/discount.service';
 
 @Module({
   imports: [DatabaseModule],
@@ -15,6 +16,7 @@ import { QuoteService } from '../quote/quote.service';
     PrismaService,
     JwtService,
     QuoteService,
+    DiscountService,
   ],
   controllers: [CommercialController],
 })

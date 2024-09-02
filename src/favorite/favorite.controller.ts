@@ -26,7 +26,6 @@ export class FavoritesController {
     @Req() req: Request,
     @Param('productCode') productCode: number,
   ) {
-    console.log('req.user:', req.user);
     const userId = req.user?.sub;
     return this.favoritesService.addFavorite(userId, productCode);
   }

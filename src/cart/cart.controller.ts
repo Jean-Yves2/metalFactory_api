@@ -54,7 +54,6 @@ export class CartController {
   @ApiResponse({ status: 401, description: 'Utilisateur non authentifié.' })
   getCartByUserId(@Req() req: Request) {
     const userId = req.user?.sub;
-    console.log('userId', userId);
     return this.cartService.getCartByUserId(userId);
   }
 

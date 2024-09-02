@@ -67,7 +67,6 @@ export class UserService {
   }
   async getMyProfile(userId: number) {
     try {
-      console.log('Fetching user profile with id:', userId);
       const user = await this.prisma.user.findUnique({
         where: { id: userId, deletedAt: null },
         select: {
@@ -96,13 +95,11 @@ export class UserService {
         },
       });
       if (!user) {
-        console.log('User not found');
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      console.log('User fetched:', user);
+
       return user;
     } catch (error) {
-      console.error('Error fetching user:', error);
       throw new HttpException(
         'Error fetching user',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -155,8 +152,6 @@ export class UserService {
         message: 'User created successfully!',
       };
     } catch (error) {
-      console.log('Erreur du serveur : ', error);
-
       this.logger.error('Error creating user:', error);
 
       if (
