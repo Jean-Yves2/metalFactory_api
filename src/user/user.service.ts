@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateUserDto } from './dto/createUserdto';
@@ -11,17 +12,18 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { PasswordDto } from './dto/password.dto';
-import { BadRequestException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
-  private readonly logger = new Logger(UserService.name);
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger = new Logger(UserService.name),
+  ) {}
 
   async getAllUsers() {
     try {
-      const users = await this.prisma.user.findMany({
+      return await this.prisma.user.findMany({
         select: {
           id: true,
           firstName: true,
@@ -31,9 +33,8 @@ export class UserService {
           userType: true,
         },
       });
-
-      return users;
     } catch (error) {
+      this.logger.error('Error fetching all users:', error);
       throw new InternalServerErrorException('Error fetching all users');
     }
   }
@@ -41,10 +42,7 @@ export class UserService {
   async getUserById(id: number) {
     try {
       const user = await this.prisma.user.findUnique({
-        where: {
-          id: id,
-          deletedAt: null,
-        },
+        where: { id, deletedAt: null },
         select: {
           id: true,
           firstName: true,
@@ -59,15 +57,17 @@ export class UserService {
       }
       return user;
     } catch (error) {
+      this.logger.error('Error fetching user:', error);
       throw new HttpException(
         'Error fetching user',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
+
   async getMyProfile(userId: number) {
     try {
-      console.log('Fetching user profile with id:', userId);
+      this.logger.log('Fetching user profile with id:', userId);
       const user = await this.prisma.user.findUnique({
         where: { id: userId, deletedAt: null },
         select: {
@@ -96,13 +96,13 @@ export class UserService {
         },
       });
       if (!user) {
-        console.log('User not found');
+        this.logger.log('User not found');
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      console.log('User fetched:', user);
+      this.logger.log('User fetched:', user);
       return user;
     } catch (error) {
-      console.error('Error fetching user:', error);
+      this.logger.error('Error fetching user:', error);
       throw new HttpException(
         'Error fetching user',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -112,16 +112,20 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto) {
     try {
-      const { firstName, lastName, email, password, companyName, phone } =
-        createUserDto;
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        companyName,
+        phone,
+        address: createAddressDto,
+      } = createUserDto;
 
-      const passwordDto = new PasswordDto();
-      passwordDto.password = password;
-
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      const createAddressDto = createUserDto.address;
+      const hashedPassword = await bcrypt.hash(
+        password,
+        await bcrypt.genSalt(10),
+      );
 
       await this.prisma.user.create({
         data: {
@@ -151,14 +155,9 @@ export class UserService {
         },
       });
 
-      return {
-        message: 'User created successfully!',
-      };
+      return { message: 'User created successfully!' };
     } catch (error) {
-      console.log('Erreur du serveur : ', error);
-
       this.logger.error('Error creating user:', error);
-
       if (
         error instanceof PrismaClientKnownRequestError &&
         error.code === 'P2002'
@@ -167,20 +166,16 @@ export class UserService {
           `Email "${createUserDto.email}" is already in use.`,
         );
       }
-      if (error instanceof BadRequestException) {
-        throw error;
-      } else {
-        throw new InternalServerErrorException(
-          "Une erreur s'est produite lors de la création de l'utilisateur.",
-        );
-      }
+      throw new InternalServerErrorException(
+        "Une erreur s'est produite lors de la création de l'utilisateur.",
+      );
     }
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     try {
       const existingUser = await this.prisma.user.findUnique({
-        where: { id: id, deletedAt: null },
+        where: { id, deletedAt: null },
       });
 
       if (!existingUser) {
@@ -198,44 +193,36 @@ export class UserService {
       }
 
       if (dataToUpdate.password) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(dataToUpdate.password, salt);
-        dataToUpdate.password = hashedPassword;
+        dataToUpdate.password = await bcrypt.hash(
+          dataToUpdate.password,
+          await bcrypt.genSalt(10),
+        );
       }
 
       return await this.prisma.user.update({
         where: { id },
-        data: {
-          ...dataToUpdate,
-          updatedAt: new Date(),
-        },
+        data: { ...dataToUpdate, updatedAt: new Date() },
       });
     } catch (error) {
-      if (error instanceof InternalServerErrorException) {
-        throw new InternalServerErrorException(
-          "Une erreur s'est produite lors de la création de l'utilisateur.",
-        );
-      } else {
-        throw error;
-      }
+      this.logger.error('Error updating user:', error);
+      throw new InternalServerErrorException(
+        "Une erreur s'est produite lors de la mise à jour de l'utilisateur.",
+      );
     }
   }
 
   async softDelete(id: number) {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: id },
-      });
+      const user = await this.prisma.user.findUnique({ where: { id } });
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
       return await this.prisma.user.update({
         where: { id },
-        data: {
-          deletedAt: new Date(),
-        },
+        data: { deletedAt: new Date() },
       });
     } catch (error) {
+      this.logger.error('Error soft deleting user:', error);
       throw new InternalServerErrorException(
         "Une erreur s'est produite lors de la suppression de l'utilisateur.",
       );
@@ -244,16 +231,14 @@ export class UserService {
 
   async findUserByEmail(email: string) {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { email: email },
-      });
+      const user = await this.prisma.user.findUnique({ where: { email } });
 
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-
       return user;
     } catch (error) {
+      this.logger.error('Error finding user by email:', error);
       throw new InternalServerErrorException(
         "Une erreur s'est produite lors de la recherche de l'utilisateur.",
       );
