@@ -5,13 +5,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
 export class UserServiceMock {
-  getAllUsers = jest.fn().mockImplementation(() => {
-    return userMock.map((user) => {
-      return {
-        ...user,
-      };
-    });
-  });
+  getAllUsers = jest.fn().mockImplementation(() => userMock);
 
   getUserById = jest.fn().mockImplementation((id: number) => {
     const foundUser = userMock.find((user) => user.id === id);
@@ -25,8 +19,8 @@ export class UserServiceMock {
     const passwordDto = new PasswordDto();
     passwordDto.password = createUserDto.password;
     await validateOrReject(passwordDto);
-    const salt = bcrypt.genSalt(10);
-    createUserDto.password = bcrypt.hash(passwordDto.password, await salt);
+    const salt = await bcrypt.genSalt(10);
+    createUserDto.password = await bcrypt.hash(passwordDto.password, salt);
     const newUser = {
       id: userMock.length + 1,
       ...createUserDto,
@@ -45,22 +39,16 @@ export class UserServiceMock {
     if (!userToUpdate) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    const updatedUser = {
-      ...userToUpdate,
-      ...createUserDto,
-      updatedAt: new Date(),
-    };
-    userMock[userMock.indexOf(userToUpdate)] = updatedUser;
+    Object.assign(userToUpdate, createUserDto, { updatedAt: new Date() });
     return 'User updated successfully';
   });
 
   softDelete = jest.fn().mockImplementation((id: number) => {
     const userToDelete = userMock.find((user) => user.id === id);
-
     if (!userToDelete) {
-      return null;
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
-    return { ...userToDelete, deletedAt: new Date() };
+    userToDelete.deletedAt = new Date();
+    return userToDelete;
   });
 }
