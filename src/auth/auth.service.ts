@@ -4,10 +4,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { LoginResponseDto } from './dto/login.dto';
+import { CreateUserDto } from 'src/user/dto/createUserdto';
 
 @Injectable()
 export class AuthService {
@@ -68,6 +69,7 @@ export class AuthService {
   getCookieWithJwtToken(token: string): string {
     return `access_token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24}`; // 1 day
   }
+
   getCookieWithJwtRefreshToken(refreshToken: string): string {
     return `refresh_token=${refreshToken}; HttpOnly; Path=/; Max-Age=${
       7 * 24 * 60 * 60
@@ -89,7 +91,7 @@ export class AuthService {
     }
   }
 
-  async register(createUserDto) {
+  async register(createUserDto: CreateUserDto) {
     const passwordError = await this.validatePassword(createUserDto.password);
     if (passwordError) {
       throw new BadRequestException(passwordError);

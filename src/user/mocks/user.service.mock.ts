@@ -2,7 +2,7 @@ import { validateOrReject } from 'class-validator';
 import { PasswordDto } from '../dto/password.dto';
 import { userMock } from './user.mock';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 export class UserServiceMock {
   getAllUsers = jest.fn().mockImplementation(() => {
@@ -21,13 +21,12 @@ export class UserServiceMock {
     return foundUser;
   });
 
-  createUser = jest.fn().mockImplementation((createUserDto) => {
+  createUser = jest.fn().mockImplementation(async (createUserDto) => {
     const passwordDto = new PasswordDto();
     passwordDto.password = createUserDto.password;
-    validateOrReject(passwordDto);
+    await validateOrReject(passwordDto);
     const salt = bcrypt.genSalt(10);
-    const hashedPassword = bcrypt.hash(passwordDto.password, salt);
-    createUserDto.password = hashedPassword;
+    createUserDto.password = bcrypt.hash(passwordDto.password, await salt);
     const newUser = {
       id: userMock.length + 1,
       ...createUserDto,
