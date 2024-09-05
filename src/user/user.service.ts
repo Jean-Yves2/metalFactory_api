@@ -18,7 +18,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly logger = new Logger(UserService.name),
+    private readonly logger: Logger,
   ) {}
 
   async getAllUsers() {

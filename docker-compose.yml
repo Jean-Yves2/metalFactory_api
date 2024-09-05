@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build:
@@ -17,7 +15,7 @@ services:
     depends_on:
       - postgres
       - mongo
-    command: npm run start:dev
+    command: ["/usr/local/bin/wait-for-it.sh", "postgres:5432", "--", "/usr/local/bin/wait-for-it.sh", "mongo:27017", "--", "npm", "run", "start:dev"]
 
   postgres:
     image: postgres:14-alpine

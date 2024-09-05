@@ -3,5 +3,5 @@ npm-debug.log
 .env
 Dockerfile
 docker-compose.yml
-prisma/migrations
-dist/
+.git
+.gitignore

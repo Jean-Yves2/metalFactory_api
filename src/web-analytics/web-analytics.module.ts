@@ -16,12 +16,14 @@ import { WebAnalyticsController } from './web-analytics.controller';
         if (process.env.NODE_ENV === 'test') {
           return {
             uri: 'mongodb://localhost/test',
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+            retryAttempts: 5,
+            retryDelay: 3000,
           };
         }
         return {
           uri: configService.get('MONGODB_URL'),
+          retryAttempts: 5,
+          retryDelay: 3000,
         };
       },
       inject: [ConfigService],
