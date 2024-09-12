@@ -38,7 +38,7 @@ export class CartController {
   @ApiResponse({ status: 401, description: 'Utilisateur non authentifié.' })
   async addItemToCart(
     @Req() req: Request,
-    @Body() addItemToCartDto: AddItemToCartDto,
+    @Body() addItemToCartDto: any, // Utilisation temporaire de any pour le débogage
   ) {
     const userId = req.user?.sub;
     if (!userId) {
